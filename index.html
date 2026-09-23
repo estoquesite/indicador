@@ -2,7 +2,7 @@
 <html lang="pt-PT">
 <head>
     <meta charset="UTF-8">
-    <title>Portal de Indicadores - Auditoria 5S (Versão 3.1)</title>
+    <title>Portal de Indicadores - Auditoria 5S (Versão 3.2)</title>
     <style>
         :root {
             --primary-color: #1f4e79;
@@ -13,36 +13,36 @@
             --border-color: #d1d8e0;
         }
         body { font-family: 'Segoe UI', Arial, sans-serif; background-color: var(--bg-color); color: var(--text-color); margin: 0; display: flex; height: 100vh; overflow: hidden; }
-        .sidebar { width: 240px; background-color: var(--sidebar-bg); color: white; display: flex; flex-direction: column; box-shadow: 2px 0 5px rgba(0,0,0,0.1); }
-        .sidebar-header { padding: 15px; background-color: #1a252f; border-bottom: 1px solid #34495e; }
-        .sidebar-header h2 { font-size: 15px; margin: 0; color: #ecf0f1; }
-        .sidebar-header p { font-size: 10px; margin: 3px 0 0 0; color: #bdc3c7; }
+        .sidebar { width: 220px; background-color: var(--sidebar-bg); color: white; display: flex; flex-direction: column; box-shadow: 2px 0 5px rgba(0,0,0,0.1); }
+        .sidebar-header { padding: 12px 15px; background-color: #1a252f; border-bottom: 1px solid #34495e; }
+        .sidebar-header h2 { font-size: 14px; margin: 0; color: #ecf0f1; }
+        .sidebar-header p { font-size: 10px; margin: 2px 0 0 0; color: #bdc3c7; }
         .menu-list { list-style: none; padding: 0; margin: 0; flex-grow: 1; }
-        .menu-item { padding: 12px 15px; font-size: 13px; cursor: pointer; border-bottom: 1px solid #34495e; background-color: var(--primary-color); color: white; display: flex; align-items: center; gap: 8px; }
-        .main-content { flex-grow: 1; display: flex; flex-direction: column; overflow-y: auto; padding: 15px 25px; position: relative; }
-        .header-top { border-bottom: 1px solid var(--border-color); padding-bottom: 10px; margin-bottom: 15px; display: flex; justify-content: space-between; align-items: center; }
-        .header-top h1 { color: var(--primary-color); font-size: 20px; margin: 0; }
-        .version-badge { background: #e2e8f0; color: #334155; padding: 4px 10px; border-radius: 20px; font-size: 11px; font-weight: bold; }
-        .filters-bar { background: white; padding: 10px 15px; border-radius: 6px; margin-bottom: 15px; display: flex; gap: 15px; align-items: center; box-shadow: 0 1px 3px rgba(0,0,0,0.03); border: 1px solid var(--border-color); flex-wrap: wrap; }
+        .menu-item { padding: 10px 15px; font-size: 12px; cursor: pointer; border-bottom: 1px solid #34495e; background-color: var(--primary-color); color: white; display: flex; align-items: center; gap: 8px; }
+        .main-content { flex-grow: 1; display: flex; flex-direction: column; overflow-y: auto; padding: 12px 20px; position: relative; }
+        .header-top { border-bottom: 1px solid var(--border-color); padding-bottom: 8px; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center; }
+        .header-top h1 { color: var(--primary-color); font-size: 18px; margin: 0; }
+        .version-badge { background: #e2e8f0; color: #334155; padding: 3px 8px; border-radius: 20px; font-size: 10px; font-weight: bold; }
+        .filters-bar { background: white; padding: 8px 12px; border-radius: 6px; margin-bottom: 12px; display: flex; gap: 15px; align-items: center; box-shadow: 0 1px 2px rgba(0,0,0,0.03); border: 1px solid var(--border-color); flex-wrap: wrap; }
         .filters-bar div { display: flex; flex-direction: column; }
-        .filters-bar label { font-weight: bold; font-size: 11px; color: #555; margin-bottom: 3px; }
-        .filters-bar select { padding: 6px 10px; border-radius: 4px; border: 1px solid var(--border-color); font-size: 12px; background: #fafafa; }
-        .indicator-card { background: var(--card-bg); border: 1px solid var(--border-color); border-top: 4px solid var(--primary-color); border-radius: 6px; padding: 15px 20px; margin-bottom: 15px; box-shadow: 0 1px 4px rgba(0,0,0,0.03); }
-        .indicator-card h2 { margin-top: 0; margin-bottom: 12px; font-size: 16px; color: var(--primary-color); border-bottom: 1px solid #eee; padding-bottom: 8px; display: flex; justify-content: space-between; align-items: center; }
-        .cards-resumo { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 12px; }
-        .mini-card { background: #f8f9fa; border-left: 3px solid var(--primary-color); padding: 10px 12px; border-radius: 4px; border: 1px solid #e9ecef; }
-        .mini-card h3 { margin: 0; font-size: 10px; color: #666; text-transform: uppercase; }
-        .mini-card .value { font-size: 18px; font-weight: bold; color: var(--primary-color); margin-top: 3px; }
-        .table-container { max-height: 380px; overflow-y: auto; border: 1px solid var(--border-color); border-radius: 4px; }
+        .filters-bar label { font-weight: bold; font-size: 10px; color: #555; margin-bottom: 2px; }
+        .filters-bar select { padding: 5px 8px; border-radius: 4px; border: 1px solid var(--border-color); font-size: 11px; background: #fafafa; }
+        .indicator-card { background: var(--card-bg); border: 1px solid var(--border-color); border-top: 4px solid var(--primary-color); border-radius: 6px; padding: 12px 15px; margin-bottom: 10px; box-shadow: 0 1px 3px rgba(0,0,0,0.03); }
+        .indicator-card h2 { margin-top: 0; margin-bottom: 8px; font-size: 14px; color: var(--primary-color); border-bottom: 1px solid #eee; padding-bottom: 6px; display: flex; justify-content: space-between; align-items: center; }
+        .cards-resumo { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 10px; }
+        .mini-card { background: #f8f9fa; border-left: 3px solid var(--primary-color); padding: 8px 10px; border-radius: 4px; border: 1px solid #e9ecef; }
+        .mini-card h3 { margin: 0; font-size: 9px; color: #666; text-transform: uppercase; }
+        .mini-card .value { font-size: 16px; font-weight: bold; color: var(--primary-color); margin-top: 2px; }
+        .table-container { max-height: 340px; overflow-y: auto; border: 1px solid var(--border-color); border-radius: 4px; }
         table { width: 100%; border-collapse: collapse; }
-        th, td { padding: 7px 10px; text-align: left; border-bottom: 1px solid var(--border-color); font-size: 11px; }
+        th, td { padding: 6px 8px; text-align: left; border-bottom: 1px solid var(--border-color); font-size: 11px; }
         th { background-color: #f1f3f5; color: #333; position: sticky; top: 0; z-index: 10; font-weight: 600; }
         tr:hover { background-color: #f8f9fa; }
-        tfoot td { background-color: #e9ecef; font-weight: bold; color: var(--primary-color); border-top: 1px solid var(--primary-color); position: sticky; bottom: 0; }
-        .badge { padding: 3px 6px; border-radius: 8px; font-size: 10px; font-weight: bold; }
+        tfoot td { background-color: #e9ecef; font-weight: bold; color: var(--primary-color); border-top: 2px solid var(--primary-color); position: sticky; bottom: 0; }
+        .badge { padding: 2px 5px; border-radius: 6px; font-size: 10px; font-weight: bold; }
         .badge-ok { background: #d4edda; color: #155724; }
         .badge-danger { background: #f8d7da; color: #721c24; }
-        .footer-version { margin-top: auto; padding-top: 10px; border-top: 1px solid var(--border-color); font-size: 10px; color: #7f8c8d; text-align: right; }
+        .footer-version { margin-top: auto; padding-top: 8px; border-top: 1px solid var(--border-color); font-size: 9px; color: #7f8c8d; text-align: right; }
     </style>
 </head>
 <body>
@@ -58,7 +58,7 @@
     <div class="main-content">
         <div class="header-top">
             <h1>Portal de Indicadores - Acompanhamento por Posto</h1>
-            <span class="version-badge">Versão 3.1 Compacta</span>
+            <span class="version-badge">Versão 3.2 Compacta</span>
         </div>
         <div class="filters-bar">
             <div>
@@ -103,13 +103,13 @@
                 <table id="tabelaDados">
                     <thead>
                         <tr>
-                            <th style="width: 40px;">#</th>
+                            <th style="width: 35px;">#</th>
                             <th>Posto / Área</th>
                             <th>Nº Inspeção</th>
-                            <th>Data Real</th>
-                            <th>Mês (Col. D)</th>
-                            <th>Status</th>
+                            <th>Data Real (Col. D)</th>
+                            <th>Mês</th>
                             <th>Conformidade</th>
+                            <th>Status</th>
                         </tr>
                     </thead>
                     <tbody id="corpoTabela"></tbody>
@@ -123,7 +123,7 @@
             </div>
         </div>
         <div class="footer-version">
-            Portal de Indicadores v3.1 | Auditoria Oficial Vale S.A.
+            Portal de Indicadores v3.2 | Auditoria Oficial Vale S.A.
         </div>
     </div>
 
@@ -215,8 +215,8 @@
                     <td>${row["Inspecao"]}</td>
                     <td>${row["Data"]}</td>
                     <td>${row["Mes"]}</td>
-                    <td><span class="badge ${badgeClass}">${status === "Encerrado" ? "OK (Avaliado)" : "Pendente"}</span></td>
                     <td>${row["Conformidade"] !== "" ? row["Conformidade"] + "%" : "-"}</td>
+                    <td><span class="badge ${badgeClass}">${status === "Encerrado" ? "OK (Avaliado)" : "Pendente"}</span></td>
                 </tr>`;
             });
 
