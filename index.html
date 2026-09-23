@@ -26,10 +26,9 @@
         .menu-item:hover, .menu-item.active { background-color: var(--primary-color); color: white; }
 
         /* CONTEÚDO PRINCIPAL */
-        .main-content { flex-grow: 1; display: flex; flex-direction: column; overflow-y: auto; padding: 30px; }
-        .header-top { display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid var(--border-color); padding-bottom: 15px; margin-bottom: 25px; }
+        .main-content { flex-grow: 1; display: flex; flex-direction: column; overflow-y: auto; padding: 30px; position: relative; }
+        .header-top { border-bottom: 2px solid var(--border-color); padding-bottom: 15px; margin-bottom: 25px; }
         .header-top h1 { color: var(--primary-color); font-size: 24px; margin: 0; }
-        .user-info { font-size: 13px; color: #666; text-align: right; }
 
         /* BARRA DE FILTROS */
         .filters-bar { background: white; padding: 15px 20px; border-radius: 8px; margin-bottom: 25px; display: flex; gap: 20px; align-items: center; box-shadow: 0 2px 5px rgba(0,0,0,0.03); border: 1px solid var(--border-color); }
@@ -58,6 +57,9 @@
         /* CONTROLE DE ABAS */
         .tab-pane { display: none; }
         .tab-pane.active { display: block; }
+
+        /* RODAPÉ DISCRETO COM A VERSÃO */
+        .footer-version { margin-top: auto; padding-top: 20px; border-top: 1px solid var(--border-color); font-size: 11px; color: #7f8c8d; text-align: right; }
     </style>
 </head>
 <body>
@@ -78,11 +80,7 @@
     <!-- CONTEÚDO PRINCIPAL -->
     <div class="main-content">
         <div class="header-top">
-            <h1>Painel de Indicadores Operacionais</h1>
-            <div class="user-info">
-                <strong>Coordenação:</strong> Bianca Medeiros<br>
-                <strong>Responsável:</strong> Mariana Pereira Cruz
-            </div>
+            <h1>Portal de Indicadores</h1>
         </div>
         
         <!-- BARRA DE FILTROS GLOBAIS -->
@@ -243,11 +241,11 @@
             </div>
         </div>
 
-        <!-- ABA 2: ESTOQUE (RESERVADA PARA O PRÓXIMO) -->
+        <!-- ABA 2: ESTOQUE -->
         <div id="tab-estoque" class="tab-pane">
             <div class="indicator-card">
                 <h2>Indicador de Estoque & Sobressalentes Críticos</h2>
-                <p style="color: #666; font-size: 14px;">Módulo em estruturação. Aqui aparecerão os dados de giro de estoque, materiais críticos e sobressalentes da confiabilidade.</p>
+                <p style="color: #666; font-size: 14px;">Módulo em estruturação para controle de materiais da confiabilidade.</p>
             </div>
         </div>
 
@@ -255,14 +253,17 @@
         <div id="tab-disponibilidade" class="tab-pane">
             <div class="indicator-card">
                 <h2>Disponibilidade Operacional e Confiabilidade (MTBF / MTTR)</h2>
-                <p style="color: #666; font-size: 14px;">Módulo reservado para o acompanhamento dos indicadores de quebra e tempo médio entre falhas dos ativos críticos.</p>
+                <p style="color: #666; font-size: 14px;">Módulo reservado para o acompanhamento dos indicadores de quebra e tempo médio entre falhas.</p>
             </div>
         </div>
 
+        <!-- RODAPÉ COM A VERSÃO -->
+        <div class="footer-version">
+            Portal de Indicadores v1.0.4 | Coordenação: Bianca Medeiros | Responsável: Mariana Pereira Cruz
+        </div>
     </div>
 
     <script>
-        // Função para trocar de aba no menu lateral
         function mudarTab(evt, tabId) {
             var panes = document.getElementsByClassName("tab-pane");
             for (var i = 0; i < panes.length; i++) {
@@ -270,13 +271,12 @@
             }
             var items = document.getElementsByClassName("menu-item");
             for (var i = 0; i < items.length; i++) {
-                items.classList.remove("active");
+                items[i].classList.remove("active");
             }
             document.getElementById(tabId).classList.add("active");
             evt.currentTarget.classList.add("active");
         }
 
-        // Função de filtro da tabela e atualização dos contadores totais
         function filtrarTabela() {
             var mesSel = document.getElementById("filtroMes").value;
             var statusSel = document.getElementById("filtroStatus").value;
@@ -304,7 +304,6 @@
                 }
             }
 
-            // Atualiza os contadores do mini-card dinamicamente com base no filtro atual
             document.getElementById("lblTotal").innerText = totalVisiveis;
             document.getElementById("lblOk").innerText = totalOk;
             document.getElementById("lblPendente").innerText = totalPendente;
