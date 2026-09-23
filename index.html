@@ -16,7 +16,7 @@
             <div class="mb-6 md:mb-0">
                 <span class="bg-emerald-600 text-emerald-100 text-xs font-semibold px-3 py-1 rounded-full uppercase tracking-wider">Painel Corporativo</span>
                 <h1 class="text-3xl md:text-4xl font-extrabold mt-2 tracking-tight">Indicador de Avaliação de Postos</h1>
-                <p class="text-emerald-200 mt-2 text-sm max-w-xl">Acompanhamento mensal por posto, cruzando a base oficial com os registros da aba Total (Coluna D).</p>
+                <p class="text-emerald-200 mt-2 text-sm max-w-xl">Cruzamento inteligente (por Código e Nome) entre a base oficial e os registros da aba Total.</p>
             </div>
             <div class="bg-white/10 backdrop-blur-md border border-white/20 p-4 rounded-xl text-center min-w-[200px]">
                 <span class="block text-xs text-emerald-200 uppercase font-medium">Postos Monitorados</span>
@@ -101,7 +101,7 @@
 
     <!-- RODAPÉ COM A VERSÃO -->
     <footer class="w-full text-center py-4 text-slate-400 text-[10px] border-t border-slate-200 bg-white">
-        Indicador de Postos &bull; Versão 06
+        Indicador de Postos &bull; Versão 07
     </footer>
 
     <!-- SCRIPT DE PROCESSAMENTO E CRUZAMENTO DE DADOS -->
@@ -140,10 +140,10 @@
             "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"
         ];
 
-        // Registros reais encontrados na aba Total (Cruzamento por Nome e Mês)
+        // Registros da aba Total (Cruzamento inteligente por Código OU Nome)
         const baseTotalAvaliacoes = [
-            { nome: "Subestação 01", mes: "Junho", data: "09/06/2026" },
-            { nome: "Subestação 02", mes: "Junho", data: "09/06/2026" }
+            { codigo: "POST-000475", nome: "Subestação 01", mes: "Junho", data: "09/06/2026" },
+            { codigo: "POST-971454", nome: "Subestação 02", mes: "Junho", data: "09/06/2026" }
         ];
 
         function renderizarTabela() {
@@ -155,10 +155,13 @@
 
             let listaCompleta = [];
 
-            // Todos os postos aparecem para todos os meses do ano
+            // Para cada posto e cada mês, verificamos se existe na aba Total usando Código OU Nome
             basePostos.forEach(posto => {
                 mesesDoAno.forEach(mes => {
-                    const avaliado = baseTotalAvaliacoes.find(a => a.nome === posto.nome && a.mes === mes);
+                    const avaliado = baseTotalAvaliacoes.find(a => 
+                        (a.codigo === posto.codigo || a.nome.toLowerCase() === posto.nome.toLowerCase()) && a.mes === mes
+                    );
+
                     listaCompleta.push({
                         codigo: posto.codigo,
                         nome: posto.nome,
@@ -169,14 +172,14 @@
                 });
             });
 
-            // Aplicar filtros
+            // Aplicar os filtros
             let dadosFiltrados = listaCompleta.filter(item => {
                 let matchMes = filtroMes === "" || item.mes === filtroMes;
                 let matchStatus = filtroStatus === "" || item.status === filtroStatus;
                 return matchMes && matchStatus;
             });
 
-            // Renderizar linhas
+            // Renderizar as linhas
             dadosFiltrados.forEach(item => {
                 const tr = document.createElement('tr');
                 tr.className = "hover:bg-emerald-50/50 transition-colors";
