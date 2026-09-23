@@ -31,7 +31,7 @@
             </button>
         </nav>
         <div class="p-4 border-t border-emerald-900 text-[10px] text-emerald-400 text-center">
-            Indicador Corporativo &bull; Versão 19
+            Indicador Corporativo &bull; Versão 20
         </div>
     </aside>
 
@@ -43,7 +43,7 @@
             <div class="max-w-3xl">
                 <span class="bg-emerald-600 text-emerald-100 text-xs font-bold px-4 py-1.5 rounded-full uppercase tracking-widest shadow-sm">Módulo de Gestão Industrial</span>
                 <h1 class="text-4xl md:text-5xl font-extrabold mt-6 tracking-tight">Central de Indicadores e Inventário</h1>
-                <p class="text-emerald-200 mt-4 text-base leading-relaxed max-w-2xl mx-auto">Bem-vinda ao painel unificado. Utilize o menu lateral para alternar entre o monitoramento de maturidade 5S dos postos e o controle estratégico de estoque e inventário.</p>
+                <p class="text-emerald-200 mt-4 text-base leading-relaxed max-w-2xl mx-auto">Bem-vinda ao painel unificado. Utilize o menu lateral para alternar entre o monitoramento de maturidade 5S dos postos e o controle estratégico de estoque e inventário em tempo real.</p>
                 <div class="mt-8 flex justify-center gap-4">
                     <button onclick="mudarAba('5s')" class="bg-emerald-500 hover:bg-emerald-600 text-white font-bold px-6 py-3 rounded-xl shadow-lg transition-all flex items-center space-x-2">
                         <span>Acessar Indicador 5S</span>
@@ -185,88 +185,35 @@
             </div>
         </section>
 
-        <!-- ABA 3: INDICADOR DE ESTOQUE -->
+        <!-- ABA 3: INDICADOR DE ESTOQUE (PUXANDO DO GOOGLE DRIVE VIA CSV) -->
         <section id="aba-estoque" class="view-aba hidden p-8 bg-emerald-50/40 min-h-full">
             <div class="max-w-7xl mx-auto">
                 <div class="flex justify-between items-center mb-6">
                     <div>
                         <h2 class="text-2xl font-extrabold text-slate-900">Indicador de Inventário e Estoque</h2>
-                        <p class="text-sm text-slate-500">Controle de insumos, almoxarifado, criticidade e giro de materiais.</p>
+                        <p class="text-sm text-slate-500">Dados sincronizados em tempo real com o Google Drive.</p>
                     </div>
                     <div class="bg-emerald-900 text-white px-5 py-2.5 rounded-xl shadow-sm text-center">
-                        <span class="block text-[10px] text-emerald-300 uppercase font-bold">Itens Cadastrados</span>
-                        <span class="text-xl font-extrabold">1,420</span>
+                        <span class="block text-[10px] text-emerald-300 uppercase font-bold">Total de Itens</span>
+                        <span id="totalEstoqueBadge" class="text-xl font-extrabold">0</span>
                     </div>
                 </div>
 
-                <!-- CARTÕES DE RESUMO DO ESTOQUE -->
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
-                    <div class="bg-white p-5 rounded-xl shadow-md border border-emerald-100 flex items-center justify-between">
-                        <div>
-                            <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Valor Total em Estoque</span>
-                            <h3 class="text-3xl font-extrabold text-slate-900 mt-1">R$ 482.900</h3>
-                        </div>
-                        <div class="w-12 h-12 bg-emerald-100 text-emerald-700 rounded-full flex items-center justify-center text-xl"><i class="fa-solid fa-wallet"></i></div>
-                    </div>
-                    <div class="bg-white p-5 rounded-xl shadow-md border border-emerald-100 flex items-center justify-between">
-                        <div>
-                            <span class="text-[10px] font-bold text-amber-600 uppercase tracking-wider">Itens Críticos / Baixos</span>
-                            <h3 class="text-3xl font-extrabold text-amber-600 mt-1">14</h3>
-                        </div>
-                        <div class="w-12 h-12 bg-amber-100 text-amber-600 rounded-full flex items-center justify-center text-xl"><i class="fa-solid fa-triangle-exclamation"></i></div>
-                    </div>
-                    <div class="bg-white p-5 rounded-xl shadow-md border border-emerald-100 flex items-center justify-between">
-                        <div>
-                            <span class="text-[10px] font-bold text-teal-600 uppercase tracking-wider">Acuracidade do Inventário</span>
-                            <h3 class="text-3xl font-extrabold text-teal-700 mt-1">98.4%</h3>
-                        </div>
-                        <div class="w-12 h-12 bg-teal-100 text-teal-700 rounded-full flex items-center justify-center text-xl"><i class="fa-solid fa-bullseye"></i></div>
-                    </div>
-                </div>
-
-                <!-- TABELA DE ESTOQUE -->
+                <!-- TABELA DE ESTOQUE DINÂMICA -->
                 <div class="bg-white rounded-xl shadow-md border border-emerald-100 overflow-hidden">
                     <div class="p-4 bg-emerald-900 text-white font-bold text-xs uppercase tracking-wider flex justify-between items-center">
-                        <span>Resumo de Insumos Críticos</span>
-                        <span class="text-[10px] bg-emerald-800 px-3 py-1 rounded">Atualizado Hoje</span>
+                        <span>Itens do Almoxarifado / Estoque</span>
+                        <span class="text-[10px] bg-emerald-800 px-3 py-1 rounded">Sincronizado</span>
                     </div>
                     <div class="overflow-x-auto">
                         <table class="w-full text-left border-collapse text-sm">
                             <thead>
-                                <tr class="bg-slate-50 border-b border-slate-200 text-xs font-bold text-slate-600 uppercase">
-                                    <th class="p-4">Código Material</th>
-                                    <th class="p-4">Descrição do Insumo</th>
-                                    <th class="p-4">Categoria</th>
-                                    <th class="p-4">Qtd Atual</th>
-                                    <th class="p-4">Estoque Mínimo</th>
-                                    <th class="p-4">Status</th>
+                                <tr id="estoqueCabecalho" class="bg-slate-50 border-b border-slate-200 text-xs font-bold text-slate-600 uppercase">
+                                    <!-- Cabeçalhos injetados via script -->
                                 </tr>
                             </thead>
-                            <tbody class="divide-y divide-slate-200">
-                                <tr class="hover:bg-slate-50">
-                                    <td class="p-4 font-semibold">MAT-10294</td>
-                                    <td class="p-4">Correia Transportadora 36"</td>
-                                    <td class="p-4 text-slate-600">Mecânica</td>
-                                    <td class="p-4 font-bold text-amber-600">2 und</td>
-                                    <td class="p-4">3 und</td>
-                                    <td class="p-4"><span class="px-2.5 py-1 rounded-full text-xs font-bold bg-amber-100 text-amber-800">Estoque Baixo</span></td>
-                                </tr>
-                                <tr class="hover:bg-slate-50">
-                                    <td class="p-4 font-semibold">MAT-40581</td>
-                                    <td class="p-4">Óleo Lubrificante Industrial ISO 220</td>
-                                    <td class="p-4 text-slate-600">Lubrificantes</td>
-                                    <td class="p-4 font-bold text-emerald-600">145 l</td>
-                                    <td class="p-4">50 l</td>
-                                    <td class="p-4"><span class="px-2.5 py-1 rounded-full text-xs font-bold bg-emerald-100 text-emerald-800">Normal</span></td>
-                                </tr>
-                                <tr class="hover:bg-slate-50">
-                                    <td class="p-4 font-semibold">MAT-88234</td>
-                                    <td class="p-4">Filtro de Ar Primário - Gerador MS</td>
-                                    <td class="p-4 text-slate-600">Elétrica / Filtros</td>
-                                    <td class="p-4 font-bold text-rose-600">0 und</td>
-                                    <td class="p-4">2 und</td>
-                                    <td class="p-4"><span class="px-2.5 py-1 rounded-full text-xs font-bold bg-rose-100 text-rose-800">Crítico / Zerado</span></td>
-                                </tr>
+                            <tbody id="tabelaCorpoEstoque" class="divide-y divide-slate-200">
+                                <tr><td colspan="5" class="p-8 text-center text-slate-400">Carregando dados do estoque do Google Drive...</td></tr>
                             </tbody>
                         </table>
                     </div>
@@ -276,9 +223,10 @@
 
     </main>
 
-    <!-- SCRIPT DE NAVEGAÇÃO E PROCESSAMENTO DO 5S -->
+    <!-- SCRIPT DE NAVEGAÇÃO E PROCESSAMENTO DE DADOS -->
     <script>
-        const CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQUoRnkIRo0UhP2r1_IbUfJ2abD3UyvsFBGR8c8tUKYtsUQqQvyfdVC2tDRIymeEA/pub?gid=786393118&single=true&output=csv";
+        const CSV_URL_5S = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQUoRnkIRo0UhP2r1_IbUfJ2abD3UyvsFBGR8c8tUKYtsUQqQvyfdVC2tDRIymeEA/pub?gid=786393118&single=true&output=csv";
+        const CSV_URL_ESTOQUE = "https://docs.google.com/spreadsheets/d/e/2PACX-1vT2pE8TgaukBivJ2UreoGzDFpQ7qy11dMRkkL9G5vAQYcCdsTRL0eGQLNgsPudJow/pub?gid=1381486713&single=true&output=csv";
 
         const basePostos = [
             { codigo: "POST-971536", nome: "Área de Caldeiraria e suas Máquinas G2" },
@@ -329,9 +277,10 @@
             return texto.toString().normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().trim();
         }
 
-        async function carregarDadosDrive() {
+        // Carregar dados 5S
+        async function carregarDados5S() {
             try {
-                const response = await fetch(CSV_URL);
+                const response = await fetch(CSV_URL_5S);
                 const textoCsv = await response.text();
                 const linhas = textoCsv.split('\n');
                 
@@ -374,8 +323,62 @@
                 }
                 renderizarTabela5S();
             } catch (erro) {
-                console.error("Erro ao ler CSV:", erro);
-                document.getElementById('tabelaCorpo5S').innerHTML = `<tr><td colspan="5" class="p-8 text-center text-rose-500">Erro ao carregar dados do Drive.</td></tr>`;
+                console.error("Erro ao ler CSV 5S:", erro);
+            }
+        }
+
+        // Carregar dados de Estoque direto do link CSV do Drive
+        async function carregarDadosEstoque() {
+            try {
+                const response = await fetch(CSV_URL_ESTOQUE);
+                const textoCsv = await response.text();
+                const linhas = textoCsv.split('\n');
+                
+                const thead = document.getElementById('estoqueCabecalho');
+                const tbody = document.getElementById('tabelaCorpoEstoque');
+                thead.innerHTML = '';
+                tbody.innerHTML = '';
+
+                if (linhas.length === 0 || !linhas[0].trim()) {
+                    tbody.innerHTML = `<tr><td colspan="5" class="p-8 text-center text-slate-400">Nenhum dado encontrado no estoque.</td></tr>`;
+                    return;
+                }
+
+                // Cabeçalho da planilha
+                const cabecalhos = linhas[0].split(',');
+                cabecalhos.forEach(col => {
+                    const th = document.createElement('th');
+                    th.className = "p-4";
+                    th.innerText = col.replace(/"/g, '').trim();
+                    thead.appendChild(th);
+                });
+
+                let totalItens = 0;
+
+                // Linhas de dados
+                for (let i = 1; i < linhas.length; i++) {
+                    const linha = linhas[i];
+                    if (!linha.trim()) continue;
+                    
+                    const colunas = linha.split(',');
+                    const tr = document.createElement('tr');
+                    tr.className = "hover:bg-slate-50";
+
+                    colunas.forEach(val => {
+                        const td = document.createElement('td');
+                        td.className = "p-4 text-slate-700";
+                        td.innerText = val.replace(/"/g, '').trim();
+                        tr.appendChild(td);
+                    });
+
+                    tbody.appendChild(tr);
+                    totalItens++;
+                }
+
+                document.getElementById('totalEstoqueBadge').innerText = totalItens;
+            } catch (erro) {
+                console.error("Erro ao ler CSV Estoque:", erro);
+                document.getElementById('tabelaCorpoEstoque').innerHTML = `<tr><td colspan="5" class="p-8 text-center text-rose-500">Erro ao carregar dados do estoque. Verifique a publicação da aba.</td></tr>`;
             }
         }
 
@@ -481,7 +484,10 @@
             document.getElementById('totalPostosBadge').innerText = totalGeralMes;
         }
 
-        window.onload = carregarDadosDrive;
+        window.onload = () => {
+            carregarDados5S();
+            carregarDadosEstoque();
+        };
     </script>
 </body>
 </html>
