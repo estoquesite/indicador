@@ -16,7 +16,7 @@
             <div class="mb-6 md:mb-0">
                 <span class="bg-emerald-600 text-emerald-100 text-xs font-semibold px-3 py-1 rounded-full uppercase tracking-wider">Painel Corporativo</span>
                 <h1 class="text-3xl md:text-4xl font-extrabold mt-2 tracking-tight">Indicador de Avaliação de Postos</h1>
-                <p class="text-emerald-200 mt-2 text-sm max-w-xl">Cruzamento oficial com a Aba Total (Lendo Coluna D e Títulos/Postos).</p>
+                <p class="text-emerald-200 mt-2 text-sm max-w-xl">Sincronizado em tempo real com a Aba Total do Google Drive (Coluna D).</p>
             </div>
             <div class="bg-white/10 backdrop-blur-md border border-white/20 p-4 rounded-xl text-center min-w-[200px]">
                 <span class="block text-xs text-emerald-200 uppercase font-medium">Postos Monitorados</span>
@@ -37,16 +37,16 @@
                     <label for="filtroMes" class="block text-xs font-bold text-slate-600 uppercase mb-2">
                         <i class="fa-regular fa-calendar mr-1 text-emerald-600"></i> Filtrar por Mês:
                     </label>
-                    <select id="filtroMes" class="w-full bg-slate-50 border border-slate-300 rounded-lg p-2.5 text-sm font-medium focus:ring-2 focus:ring-emerald-600 focus:outline-none">
+                    <select id="filtroMes" class="w-full bg-slate-50 border border-slate-300 rounded-lg p-2.5 text-sm font-medium focus:ring-2 focus:ring-emerald-600 focus:outline-none" onchange="renderizarTabela()">
                         <option value="">Todos os Meses</option>
                         <option value="Janeiro">Janeiro</option>
                         <option value="Fevereiro">Fevereiro</option>
                         <option value="Março">Março</option>
                         <option value="Abril">Abril</option>
                         <option value="Maio">Maio</option>
-                        <option value="Junho">Junho</option>
+                        <option value="Junho" selected>Junho (Atual)</option>
                         <option value="Julho">Julho</option>
-                        <option value="Agosto" selected>Agosto</option>
+                        <option value="Agosto">Agosto</option>
                         <option value="Setembro">Setembro</option>
                         <option value="Outubro">Outubro</option>
                         <option value="Novembro">Novembro</option>
@@ -59,7 +59,7 @@
                     <label for="filtroStatus" class="block text-xs font-bold text-slate-600 uppercase mb-2">
                         <i class="fa-solid fa-filter mr-1 text-emerald-600"></i> Status da Avaliação:
                     </label>
-                    <select id="filtroStatus" class="w-full bg-slate-50 border border-slate-300 rounded-lg p-2.5 text-sm font-medium focus:ring-2 focus:ring-emerald-600 focus:outline-none">
+                    <select id="filtroStatus" class="w-full bg-slate-50 border border-slate-300 rounded-lg p-2.5 text-sm font-medium focus:ring-2 focus:ring-emerald-600 focus:outline-none" onchange="renderizarTabela()">
                         <option value="">Todos</option>
                         <option value="Avaliado">Avaliado no Mês</option>
                         <option value="Pendente">Pendente de Avaliação</option>
@@ -91,7 +91,9 @@
                         </tr>
                     </thead>
                     <tbody id="tabelaCorpo" class="divide-y divide-slate-200 text-sm">
-                        <!-- Os dados serão injetados aqui via script -->
+                        <tr>
+                            <td colspan="5" class="p-8 text-center text-slate-400">Carregando dados do Google Drive...</td>
+                        </tr>
                     </tbody>
                 </table>
             </div>
@@ -101,12 +103,14 @@
 
     <!-- RODAPÉ COM A VERSÃO -->
     <footer class="w-full text-center py-4 text-slate-400 text-[10px] border-t border-slate-200 bg-white">
-        Indicador de Postos &bull; Versão 09
+        Indicador de Postos &bull; Versão 10
     </footer>
 
-    <!-- SCRIPT DE PROCESSAMENTO E CRUZAMENTO COM A ABA TOTAL -->
+    <!-- SCRIPT DE LEITURA CSV DO DRIVE E CRUZAMENTO -->
     <script>
-        // Lista completa dos 25 postos oficiais
+        const CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQUoRnkIRo0UhP2r1_IbUfJ2abD3UyvsFBGR8c8tUKYtsUQqQvyfdVC2tDRIymeEA/pub?gid=786393118&single=true&output=csv";
+
+        // Lista oficial dos 25 postos
         const basePostos = [
             { codigo: "POST-971536", nome: "Área de Caldeiraria e suas Máquinas G2" },
             { codigo: "POST-970384", nome: "Área de Resíduos G2" },
@@ -140,18 +144,42 @@
             "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"
         ];
 
-        // Aqui você insere (ou puxa via fetch do CSV) os dados reais das suas 198 linhas da aba Total.
-        // O cruzamento verifica tanto o Código quanto o Nome/Título contidos na linha.
-        const baseTotalAvaliacoes = [
-            // Exemplo de agosto/junho extraídos da sua planilha real:
-            { codigo: "POST-971536", nome: "Área de Caldeiraria e suas Máquinas G2", mes: "Agosto", data: "14/08/2026" },
-            { codigo: "POST-629405", nome: "Container Mecânica", mes: "Agosto", data: "18/08/2026" },
-            { codigo: "POST-000475", nome: "Subestação 01", mes: "Junho", data: "09/06/2026" },
-            { codigo: "POST-971454", nome: "Subestação 02", mes: "Junho", data: "09/06/2026" }
-        ];
+        let dadosAvaliacoesGlobais = [];
 
         function normalizar(texto) {
             return texto ? texto.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().trim() : "";
+        }
+
+        // Função para ler o CSV gerado pelo Google Sheets
+        async function carregarDadosDrive() {
+            try {
+                const response = await fetch(CSV_URL);
+                const textoCsv = await response.text();
+                
+                // Parse simples de CSV
+                const linhas = textoCsv.split('\n');
+                dadosAvaliacoesGlobais = [];
+
+                for (let i = 1; i < linhas.length; i++) {
+                    const linha = linhas[i];
+                    if (!linha.trim()) continue;
+                    
+                    // Quebra respeitando vírgulas simples ou colunas
+                    const colunas = linha.split(',');
+                    if (colunas.length > 5) {
+                        // Coluna D (índice 3 ou similar dependendo da estrutura)
+                        // Vamos varrer a linha inteira para achar correspondências de data e texto do posto
+                        const linhaStr = colunas.join(' ');
+                        dadosAvaliacoesGlobais.push({
+                            conteudo: linhaStr
+                        });
+                    }
+                }
+                renderizarTabela();
+            } catch (erro) {
+                console.error("Erro ao carregar CSV:", erro);
+                document.getElementById('tabelaCorpo').innerHTML = `<tr><td colspan="5" class="p-8 text-center text-rose-500">Erro ao carregar dados do Drive. Verifique se a publicação CSV está ativa.</td></tr>`;
+            }
         }
 
         function renderizarTabela() {
@@ -160,41 +188,45 @@
             const tbody = document.getElementById('tabelaCorpo');
             
             tbody.innerHTML = '';
-
             let listaCompleta = [];
 
             basePostos.forEach(posto => {
                 mesesDoAno.forEach(mes => {
-                    // Procura na base de auditoria real (aba Total) correspondência por código ou nome para o mês
-                    const avaliado = baseTotalAvaliacoes.find(a => {
-                        let mesCombina = a.mes.toLowerCase() === mes.toLowerCase();
-                        let codigoCombina = a.codigo && a.codigo.trim() === posto.codigo.trim();
-                        
-                        let nomeA = normalizar(a.nome);
-                        let nomeP = normalizar(posto.nome);
-                        let nomeCombina = nomeA && (nomeP.includes(nomeA) || nomeA.includes(nomeP));
+                    // Procura nas linhas da aba Total se o posto e o mês aparecem
+                    const achou = dadosAvaliacoesGlobais.find(item => {
+                        let textoNorm = normalizar(item.conteudo);
+                        let codigoNorm = normalizar(posto.codigo);
+                        let nomeNorm = normalizar(posto.nome);
+                        let mesNorm = normalizar(mes);
 
-                        return mesCombina && (codigoCombina || nomeCombina);
+                        let temPosto = textoNorm.includes(codigoNorm) || textoNorm.includes(nomeNorm);
+                        let temMes = textoNorm.includes(mesNorm);
+
+                        return temPosto && temMes;
                     });
 
                     listaCompleta.push({
                         codigo: posto.codigo,
                         nome: posto.nome,
                         mes: mes,
-                        data: avaliado ? avaliado.data : "-",
-                        status: avaliado ? "Avaliado" : "Pendente"
+                        data: achou ? "Registrado" : "-",
+                        status: achou ? "Avaliado" : "Pendente"
                     });
                 });
             });
 
-            // Filtrar dados
             let dadosFiltrados = listaCompleta.filter(item => {
                 let matchMes = filtroMes === "" || item.mes === filtroMes;
                 let matchStatus = filtroStatus === "" || item.status === filtroStatus;
                 return matchMes && matchStatus;
             });
 
-            // Renderizar
+            if (dadosFiltrados.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="5" class="p-8 text-center text-slate-400">Nenhum registro encontrado para os filtros selecionados.</td></tr>`;
+                document.getElementById('contadorExibidos').innerText = 0;
+                return;
+            }
+
             dadosFiltrados.forEach(item => {
                 const tr = document.createElement('tr');
                 tr.className = "hover:bg-emerald-50/50 transition-colors";
@@ -216,10 +248,8 @@
             document.getElementById('contadorExibidos').innerText = dadosFiltrados.length;
         }
 
-        document.getElementById('filtroMes').addEventListener('change', renderizarTabela);
-        document.getElementById('filtroStatus').addEventListener('change', renderizarTabela);
-
-        window.onload = renderizarTabela;
+        // Iniciar carregamento automático ao abrir
+        window.onload = carregarDadosDrive;
     </script>
 </body>
 </html>
