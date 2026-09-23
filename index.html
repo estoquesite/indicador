@@ -2,214 +2,130 @@
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
-    <title>Portal de Indicadores - Confiabilidade & Gestão de Ativos</title>
+    <title>Portal de Indicadores - Vale</title>
+    <!-- Importa a biblioteca SheetJS para ler arquivos .xlsx direto no navegador -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <style>
-        :root {
-            --primary-color: #1f4e79;
-            --sidebar-bg: #2c3e50;
-            --bg-color: #f4f6f9;
-            --card-bg: #ffffff;
-            --text-color: #333333;
-            --border-color: #d1d8e0;
-        }
-        body { font-family: 'Segoe UI', Arial, sans-serif; background-color: var(--bg-color); color: var(--text-color); margin: 0; display: flex; height: 100vh; overflow: hidden; }
-        .sidebar { width: 260px; background-color: var(--sidebar-bg); color: white; display: flex; flex-direction: column; box-shadow: 2px 0 5px rgba(0,0,0,0.1); }
-        .sidebar-header { padding: 20px; background-color: #1a252f; border-bottom: 1px solid #34495e; }
-        .sidebar-header h2 { font-size: 16px; margin: 0; color: #ecf0f1; }
-        .sidebar-header p { font-size: 11px; margin: 5px 0 0 0; color: #bdc3c7; }
-        .menu-list { list-style: none; padding: 0; margin: 0; flex-grow: 1; }
-        .menu-item { padding: 15px 20px; font-size: 14px; cursor: pointer; border-bottom: 1px solid #34495e; transition: background 0.2s; display: flex; align-items: center; gap: 10px; }
-        .menu-item:hover, .menu-item.active { background-color: var(--primary-color); color: white; }
-        .main-content { flex-grow: 1; display: flex; flex-direction: column; overflow-y: auto; padding: 30px; position: relative; }
-        .header-top { border-bottom: 2px solid var(--border-color); padding-bottom: 15px; margin-bottom: 25px; }
-        .header-top h1 { color: var(--primary-color); font-size: 24px; margin: 0; }
-        .filters-bar { background: white; padding: 15px 20px; border-radius: 8px; margin-bottom: 25px; display: flex; gap: 20px; align-items: center; box-shadow: 0 2px 5px rgba(0,0,0,0.03); border: 1px solid var(--border-color); flex-wrap: wrap; }
-        .filters-bar div { display: flex; flex-direction: column; }
-        .filters-bar label { font-weight: bold; font-size: 12px; color: #555; margin-bottom: 5px; }
-        .filters-bar select { padding: 8px 12px; border-radius: 4px; border: 1px solid var(--border-color); font-size: 13px; background: #fafafa; }
-        .indicator-card { background: var(--card-bg); border: 1px solid var(--border-color); border-top: 5px solid var(--primary-color); border-radius: 8px; padding: 25px; margin-bottom: 30px; box-shadow: 0 2px 6px rgba(0,0,0,0.04); }
-        .indicator-card h2 { margin-top: 0; font-size: 18px; color: var(--primary-color); border-bottom: 1px solid #eee; padding-bottom: 12px; display: flex; justify-content: space-between; align-items: center; }
-        .cards-resumo { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; margin-bottom: 20px; }
-        .mini-card { background: #f8f9fa; border-left: 4px solid var(--primary-color); padding: 15px; border-radius: 4px; border: 1px solid #e9ecef; }
-        .mini-card h3 { margin: 0; font-size: 11px; color: #666; text-transform: uppercase; }
-        .mini-card .value { font-size: 22px; font-weight: bold; color: var(--primary-color); margin-top: 5px; }
-        .table-container { max-height: 480px; overflow-y: auto; border: 1px solid var(--border-color); border-radius: 6px; }
+        body { font-family: 'Segoe UI', Arial, sans-serif; background-color: #f4f6f9; color: #333; margin: 0; padding: 20px; }
+        h1 { color: #1f4e79; font-size: 22px; }
+        .filters { background: #fff; padding: 15px; border-radius: 6px; margin-bottom: 20px; border: 1px solid #d1d8e0; }
+        .filters select { padding: 8px; font-size: 14px; }
+        .table-container { max-height: 500px; overflow-y: auto; background: #fff; border: 1px solid #d1d8e0; border-radius: 6px; }
         table { width: 100%; border-collapse: collapse; }
-        th, td { padding: 10px 15px; text-align: left; border-bottom: 1px solid var(--border-color); font-size: 12px; }
-        th { background-color: #f1f3f5; color: #333; position: sticky; top: 0; z-index: 10; font-weight: 600; }
-        tr:hover { background-color: #f8f9fa; }
-        tfoot td { background-color: #e9ecef; font-weight: bold; color: var(--primary-color); border-top: 2px solid var(--primary-color); position: sticky; bottom: 0; }
-        .badge { padding: 4px 8px; border-radius: 10px; font-size: 11px; font-weight: bold; }
-        .badge-ok { background: #d4edda; color: #155724; }
-        .badge-danger { background: #f8d7da; color: #721c24; }
-        .tab-pane { display: none; }
-        .tab-pane.active { display: block; }
-        .footer-version { margin-top: auto; padding-top: 20px; border-top: 1px solid var(--border-color); font-size: 11px; color: #7f8c8d; text-align: right; }
+        th, td { padding: 10px 15px; text-align: left; border-bottom: 1px solid #d1d8e0; font-size: 13px; }
+        th { background-color: #f1f3f5; position: sticky; top: 0; }
+        tfoot td { background-color: #e9ecef; font-weight: bold; color: #1f4e79; position: sticky; bottom: 0; }
     </style>
 </head>
 <body>
-    <div class="sidebar">
-        <div class="sidebar-header">
-            <h2>Portal Vale</h2>
-            <p>Confiabilidade & Ativos</p>
-        </div>
-        <ul class="menu-list">
-            <li class="menu-item active" onclick="mudarTab(event, 'tab-5s')">📊 Indicador 5S</li>
-            <li class="menu-item" onclick="mudarTab(event, 'tab-estoque')">📦 Indicador de Estoque</li>
-            <li class="menu-item" onclick="mudarTab(event, 'tab-disponibilidade')">⚙️ Disponibilidade (MTBF)</li>
-        </ul>
+
+    <h1>Portal de Indicadores - Auditoria 5S</h1>
+    
+    <div class="filters">
+        <label for="filtroMes">Filtrar por Mês / Competência:</label>
+        <select id="filtroMes" onchange="filtrarDados()">
+            <option value="todos">Todos os Meses (Base Completa)</option>
+        </select>
     </div>
-    <div class="main-content">
-        <div class="header-top">
-            <h1>Portal de Indicadores</h1>
-        </div>
-        <div class="filters-bar">
-            <div>
-                <label for="filtroMes">Competência (Mês Referência):</label>
-                <select id="filtroMes" onchange="filtrarTabela()">
-                    <option value="todos" selected>Todos os Meses (Base Completa)</option>
-                    <option value="junho">Junho / 2026</option>
-                    <option value="julho">Julho / 2026</option>
-                    <option value="agosto">Agosto / 2026</option>
-                    <option value="setembro">Setembro / 2026</option>
-                    <option value="outubro">Outubro / 2026</option>
-                </select>
-            </div>
-            <div>
-                <label for="filtroStatus">Status da Inspeção:</label>
-                <select id="filtroStatus" onchange="filtrarTabela()">
-                    <option value="todos" selected>Todos os Status</option>
-                    <option value="ok">Apenas Concluído</option>
-                    <option value="pendente">Apenas Pendente</option>
-                </select>
-            </div>
-        </div>
-        <div id="tab-5s" class="tab-pane active">
-            <div class="indicator-card">
-                <h2>
-                    <span>Maturidade do Programa 5S - Auditoria Geral (780 Linhas Reais)</span>
-                    <span style="font-size: 12px; font-weight: normal; color: #666;">Coordenação: Bianca Medeiros</span>
-                </h2>
-                <div class="cards-resumo">
-                    <div class="mini-card">
-                        <h3>Registros Exibidos (Filtro)</h3>
-                        <div class="value" id="lblTotal">780</div>
-                    </div>
-                    <div class="mini-card">
-                        <h3>Concluídos (Filtro)</h3>
-                        <div class="value" id="lblOk" style="color: #28a745;">0</div>
-                    </div>
-                    <div class="mini-card">
-                        <h3>Pendentes (Filtro)</h3>
-                        <div class="value" id="lblPendente" style="color: #dc3545;">0</div>
-                    </div>
-                </div>
-                <div class="table-container">
-                    <table id="tabelaDados">
-                        <thead>
-                            <tr>
-                                <th style="width: 60px;">#</th>
-                                <th>Código e Nome do Posto / Localização</th>
-                                <th style="width: 140px;">Competência</th>
-                                <th style="width: 120px;">Status</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <!-- Início das 780 linhas reais da base -->
-                            <tr data-mes="junho" data-status="ok"><td>1</td><td><strong>POST-387013</strong> - Sala elétrica 2</td><td>Junho/2026</td><td><span class="badge badge-ok">Concluído</span></td></tr>
-                            <tr data-mes="julho" data-status="ok"><td>2</td><td><strong>POST-718361</strong> - Gerador MS</td><td>Julho/2026</td><td><span class="badge badge-ok">Concluído</span></td></tr>
-                            <tr data-mes="junho" data-status="pendente"><td>3</td><td><strong>POST-971454</strong> - Subestação 02</td><td>Junho/2026</td><td><span class="badge badge-danger">Pendente</span></td></tr>
-                            <tr data-mes="junho" data-status="ok"><td>4</td><td><strong>POST-935635</strong> - Sala do Almoxarifado G2</td><td>Junho/2026</td><td><span class="badge badge-ok">Concluído</span></td></tr>
-                            <tr data-mes="junho" data-status="ok"><td>5</td><td><strong>POST-970384</strong> - Área de Resíduos G2</td><td>Junho/2026</td><td><span class="badge badge-ok">Concluído</span></td></tr>
-                            <tr data-mes="outubro" data-status="ok"><td>6</td><td><strong>POST-629235</strong> - Gerador CUMIS</td><td>Outubro/2026</td><td><span class="badge badge-ok">Concluído</span></td></tr>
-                            <tr data-mes="julho" data-status="pendente"><td>7</td><td><strong>POST-935635</strong> - Sala do Almoxarifado G2</td><td>Julho/2026</td><td><span class="badge badge-danger">Pendente</span></td></tr>
-                            <tr data-mes="outubro" data-status="ok"><td>8</td><td><strong>POST-000475</strong> - Subestação 01</td><td>Outubro/2026</td><td><span class="badge badge-ok">Concluído</span></td></tr>
-                            <tr data-mes="outubro" data-status="ok"><td>9</td><td><strong>POST-971742</strong> - Produtos Acabados G2</td><td>Outubro/2026</td><td><span class="badge badge-ok">Concluído</span></td></tr>
-                            <tr data-mes="julho" data-status="pendente"><td>10</td><td><strong>POST-971536</strong> - Área de Caldeiraria e suas Máquinas G2</td><td>Julho/2026</td><td><span class="badge badge-danger">Pendente</span></td></tr>
-                            <tr data-mes="agosto" data-status="ok"><td>11</td><td><strong>POST-630280</strong> - Içamento de Carga (Contêiner)</td><td>Agosto/2026</td><td><span class="badge badge-ok">Concluído</span></td></tr>
-                            <tr data-mes="agosto" data-status="ok"><td>12</td><td><strong>POST-971617</strong> - Usinagem G2</td><td>Agosto/2026</td><td><span class="badge badge-ok">Concluído</span></td></tr>
-                            <tr data-mes="junho" data-status="ok"><td>13</td><td><strong>POST-971718</strong> - Matéria-Prima G2</td><td>Junho/2026</td><td><span class="badge badge-ok">Concluído</span></td></tr>
-                            <tr data-mes="outubro" data-status="ok"><td>14</td><td><strong>POST-387083</strong> - Laboratório de elétrica e eletrônica</td><td>Outubro/2026</td><td><span class="badge badge-ok">Concluído</span></td></tr>
-                            <tr data-mes="setembro" data-status="ok"><td>15</td><td><strong>POST-970384</strong> - Área de Resíduos G2</td><td>Setembro/2026</td><td><span class="badge badge-ok">Concluído</span></td></tr>
-                            <tr data-mes="junho" data-status="ok"><td>16</td><td><strong>POST-971718</strong> - Matéria-Prima G2</td><td>Junho/2026</td><td><span class="badge badge-ok">Concluído</span></td></tr>
-                            <tr data-mes="outubro" data-status="pendente"><td>17</td><td><strong>POST-387013</strong> - Sala elétrica 2</td><td>Outubro/2026</td><td><span class="badge badge-danger">Pendente</span></td></tr>
-                            <tr data-mes="outubro" data-status="ok"><td>18</td><td><strong>POST-387083</strong> - Laboratório de elétrica e eletrônica</td><td>Outubro/2026</td><td><span class="badge badge-ok">Concluído</span></td></tr>
-                            <tr data-mes="junho" data-status="pendente"><td>19</td><td><strong>POST-696691</strong> - Baia de Gases Almoxarifado</td><td>Junho/2026</td><td><span class="badge badge-danger">Pendente</span></td></tr>
-                            <tr data-mes="agosto" data-status="pendente"><td>20</td><td><strong>POST-971617</strong> - Usinagem G2</td><td>Agosto/2026</td><td><span class="badge badge-danger">Pendente</span></td></tr>
-                            <!-- Continuação da massa de dados cobrindo até o registro 780 -->
-                            <tr data-mes="setembro" data-status="ok"><td>778</td><td><strong>POST-935635</strong> - Sala do Almoxarifado G2</td><td>Setembro/2026</td><td><span class="badge badge-danger">Pendente</span></td></tr>
-                            <tr data-mes="julho" data-status="pendente"><td>779</td><td><strong>POST-629274</strong> - SPCI</td><td>Julho/2026</td><td><span class="badge badge-danger">Pendente</span></td></tr>
-                            <tr data-mes="outubro" data-status="pendente"><td>780</td><td><strong>POST-629274</strong> - SPCI</td><td>Outubro/2026</td><td><span class="badge badge-danger">Pendente</span></td></tr>
-                        </tbody>
-                        <tfoot>
-                            <tr>
-                                <td colspan="2">TOTAL BRUTO DE REGISTROS NA BASE:</td>
-                                <td colspan="2" id="lblTotalRodape" style="text-align: right;">780 linhas</td>
-                            </tr>
-                        </tfoot>
-                    </table>
-                </div>
-            </div>
-        </div>
-        <div id="tab-estoque" class="tab-pane">
-            <div class="indicator-card">
-                <h2>Indicador de Estoque & Sobressalentes Críticos</h2>
-                <p style="color: #666; font-size: 14px;">Módulo em estruturação para controle de materiais da confiabilidade.</p>
-            </div>
-        </div>
-        <div id="tab-disponibilidade" class="tab-pane">
-            <div class="indicator-card">
-                <h2>Disponibilidade Operacional e Confiabilidade (MTBF / MTTR)</h2>
-                <p style="color: #666; font-size: 14px;">Módulo reservado para o acompanhamento dos indicadores de quebra e tempo médio entre falhas.</p>
-            </div>
-        </div>
-        <div class="footer-version">
-            Portal de Indicadores v1.0.13 | Coordenação: Bianca Medeiros | Responsável: Mariana Pereira Cruz
-        </div>
+
+    <div class="table-container">
+        <table id="tabelaExcel">
+            <thead>
+                <tr id="cabecalhoTabela"></tr>
+            </thead>
+            <tbody id="corpoTabela">
+                <tr><td colspan="5" style="text-align:center;">Carregando dados reais do arquivo avaliação.xlsx...</td></tr>
+            </tbody>
+            <tfoot>
+                <tr>
+                    <td id="rodapeTotal" colspan="5">Total de Registros: 0</td>
+                </tr>
+            </tfoot>
+        </table>
     </div>
+
     <script>
-        function mudarTab(evt, tabId) {
-            var panes = document.getElementsByClassName("tab-pane");
-            for (var i = 0; i < panes.length; i++) {
-                panes[i].classList.remove("active");
+        let dadosGlobais = [];
+
+        // Carrega automaticamente o arquivo avaliação.xlsx do mesmo repositório do GitHub
+        async function carregarPlanilha() {
+            try {
+                let resposta = await fetch('avaliação.xlsx');
+                let dadosBinarios = await resposta.arrayBuffer();
+                let workbook = XLSX.read(dadosBinarios, { type: 'array' });
+                
+                // Pega a primeira aba da planilha
+                let primeiraAba = workbook.SheetNames[0];
+                let worksheet = workbook.Sheets[primeiraAba];
+                
+                // Converte a planilha em JSON (linhas e colunas reais)
+                dadosGlobais = XLSX.utils.sheet_to_json(worksheet, { defval: "" });
+                
+                popularFiltrosE Tabela(dadosGlobais);
+            } catch (erro) {
+                alert("Erro ao carregar o arquivo avaliação.xlsx. Verifique se ele está na mesma pasta no GitHub.");
+                console.error(erro);
             }
-            var items = document.getElementsByClassName("menu-item");
-            for (var i = 0; i < items.length; i++) {
-                items[i].classList.remove("active");
-            }
-            document.getElementById(tabId).classList.add("active");
-            evt.currentTarget.classList.add("active");
         }
-        function filtrarTabela() {
-            var mesSel = document.getElementById("filtroMes").value;
-            var statusSel = document.getElementById("filtroStatus").value;
-            var tabela = document.getElementById("tabelaDados");
-            var linhas = tabela.getElementsByTagName("tbody")[0].getElementsByTagName("tr");
-            var totalVisiveis = 0;
-            var totalOk = 0;
-            var totalPendente = 0;
-            for (var i = 0; i < linhas.length; i++) {
-                var mesLinha = linhas[i].getAttribute("data-mes");
-                var statusLinha = linhas[i].getAttribute("data-status");
-                var matchMes = (mesSel === "todos" || mesLinha === mesSel);
-                var matchStatus = (statusSel === "todos" || statusLinha === statusSel);
-                if (matchMes && matchStatus) {
-                    linhas[i].style.display = "";
-                    totalVisiveis++;
-                    if (statusLinha === "ok") totalOk++;
-                    if (statusLinha === "pendente") totalPendente++;
-                } else {
-                    linhas[i].style.display = "none";
-                }
+
+        function popularFiltrosETabela(dados) {
+            let tbody = document.getElementById("corpoTabela");
+            let thead = document.getElementById("cabecalhoTabela");
+            tbody.innerHTML = "";
+            thead.innerHTML = "";
+
+            if (dados.length === 0) {
+                tbody.innerHTML = "<tr><td colspan='5' style='text-align:center;'>A planilha está vazia.</td></tr>";
+                return;
             }
-            document.getElementById("lblTotal").innerText = totalVisiveis;
-            document.getElementById("lblOk").innerText = totalOk;
-            document.getElementById("lblPendente").innerText = totalPendente;
-            document.getElementById("lblTotalRodape").innerText = totalVisiveis + " de 780 registros exibidos";
+
+            // Cria os cabeçalhos com base nas colunas reais do seu Excel
+            let colunas = Object.keys(dados[0]);
+            colunas.forEach(col => {
+                let th = document.createElement("th");
+                th.innerText = col;
+                thead.appendChild(th);
+            });
+
+            // Preenche todas as linhas reais
+            exibirLinhas(dados);
         }
-        window.onload = function() {
-            filtrarTabela();
-        };
+
+        function exibirLinhas(dados) {
+            let tbody = document.getElementById("corpoTabela");
+            tbody.innerHTML = "";
+
+            dados.forEach(linha => {
+                let tr = document.createElement("tr");
+                Object.values(linha).forEach(valor => {
+                    let td = document.createElement("td");
+                    td.innerText = valor;
+                    tr.appendChild(td);
+                });
+                tbody.appendChild(tr);
+            });
+
+            document.getElementById("rodapeTotal").innerText = "Total de Registros Exibidos: " + dados.length;
+        }
+
+        function filtrarDados() {
+            // Lógica de filtro flexível para as colunas da sua base
+            let mesFiltro = document.getElementById("filtroMes").value;
+            if (mesFiltro === "todos") {
+                exibirLinhas(dadosGlobais);
+            } else {
+                // Filtra iterando pelas colunas que contêm texto de data ou mês
+                let filtrados = dadosGlobais.filter(linha => {
+                    return Object.values(linha).some(val => 
+                        String(val).toLowerCase().includes(mesFiltro.toLowerCase())
+                    );
+                });
+                exibirLinhas(filtrados);
+            }
+        }
+
+        // Executa a leitura assim que a página abre no GitHub Pages
+        window.onload = carregarPlanilha;
     </script>
 </body>
 </html>
