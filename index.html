@@ -3,126 +3,173 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Indicador de Postos - Auditoria</title>
-    <!-- Tailwind CSS para estilização moderna -->
+    <title>Indicador de Avaliação de Postos</title>
+    <!-- Tailwind CSS para um design limpo e corporativo -->
     <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
 </head>
-<body class="bg-gray-50 font-sans text-gray-800">
+<body class="bg-slate-100 font-sans text-slate-800 antialiased">
 
-    <div class="max-w-7xl mx-auto p-6">
-        <!-- Cabeçalho -->
-        <header class="mb-8">
-            <h1 class="text-2xl font-bold text-gray-900">Painel de Indicadores de Postos</h1>
-            <p class="text-sm text-gray-600">Cruzamento de dados entre a listagem de postos e as avaliações de auditoria.</p>
-        </header>
-
-        <!-- Filtros -->
-        <div class="bg-white p-4 rounded-lg shadow-sm border border-gray-200 mb-6 flex flex-wrap gap-4 items-center">
-            <div>
-                <label for="filtroMes" class="block text-xs font-semibold text-gray-600 uppercase mb-1">Filtrar por Mês:</label>
-                <select id="filtroMes" class="border border-gray-300 rounded-md p-2 text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none">
-                    <option value="">Todos os Meses</option>
-                    <!-- Os meses serão preenchidos via script ou manualmente -->
-                </select>
+    <!-- CAPA DO INDICADOR -->
+    <header class="bg-gradient-to-r from-blue-900 via-indigo-900 to-slate-900 text-white shadow-lg">
+        <div class="max-w-7xl mx-auto px-6 py-12 flex flex-col md:flex-row justify-between items-center">
+            <div class="mb-6 md:mb-0">
+                <span class="bg-blue-600 text-blue-100 text-xs font-semibold px-3 py-1 rounded-full uppercase tracking-wider">Painel Corporativo</span>
+                <h1 class="text-3xl md:text-4xl font-extrabold mt-2 tracking-tight">Indicador de Avaliação de Postos</h1>
+                <p class="text-slate-300 mt-2 text-sm max-w-xl">Cruzamento automatizado entre a base de postos cadastrados e os registros de auditoria da aba Total (Coluna D).</p>
             </div>
-
-            <div>
-                <label for="filtroStatus" class="block text-xs font-semibold text-gray-600 uppercase mb-1">Status da Avaliação:</label>
-                <select id="filtroStatus" class="border border-gray-300 rounded-md p-2 text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none">
-                    <option value="">Todos</option>
-                    <option value="Avaliado no Mês">Avaliado dentro do mês</option>
-                    <option value="Fora do Prazo / Pendente">Fora do mês / Pendente</option>
-                </select>
+            <div class="bg-white/10 backdrop-blur-md border border-white/20 p-4 rounded-xl text-center min-w-[200px]">
+                <span class="block text-xs text-slate-300 uppercase font-medium">Status Geral</span>
+                <span id="totalPostosBadge" class="text-2xl font-bold text-white">0 Postos</span>
             </div>
+        </div>
+    </header>
 
-            <div class="ml-auto">
-                <span id="contadorRegistros" class="text-sm text-gray-500 font-medium">Exibindo 0 registros</span>
+    <!-- CONTEÚDO PRINCIPAL -->
+    <main class="max-w-7xl mx-auto px-6 -mt-6 mb-16">
+        
+        <!-- PAINEL DE FILTROS E MÉTRICAS -->
+        <div class="bg-white rounded-xl shadow-md p-6 mb-8 border border-slate-200">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 items-center">
+                
+                <!-- Filtro por Mês -->
+                <div>
+                    <label for="filtroMes" class="block text-xs font-bold text-slate-600 uppercase mb-2">
+                        <i class="fa-regular fa-calendar mr-1 text-blue-600"></i> Filtrar por Mês (Coluna D):
+                    </label>
+                    <select id="filtroMes" class="w-full bg-slate-50 border border-slate-300 rounded-lg p-2.5 text-sm font-medium focus:ring-2 focus:ring-blue-600 focus:outline-none">
+                        <option value="">Todos os Meses</option>
+                        <option value="Janeiro">Janeiro</option>
+                        <option value="Fevereiro">Fevereiro</option>
+                        <option value="Março">Março</option>
+                        <option value="Abril">Abril</option>
+                        <option value="Maio">Maio</option>
+                        <option value="Junho">Junho</option>
+                        <option value="Julho">Julho</option>
+                        <option value="Agosto">Agosto</option>
+                        <option value="Setembro">Setembro</option>
+                        <option value="Outubro">Outubro</option>
+                        <option value="Novembro">Novembro</option>
+                        <option value="Dezembro">Dezembro</option>
+                    </select>
+                </div>
+
+                <!-- Filtro por Status -->
+                <div>
+                    <label for="filtroStatus" class="block text-xs font-bold text-slate-600 uppercase mb-2">
+                        <i class="fa-solid fa-filter mr-1 text-blue-600"></i> Status da Avaliação:
+                    </label>
+                    <select id="filtroStatus" class="w-full bg-slate-50 border border-slate-300 rounded-lg p-2.5 text-sm font-medium focus:ring-2 focus:ring-blue-600 focus:outline-none">
+                        <option value="">Todos</option>
+                        <option value="Avaliado">Avaliado no Mês</option>
+                        <option value="Pendente">Pendente / Não Avaliado</option>
+                    </select>
+                </div>
+
+                <!-- Resumo Quantitativo -->
+                <div class="flex justify-end items-center space-x-4 pt-4 md:pt-0">
+                    <div class="text-right">
+                        <span id="contadorExibidos" class="block text-xl font-bold text-slate-900">0</span>
+                        <span class="text-xs text-slate-500 font-medium uppercase">Registros Filtrados</span>
+                    </div>
+                </div>
+
             </div>
         </div>
 
-        <!-- Tabela de Dados -->
-        <div class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
+        <!-- TABELA DE INDICADORES -->
+        <div class="bg-white rounded-xl shadow-md border border-slate-200 overflow-hidden">
             <div class="overflow-x-auto">
                 <table class="w-full text-left border-collapse">
                     <thead>
-                        <tr class="bg-gray-100 border-b border-gray-200 text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                        <tr class="bg-slate-50 border-b border-slate-200 text-xs font-bold text-slate-600 uppercase tracking-wider">
                             <th class="p-4">Código do Posto</th>
-                            <th class="p-4">Nome / Título do Posto</th>
-                            <th class="p-4">Expansão</th>
-                            <th class="p-4">Mês de Referência (Data - Coluna D)</th>
-                            <th class="p-4">Status da Auditoria</th>
+                            <th class="p-4">Nome do Posto / Título</th>
+                            <th class="p-4">Mês (Coluna D)</th>
+                            <th class="p-4">Status</th>
                         </tr>
                     </thead>
-                    <tbody id="tabelaCorpo" class="divide-y divide-gray-200 text-sm">
-                        <!-- Os dados serão injetados aqui pelo JavaScript -->
+                    <tbody id="tabelaCorpo" class="divide-y divide-slate-200 text-sm">
+                        <!-- Os dados serão injetados aqui via script -->
                     </tbody>
                 </table>
             </div>
         </div>
-    </div>
 
+    </main>
+
+    <!-- SCRIPT DE PROCESSAMENTO E CRUZAMENTO DE DADOS -->
     <script>
-        // EXEMPLO DE DADOS (Substitua ou conecte com a exportação da sua planilha do Google Drive)
-        // Página 1: Todos os postos (Código, Título, Expansão)
-        // Plan 1: Dados avaliados (Título, Auditoria, Data da Coluna D)
-        
-        const dadosPostos = [
-            { codigo: "P001", titulo: "Posto Centro", expansao: "Expansão A" },
-            { codigo: "P002", titulo: "Posto Norte", expansao: "Expansão B" },
-            { codigo: "P003", titulo: "Posto Sul", expansao: "Expansão A" }
+        // Base simulada com base na estrutura da planilha do Google Drive (Postos x Aba Total)
+        const basePostos = [
+            { codigo: "POST-000475", nome: "Subestação 01" },
+            { codigo: "POST-000476", nome: "Subestação 02" },
+            { codigo: "POST-000480", nome: "Oficina Central" },
+            { codigo: "POST-000491", nome: "Almoxarifado Norte" },
+            { codigo: "POST-000502", nome: "Área de Correias 03" }
         ];
 
-        const dadosAvaliacoes = [
-            { titulo: "Posto Centro", auditoria: "Audit 01", dataColunaD: "2026-08-15" }, // Formato AAAA-MM-DD ou MM/AAAA
-            { titulo: "Posto Sul", auditoria: "Audit 02", dataColunaD: "2026-07-10" }
+        // Aba Total (Contendo as avaliações e a data na Coluna D)
+        const baseTotalAvaliacoes = [
+            { titulo: "Subestação 01", mes: "Junho" },
+            { titulo: "Oficina Central", mes: "Junho" },
+            { titulo: "Área de Correias 03", mes: "Maio" }
         ];
 
-        function processarIndicador() {
+        function renderizarTabela() {
+            const filtroMes = document.getElementById('filtroMes').value;
+            const filtroStatus = document.getElementById('filtroStatus').value;
             const tbody = document.getElementById('tabelaCorpo');
+            
             tbody.innerHTML = '';
 
-            // Cruzamento de dados por Título
-            const resultadoCombinado = dadosPostos.map(posto => {
-                const avaliacao = dadosAvaliacoes.find(a => a.titulo === posto.titulo);
-                
-                let mesAvaliacao = "-";
-                let status = "Fora do Prazo / Pendente";
-
-                if (avaliacao) {
-                    mesAvaliacao = avaliacao.dataColunaD; // Ajuste conforme o formato da sua coluna D
-                    // Lógica simples para checar se foi avaliado no mês vigente ou correspondente
-                    status = "Avaliado no Mês"; 
-                }
-
+            // Cruzamento de dados: Unindo Postos com a Aba Total pelo nome/título
+            let dadosCruzados = basePostos.map(posto => {
+                const avaliado = baseTotalAvaliacoes.find(a => a.titulo === posto.nome);
                 return {
-                    ...posto,
-                    mesAvaliacao,
-                    status
+                    codigo: posto.codigo,
+                    nome: posto.nome,
+                    mes: avaliado ? avaliado.mes : "-",
+                    status: avaliado ? "Avaliado" : "Pendente"
                 };
             });
 
-            // Renderizar na tabela
-            resultadoCombinado.forEach(item => {
+            // Aplicar Filtros
+            let dadosFiltrados = dadosCruzados.filter(item => {
+                let matchMes = filtroMes === "" || item.mes === filtroMes;
+                let matchStatus = filtroStatus === "" || item.status === filtroStatus;
+                return matchMes && matchStatus;
+            });
+
+            // Preencher Tabela
+            dadosFiltrados.forEach(item => {
                 const tr = document.createElement('tr');
+                tr.className = "hover:bg-slate-50 transition-colors";
+                
+                const badgeStatus = item.status === "Avaliado" 
+                    ? `<span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold bg-emerald-100 text-emerald-800"><i class="fa-solid fa-check mr-1.5"></i> Avaliado no Mês</span>`
+                    : `<span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold bg-rose-100 text-rose-800"><i class="fa-solid fa-clock mr-1.5"></i> Pendente</span>`;
+
                 tr.innerHTML = `
-                    <td class="p-4 font-medium text-gray-900">${item.codigo}</td>
-                    <td class="p-4">${item.titulo}</td>
-                    <td class="p-4 text-gray-600">${item.expansao}</td>
-                    <td class="p-4 text-gray-600">${item.mesAvaliacao}</td>
-                    <td class="p-4">
-                        <span class="px-2.5 py-1 rounded-full text-xs font-semibold ${item.status === 'Avaliado no Mês' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}">
-                            ${item.status}
-                        </span>
-                    </td>
+                    <td class="p-4 font-semibold text-slate-900">${item.codigo}</td>
+                    <td class="p-4 font-medium text-slate-700">${item.nome}</td>
+                    <td class="p-4 text-slate-600">${item.mes}</td>
+                    <td class="p-4">${badgeStatus}</td>
                 `;
                 tbody.appendChild(tr);
             });
 
-            document.getElementById('contadorRegistros').innerText = `Exibindo ${resultadoCombinado.length} registros`;
+            // Atualizar contadores
+            document.getElementById('contadorExibidos').innerText = dadosFiltrados.length;
+            document.getElementById('totalPostosBadge').innerText = `${basePostos.length} Postos`;
         }
 
-        // Executar ao carregar a página
-        window.onload = processarIndicador;
+        // Eventos para os filtros
+        document.getElementById('filtroMes').addEventListener('change', renderizarTabela);
+        document.getElementById('filtroStatus').addEventListener('change', renderizarTabela);
+
+        // Inicializar
+        window.onload = renderizarTabela;
     </script>
 </body>
 </html>
