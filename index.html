@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Indicador de Avaliação de Postos</title>
+    <title>Indicador de Avaliação de Postos - Mensal</title>
     <!-- Tailwind CSS para um design limpo e corporativo -->
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
@@ -16,11 +16,11 @@
             <div class="mb-6 md:mb-0">
                 <span class="bg-blue-600 text-blue-100 text-xs font-semibold px-3 py-1 rounded-full uppercase tracking-wider">Painel Corporativo</span>
                 <h1 class="text-3xl md:text-4xl font-extrabold mt-2 tracking-tight">Indicador de Avaliação de Postos</h1>
-                <p class="text-slate-300 mt-2 text-sm max-w-xl">Cruzamento automatizado entre a base de postos cadastrados e os registros de auditoria da aba Total (Coluna D).</p>
+                <p class="text-slate-300 mt-2 text-sm max-w-xl">Acompanhamento mensal por posto, cruzando a base oficial com os registros da aba Total (Coluna D).</p>
             </div>
             <div class="bg-white/10 backdrop-blur-md border border-white/20 p-4 rounded-xl text-center min-w-[200px]">
-                <span class="block text-xs text-slate-300 uppercase font-medium">Status Geral</span>
-                <span id="totalPostosBadge" class="text-2xl font-bold text-white">0 Postos</span>
+                <span class="block text-xs text-slate-300 uppercase font-medium">Postos Monitorados</span>
+                <span id="totalPostosBadge" class="text-2xl font-bold text-white">25 Postos</span>
             </div>
         </div>
     </header>
@@ -35,7 +35,7 @@
                 <!-- Filtro por Mês -->
                 <div>
                     <label for="filtroMes" class="block text-xs font-bold text-slate-600 uppercase mb-2">
-                        <i class="fa-regular fa-calendar mr-1 text-blue-600"></i> Filtrar por Mês (Coluna D):
+                        <i class="fa-regular fa-calendar mr-1 text-blue-600"></i> Filtrar por Mês:
                     </label>
                     <select id="filtroMes" class="w-full bg-slate-50 border border-slate-300 rounded-lg p-2.5 text-sm font-medium focus:ring-2 focus:ring-blue-600 focus:outline-none">
                         <option value="">Todos os Meses</option>
@@ -44,7 +44,7 @@
                         <option value="Março">Março</option>
                         <option value="Abril">Abril</option>
                         <option value="Maio">Maio</option>
-                        <option value="Junho">Junho</option>
+                        <option value="Junho" selected>Junho (Atual)</option>
                         <option value="Julho">Julho</option>
                         <option value="Agosto">Agosto</option>
                         <option value="Setembro">Setembro</option>
@@ -70,7 +70,7 @@
                 <div class="flex justify-end items-center space-x-4 pt-4 md:pt-0">
                     <div class="text-right">
                         <span id="contadorExibidos" class="block text-xl font-bold text-slate-900">0</span>
-                        <span class="text-xs text-slate-500 font-medium uppercase">Registros Filtrados</span>
+                        <span class="text-xs text-slate-500 font-medium uppercase">Registros Exibidos</span>
                     </div>
                 </div>
 
@@ -85,7 +85,8 @@
                         <tr class="bg-slate-50 border-b border-slate-200 text-xs font-bold text-slate-600 uppercase tracking-wider">
                             <th class="p-4">Código do Posto</th>
                             <th class="p-4">Nome do Posto / Título</th>
-                            <th class="p-4">Mês (Coluna D)</th>
+                            <th class="p-4">Mês de Referência</th>
+                            <th class="p-4">Data Registro (Coluna D)</th>
                             <th class="p-4">Status</th>
                         </tr>
                     </thead>
@@ -100,23 +101,49 @@
 
     <!-- RODAPÉ COM A VERSÃO -->
     <footer class="w-full text-center py-4 text-slate-400 text-[10px] border-t border-slate-200 bg-white">
-        Indicador de Postos &bull; Versão 02
+        Indicador de Postos &bull; Versão 05
     </footer>
 
     <!-- SCRIPT DE PROCESSAMENTO E CRUZAMENTO DE DADOS -->
     <script>
+        // Lista completa dos 25 postos oficiais
         const basePostos = [
+            { codigo: "POST-971536", nome: "Área de Caldeiraria e suas Máquinas G2" },
+            { codigo: "POST-970384", nome: "Área de Resíduos G2" },
+            { codigo: "POST-696691", nome: "Baia de Gases Almoxarifado" },
+            { codigo: "POST-629350", nome: "Container Elétrica" },
+            { codigo: "POST-629405", nome: "Container Mecânica" },
+            { codigo: "POST-000327", nome: "Ferramentaria" },
+            { codigo: "POST-822607", nome: "G4" },
+            { codigo: "POST-629235", nome: "Gerador CUMIS" },
+            { codigo: "POST-718361", nome: "Gerador MS" },
+            { codigo: "POST-718343", nome: "Gerador Toyama" },
+            { codigo: "POST-630280", nome: "Içamento de Carga (Contêiner)" },
+            { codigo: "POST-387083", nome: "Laboratório de elétrica e eletrônica" },
+            { codigo: "POST-971718", nome: "Matéria-Prima G2" },
+            { codigo: "POST-971666", nome: "Oficina de Manutenção G2" },
+            { codigo: "POST-971742", nome: "Produtos Acabados G2" },
+            { codigo: "POST-971746", nome: "Produtos Químicos G2" },
+            { codigo: "POST-970883", nome: "Sala de Compressores G2" },
+            { codigo: "POST-935635", nome: "Sala do Almoxarifado G2" },
+            { codigo: "POST-642629", nome: "Sala dos Compressores G1" },
+            { codigo: "POST-199278", nome: "Sala elétrica 1" },
+            { codigo: "POST-387013", nome: "Sala elétrica 2" },
+            { codigo: "POST-629274", nome: "SPCI" },
             { codigo: "POST-000475", nome: "Subestação 01" },
-            { codigo: "POST-000476", nome: "Subestação 02" },
-            { codigo: "POST-000480", nome: "Oficina Central" },
-            { codigo: "POST-000491", nome: "Almoxarifado Norte" },
-            { codigo: "POST-000502", nome: "Área de Correias 03" }
+            { codigo: "POST-971454", nome: "Subestação 02" },
+            { codigo: "POST-971617", nome: "Usinagem G2" }
         ];
 
+        const mesesDoAno = [
+            "Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho", 
+            "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"
+        ];
+
+        // Registros reais encontrados na aba Total (Cruzamento por Nome e Mês)
         const baseTotalAvaliacoes = [
-            { titulo: "Subestação 01", mes: "Junho" },
-            { titulo: "Oficina Central", mes: "Junho" },
-            { titulo: "Área de Correias 03", mes: "Maio" }
+            { nome: "Subestação 01", mes: "Junho", data: "09/06/2026" },
+            { nome: "Subestação 02", mes: "Junho", data: "09/06/2026" }
         ];
 
         function renderizarTabela() {
@@ -126,22 +153,30 @@
             
             tbody.innerHTML = '';
 
-            let dadosCruzados = basePostos.map(posto => {
-                const avaliado = baseTotalAvaliacoes.find(a => a.titulo === posto.nome);
-                return {
-                    codigo: posto.codigo,
-                    nome: posto.nome,
-                    mes: avaliado ? avaliado.mes : "-",
-                    status: avaliado ? "Avaliado" : "Pendente"
-                };
+            let listaCompleta = [];
+
+            // Para cada posto, criamos uma linha para cada mês do ano
+            basePostos.forEach(posto => {
+                mesesDoAno.forEach(mes => {
+                    const avaliado = baseTotalAvaliacoes.find(a => a.nome === posto.nome && a.mes === mes);
+                    listaCompleta.push({
+                        codigo: posto.codigo,
+                        nome: posto.nome,
+                        mes: mes,
+                        data: avaliado ? avaliado.data : "-",
+                        status: avaliado ? "Avaliado" : "Pendente"
+                    });
+                });
             });
 
-            let dadosFiltrados = dadosCruzados.filter(item => {
+            // Aplicar os filtros selecionados
+            let dadosFiltrados = listaCompleta.filter(item => {
                 let matchMes = filtroMes === "" || item.mes === filtroMes;
                 let matchStatus = filtroStatus === "" || item.status === filtroStatus;
                 return matchMes && matchStatus;
             });
 
+            // Renderizar as linhas na tabela
             dadosFiltrados.forEach(item => {
                 const tr = document.createElement('tr');
                 tr.className = "hover:bg-slate-50 transition-colors";
@@ -153,14 +188,14 @@
                 tr.innerHTML = `
                     <td class="p-4 font-semibold text-slate-900">${item.codigo}</td>
                     <td class="p-4 font-medium text-slate-700">${item.nome}</td>
-                    <td class="p-4 text-slate-600">${item.mes}</td>
+                    <td class="p-4 font-medium text-blue-900">${item.mes}</td>
+                    <td class="p-4 text-slate-600">${item.data}</td>
                     <td class="p-4">${badgeStatus}</td>
                 `;
                 tbody.appendChild(tr);
             });
 
             document.getElementById('contadorExibidos').innerText = dadosFiltrados.length;
-            document.getElementById('totalPostosBadge').innerText = `${basePostos.length} Postos`;
         }
 
         document.getElementById('filtroMes').addEventListener('change', renderizarTabela);
