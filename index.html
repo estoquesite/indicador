@@ -16,7 +16,7 @@
             <div class="mb-6 md:mb-0">
                 <span class="bg-emerald-600 text-emerald-100 text-xs font-semibold px-3 py-1 rounded-full uppercase tracking-wider">Painel Corporativo</span>
                 <h1 class="text-3xl md:text-4xl font-extrabold mt-2 tracking-tight">Indicador de Avaliação de Postos</h1>
-                <p class="text-emerald-200 mt-2 text-sm max-w-xl">Cruzamento inteligente (por Código e Nome) entre a base oficial e os registros da aba Total.</p>
+                <p class="text-emerald-200 mt-2 text-sm max-w-xl">Cruzamento flexível por correspondência parcial de Código e Nome com a aba Total.</p>
             </div>
             <div class="bg-white/10 backdrop-blur-md border border-white/20 p-4 rounded-xl text-center min-w-[200px]">
                 <span class="block text-xs text-emerald-200 uppercase font-medium">Postos Monitorados</span>
@@ -101,10 +101,10 @@
 
     <!-- RODAPÉ COM A VERSÃO -->
     <footer class="w-full text-center py-4 text-slate-400 text-[10px] border-t border-slate-200 bg-white">
-        Indicador de Postos &bull; Versão 07
+        Indicador de Postos &bull; Versão 08
     </footer>
 
-    <!-- SCRIPT DE PROCESSAMENTO E CRUZAMENTO DE DADOS -->
+    <!-- SCRIPT DE PROCESSAMENTO E CRUZAMENTO INTELIGENTE -->
     <script>
         // Lista completa dos 25 postos oficiais
         const basePostos = [
@@ -140,11 +140,16 @@
             "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"
         ];
 
-        // Registros da aba Total (Cruzamento inteligente por Código OU Nome)
+        // Registros da aba Total
         const baseTotalAvaliacoes = [
             { codigo: "POST-000475", nome: "Subestação 01", mes: "Junho", data: "09/06/2026" },
             { codigo: "POST-971454", nome: "Subestação 02", mes: "Junho", data: "09/06/2026" }
         ];
+
+        // Função auxiliar para normalizar textos (remover acentos e deixar minúsculo para comparar)
+        function normalizar(texto) {
+            return texto ? texto.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().trim() : "";
+        }
 
         function renderizarTabela() {
             const filtroMes = document.getElementById('filtroMes').value;
@@ -155,12 +160,20 @@
 
             let listaCompleta = [];
 
-            // Para cada posto e cada mês, verificamos se existe na aba Total usando Código OU Nome
             basePostos.forEach(posto => {
                 mesesDoAno.forEach(mes => {
-                    const avaliado = baseTotalAvaliacoes.find(a => 
-                        (a.codigo === posto.codigo || a.nome.toLowerCase() === posto.nome.toLowerCase()) && a.mes === mes
-                    );
+                    // Cruzamento inteligente por Código OU Correspondência Parcial do Nome
+                    const avaliado = baseTotalAvaliacoes.find(a => {
+                        let mesCombina = a.mes === mes;
+                        let codigoCombina = a.codigo && a.codigo.trim() === posto.codigo.trim();
+                        
+                        // Busca flexível no nome (ex: "compressor g1" dentro de "Sala dos Compressores G1")
+                        let nomeA = normalizar(a.nome);
+                        let nomeP = normalizar(posto.nome);
+                        let nomeCombina = nomeA && (nomeP.includes(nomeA) || nomeA.includes(nomeP));
+
+                        return mesCombina && (codigoCombina || nomeCombina);
+                    });
 
                     listaCompleta.push({
                         codigo: posto.codigo,
@@ -172,14 +185,14 @@
                 });
             });
 
-            // Aplicar os filtros
+            // Aplicar filtros
             let dadosFiltrados = listaCompleta.filter(item => {
                 let matchMes = filtroMes === "" || item.mes === filtroMes;
                 let matchStatus = filtroStatus === "" || item.status === filtroStatus;
                 return matchMes && matchStatus;
             });
 
-            // Renderizar as linhas
+            // Renderizar linhas
             dadosFiltrados.forEach(item => {
                 const tr = document.createElement('tr');
                 tr.className = "hover:bg-emerald-50/50 transition-colors";
