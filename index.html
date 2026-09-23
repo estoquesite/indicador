@@ -8,7 +8,7 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
 </head>
-<body class="bg-slate-100 font-sans text-slate-800 antialiased">
+<body class="bg-slate-100 font-sans text-slate-800 antialiased flex flex-col min-h-screen">
 
     <!-- CAPA DO INDICADOR -->
     <header class="bg-gradient-to-r from-blue-900 via-indigo-900 to-slate-900 text-white shadow-lg">
@@ -26,7 +26,7 @@
     </header>
 
     <!-- CONTEÚDO PRINCIPAL -->
-    <main class="max-w-7xl mx-auto px-6 -mt-6 mb-16">
+    <main class="max-w-7xl mx-auto px-6 -mt-6 mb-16 flex-grow w-full">
         
         <!-- PAINEL DE FILTROS E MÉTRICAS -->
         <div class="bg-white rounded-xl shadow-md p-6 mb-8 border border-slate-200">
@@ -98,9 +98,13 @@
 
     </main>
 
+    <!-- RODAPÉ COM A VERSÃO -->
+    <footer class="w-full text-center py-4 text-slate-400 text-[10px] border-t border-slate-200 bg-white">
+        Indicador de Postos &bull; Versão 02
+    </footer>
+
     <!-- SCRIPT DE PROCESSAMENTO E CRUZAMENTO DE DADOS -->
     <script>
-        // Base simulada com base na estrutura da planilha do Google Drive (Postos x Aba Total)
         const basePostos = [
             { codigo: "POST-000475", nome: "Subestação 01" },
             { codigo: "POST-000476", nome: "Subestação 02" },
@@ -109,7 +113,6 @@
             { codigo: "POST-000502", nome: "Área de Correias 03" }
         ];
 
-        // Aba Total (Contendo as avaliações e a data na Coluna D)
         const baseTotalAvaliacoes = [
             { titulo: "Subestação 01", mes: "Junho" },
             { titulo: "Oficina Central", mes: "Junho" },
@@ -123,7 +126,6 @@
             
             tbody.innerHTML = '';
 
-            // Cruzamento de dados: Unindo Postos com a Aba Total pelo nome/título
             let dadosCruzados = basePostos.map(posto => {
                 const avaliado = baseTotalAvaliacoes.find(a => a.titulo === posto.nome);
                 return {
@@ -134,14 +136,12 @@
                 };
             });
 
-            // Aplicar Filtros
             let dadosFiltrados = dadosCruzados.filter(item => {
                 let matchMes = filtroMes === "" || item.mes === filtroMes;
                 let matchStatus = filtroStatus === "" || item.status === filtroStatus;
                 return matchMes && matchStatus;
             });
 
-            // Preencher Tabela
             dadosFiltrados.forEach(item => {
                 const tr = document.createElement('tr');
                 tr.className = "hover:bg-slate-50 transition-colors";
@@ -159,16 +159,13 @@
                 tbody.appendChild(tr);
             });
 
-            // Atualizar contadores
             document.getElementById('contadorExibidos').innerText = dadosFiltrados.length;
             document.getElementById('totalPostosBadge').innerText = `${basePostos.length} Postos`;
         }
 
-        // Eventos para os filtros
         document.getElementById('filtroMes').addEventListener('change', renderizarTabela);
         document.getElementById('filtroStatus').addEventListener('change', renderizarTabela);
 
-        // Inicializar
         window.onload = renderizarTabela;
     </script>
 </body>
