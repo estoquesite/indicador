@@ -8,18 +8,18 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
 </head>
-<body class="bg-slate-100 font-sans text-slate-800 antialiased flex flex-col min-h-screen">
+<body class="bg-emerald-50/40 font-sans text-slate-800 antialiased flex flex-col min-h-screen">
 
-    <!-- CAPA DO INDICADOR -->
-    <header class="bg-gradient-to-r from-blue-900 via-indigo-900 to-slate-900 text-white shadow-lg">
+    <!-- CAPA DO INDICADOR (TEMA VERDE) -->
+    <header class="bg-gradient-to-r from-emerald-900 via-green-900 to-teal-900 text-white shadow-lg">
         <div class="max-w-7xl mx-auto px-6 py-12 flex flex-col md:flex-row justify-between items-center">
             <div class="mb-6 md:mb-0">
-                <span class="bg-blue-600 text-blue-100 text-xs font-semibold px-3 py-1 rounded-full uppercase tracking-wider">Painel Corporativo</span>
+                <span class="bg-emerald-600 text-emerald-100 text-xs font-semibold px-3 py-1 rounded-full uppercase tracking-wider">Painel Corporativo</span>
                 <h1 class="text-3xl md:text-4xl font-extrabold mt-2 tracking-tight">Indicador de Avaliação de Postos</h1>
-                <p class="text-slate-300 mt-2 text-sm max-w-xl">Acompanhamento mensal por posto, cruzando a base oficial com os registros da aba Total (Coluna D).</p>
+                <p class="text-emerald-200 mt-2 text-sm max-w-xl">Acompanhamento mensal por posto, cruzando a base oficial com os registros da aba Total (Coluna D).</p>
             </div>
             <div class="bg-white/10 backdrop-blur-md border border-white/20 p-4 rounded-xl text-center min-w-[200px]">
-                <span class="block text-xs text-slate-300 uppercase font-medium">Postos Monitorados</span>
+                <span class="block text-xs text-emerald-200 uppercase font-medium">Postos Monitorados</span>
                 <span id="totalPostosBadge" class="text-2xl font-bold text-white">25 Postos</span>
             </div>
         </div>
@@ -29,15 +29,15 @@
     <main class="max-w-7xl mx-auto px-6 -mt-6 mb-16 flex-grow w-full">
         
         <!-- PAINEL DE FILTROS E MÉTRICAS -->
-        <div class="bg-white rounded-xl shadow-md p-6 mb-8 border border-slate-200">
+        <div class="bg-white rounded-xl shadow-md p-6 mb-8 border border-emerald-100">
             <div class="grid grid-cols-1 md:grid-cols-3 gap-6 items-center">
                 
                 <!-- Filtro por Mês -->
                 <div>
                     <label for="filtroMes" class="block text-xs font-bold text-slate-600 uppercase mb-2">
-                        <i class="fa-regular fa-calendar mr-1 text-blue-600"></i> Filtrar por Mês:
+                        <i class="fa-regular fa-calendar mr-1 text-emerald-600"></i> Filtrar por Mês:
                     </label>
-                    <select id="filtroMes" class="w-full bg-slate-50 border border-slate-300 rounded-lg p-2.5 text-sm font-medium focus:ring-2 focus:ring-blue-600 focus:outline-none">
+                    <select id="filtroMes" class="w-full bg-slate-50 border border-slate-300 rounded-lg p-2.5 text-sm font-medium focus:ring-2 focus:ring-emerald-600 focus:outline-none">
                         <option value="">Todos os Meses</option>
                         <option value="Janeiro">Janeiro</option>
                         <option value="Fevereiro">Fevereiro</option>
@@ -57,12 +57,12 @@
                 <!-- Filtro por Status -->
                 <div>
                     <label for="filtroStatus" class="block text-xs font-bold text-slate-600 uppercase mb-2">
-                        <i class="fa-solid fa-filter mr-1 text-blue-600"></i> Status da Avaliação:
+                        <i class="fa-solid fa-filter mr-1 text-emerald-600"></i> Status da Avaliação:
                     </label>
-                    <select id="filtroStatus" class="w-full bg-slate-50 border border-slate-300 rounded-lg p-2.5 text-sm font-medium focus:ring-2 focus:ring-blue-600 focus:outline-none">
+                    <select id="filtroStatus" class="w-full bg-slate-50 border border-slate-300 rounded-lg p-2.5 text-sm font-medium focus:ring-2 focus:ring-emerald-600 focus:outline-none">
                         <option value="">Todos</option>
                         <option value="Avaliado">Avaliado no Mês</option>
-                        <option value="Pendente">Pendente / Não Avaliado</option>
+                        <option value="Pendente">Pendente de Avaliação</option>
                     </select>
                 </div>
 
@@ -78,11 +78,11 @@
         </div>
 
         <!-- TABELA DE INDICADORES -->
-        <div class="bg-white rounded-xl shadow-md border border-slate-200 overflow-hidden">
+        <div class="bg-white rounded-xl shadow-md border border-emerald-100 overflow-hidden">
             <div class="overflow-x-auto">
                 <table class="w-full text-left border-collapse">
                     <thead>
-                        <tr class="bg-slate-50 border-b border-slate-200 text-xs font-bold text-slate-600 uppercase tracking-wider">
+                        <tr class="bg-emerald-900 text-white text-xs font-bold uppercase tracking-wider">
                             <th class="p-4">Código do Posto</th>
                             <th class="p-4">Nome do Posto / Título</th>
                             <th class="p-4">Mês de Referência</th>
@@ -101,7 +101,7 @@
 
     <!-- RODAPÉ COM A VERSÃO -->
     <footer class="w-full text-center py-4 text-slate-400 text-[10px] border-t border-slate-200 bg-white">
-        Indicador de Postos &bull; Versão 05
+        Indicador de Postos &bull; Versão 06
     </footer>
 
     <!-- SCRIPT DE PROCESSAMENTO E CRUZAMENTO DE DADOS -->
@@ -155,7 +155,7 @@
 
             let listaCompleta = [];
 
-            // Para cada posto, criamos uma linha para cada mês do ano
+            // Todos os postos aparecem para todos os meses do ano
             basePostos.forEach(posto => {
                 mesesDoAno.forEach(mes => {
                     const avaliado = baseTotalAvaliacoes.find(a => a.nome === posto.nome && a.mes === mes);
@@ -169,26 +169,26 @@
                 });
             });
 
-            // Aplicar os filtros selecionados
+            // Aplicar filtros
             let dadosFiltrados = listaCompleta.filter(item => {
                 let matchMes = filtroMes === "" || item.mes === filtroMes;
                 let matchStatus = filtroStatus === "" || item.status === filtroStatus;
                 return matchMes && matchStatus;
             });
 
-            // Renderizar as linhas na tabela
+            // Renderizar linhas
             dadosFiltrados.forEach(item => {
                 const tr = document.createElement('tr');
-                tr.className = "hover:bg-slate-50 transition-colors";
+                tr.className = "hover:bg-emerald-50/50 transition-colors";
                 
                 const badgeStatus = item.status === "Avaliado" 
                     ? `<span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold bg-emerald-100 text-emerald-800"><i class="fa-solid fa-check mr-1.5"></i> Avaliado no Mês</span>`
-                    : `<span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold bg-rose-100 text-rose-800"><i class="fa-solid fa-clock mr-1.5"></i> Pendente</span>`;
+                    : `<span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold bg-amber-100 text-amber-800"><i class="fa-solid fa-clock mr-1.5"></i> Pendente de Avaliação</span>`;
 
                 tr.innerHTML = `
                     <td class="p-4 font-semibold text-slate-900">${item.codigo}</td>
                     <td class="p-4 font-medium text-slate-700">${item.nome}</td>
-                    <td class="p-4 font-medium text-blue-900">${item.mes}</td>
+                    <td class="p-4 font-medium text-emerald-900">${item.mes}</td>
                     <td class="p-4 text-slate-600">${item.data}</td>
                     <td class="p-4">${badgeStatus}</td>
                 `;
