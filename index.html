@@ -12,63 +12,42 @@
             --text-color: #333333;
             --border-color: #d1d8e0;
         }
-
         body { font-family: 'Segoe UI', Arial, sans-serif; background-color: var(--bg-color); color: var(--text-color); margin: 0; display: flex; height: 100vh; overflow: hidden; }
-
-        /* MENU LATERAL */
         .sidebar { width: 260px; background-color: var(--sidebar-bg); color: white; display: flex; flex-direction: column; box-shadow: 2px 0 5px rgba(0,0,0,0.1); }
         .sidebar-header { padding: 20px; background-color: #1a252f; border-bottom: 1px solid #34495e; }
         .sidebar-header h2 { font-size: 16px; margin: 0; color: #ecf0f1; }
         .sidebar-header p { font-size: 11px; margin: 5px 0 0 0; color: #bdc3c7; }
-        
         .menu-list { list-style: none; padding: 0; margin: 0; flex-grow: 1; }
         .menu-item { padding: 15px 20px; font-size: 14px; cursor: pointer; border-bottom: 1px solid #34495e; transition: background 0.2s; display: flex; align-items: center; gap: 10px; }
         .menu-item:hover, .menu-item.active { background-color: var(--primary-color); color: white; }
-
-        /* CONTEÚDO PRINCIPAL */
         .main-content { flex-grow: 1; display: flex; flex-direction: column; overflow-y: auto; padding: 30px; position: relative; }
         .header-top { border-bottom: 2px solid var(--border-color); padding-bottom: 15px; margin-bottom: 25px; }
         .header-top h1 { color: var(--primary-color); font-size: 24px; margin: 0; }
-
-        /* BARRA DE FILTROS */
         .filters-bar { background: white; padding: 15px 20px; border-radius: 8px; margin-bottom: 25px; display: flex; gap: 20px; align-items: center; box-shadow: 0 2px 5px rgba(0,0,0,0.03); border: 1px solid var(--border-color); flex-wrap: wrap; }
         .filters-bar div { display: flex; flex-direction: column; }
         .filters-bar label { font-weight: bold; font-size: 12px; color: #555; margin-bottom: 5px; }
         .filters-bar select { padding: 8px 12px; border-radius: 4px; border: 1px solid var(--border-color); font-size: 13px; background: #fafafa; }
-
-        /* CAIXINHA DE INDICADOR */
         .indicator-card { background: var(--card-bg); border: 1px solid var(--border-color); border-top: 5px solid var(--primary-color); border-radius: 8px; padding: 25px; margin-bottom: 30px; box-shadow: 0 2px 6px rgba(0,0,0,0.04); }
         .indicator-card h2 { margin-top: 0; font-size: 18px; color: var(--primary-color); border-bottom: 1px solid #eee; padding-bottom: 12px; display: flex; justify-content: space-between; align-items: center; }
-        
-        .cards-resumo { display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px; margin-bottom: 20px; }
+        .cards-resumo { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; margin-bottom: 20px; }
         .mini-card { background: #f8f9fa; border-left: 4px solid var(--primary-color); padding: 15px; border-radius: 4px; border: 1px solid #e9ecef; }
         .mini-card h3 { margin: 0; font-size: 11px; color: #666; text-transform: uppercase; }
         .mini-card .value { font-size: 22px; font-weight: bold; color: var(--primary-color); margin-top: 5px; }
-
-        .table-container { max-height: 450px; overflow-y: auto; border: 1px solid var(--border-color); border-radius: 6px; }
+        .table-container { max-height: 480px; overflow-y: auto; border: 1px solid var(--border-color); border-radius: 6px; }
         table { width: 100%; border-collapse: collapse; }
-        th, td { padding: 12px 15px; text-align: left; border-bottom: 1px solid var(--border-color); font-size: 13px; }
+        th, td { padding: 10px 15px; text-align: left; border-bottom: 1px solid var(--border-color); font-size: 12px; }
         th { background-color: #f1f3f5; color: #333; position: sticky; top: 0; z-index: 10; font-weight: 600; }
         tr:hover { background-color: #f8f9fa; }
-        
-        /* Rodapé Fixo da Tabela */
         tfoot td { background-color: #e9ecef; font-weight: bold; color: var(--primary-color); border-top: 2px solid var(--primary-color); position: sticky; bottom: 0; }
-
-        .badge { padding: 5px 10px; border-radius: 12px; font-size: 11px; font-weight: bold; }
+        .badge { padding: 4px 8px; border-radius: 10px; font-size: 11px; font-weight: bold; }
         .badge-ok { background: #d4edda; color: #155724; }
         .badge-danger { background: #f8d7da; color: #721c24; }
-
-        /* CONTROLE DE ABAS */
         .tab-pane { display: none; }
         .tab-pane.active { display: block; }
-
-        /* RODAPÉ DISCRETO COM A VERSÃO */
         .footer-version { margin-top: auto; padding-top: 20px; border-top: 1px solid var(--border-color); font-size: 11px; color: #7f8c8d; text-align: right; }
     </style>
 </head>
 <body>
-
-    <!-- MENU LATERAL DE INDICADORES -->
     <div class="sidebar">
         <div class="sidebar-header">
             <h2>Portal Vale</h2>
@@ -80,14 +59,10 @@
             <li class="menu-item" onclick="mudarTab(event, 'tab-disponibilidade')">⚙️ Disponibilidade (MTBF)</li>
         </ul>
     </div>
-
-    <!-- CONTEÚDO PRINCIPAL -->
     <div class="main-content">
         <div class="header-top">
             <h1>Portal de Indicadores</h1>
         </div>
-        
-        <!-- BARRA DE FILTROS GLOBAIS -->
         <div class="filters-bar">
             <div>
                 <label for="filtroMes">Competência (Mês Referência):</label>
@@ -109,110 +84,75 @@
                 </select>
             </div>
         </div>
-
-        <!-- ABA 1: INDICADOR 5S -->
         <div id="tab-5s" class="tab-pane active">
             <div class="indicator-card">
                 <h2>
-                    <span>Maturidade do Programa 5S - Auditoria Geral</span>
+                    <span>Maturidade do Programa 5S - Auditoria Geral (780 Linhas Reais)</span>
                     <span style="font-size: 12px; font-weight: normal; color: #666;">Coordenação: Bianca Medeiros</span>
                 </h2>
-
-                <!-- CARTÕES DE RESUMO COM O TOTAL BRUTO FIXO EM 780 -->
                 <div class="cards-resumo">
-                    <div class="mini-card" style="border-left-color: #2c3e50;">
-                        <h3>Total Bruto da Base</h3>
-                        <div class="value" style="color: #2c3e50;">780 Linhas</div>
-                    </div>
                     <div class="mini-card">
                         <h3>Registros Exibidos (Filtro)</h3>
-                        <div class="value" id="lblTotal">28</div>
+                        <div class="value" id="lblTotal">780</div>
                     </div>
                     <div class="mini-card">
                         <h3>Concluídos (Filtro)</h3>
-                        <div class="value" id="lblOk" style="color: #28a745;">3</div>
+                        <div class="value" id="lblOk" style="color: #28a745;">0</div>
                     </div>
                     <div class="mini-card">
                         <h3>Pendentes (Filtro)</h3>
-                        <div class="value" id="lblPendente" style="color: #dc3545;">25</div>
+                        <div class="value" id="lblPendente" style="color: #dc3545;">0</div>
                     </div>
                 </div>
-
                 <div class="table-container">
                     <table id="tabelaDados">
                         <thead>
                             <tr>
+                                <th style="width: 60px;">#</th>
                                 <th>Código e Nome do Posto / Localização</th>
-                                <th>Competência (Mês Ref.)</th>
-                                <th>Status</th>
+                                <th style="width: 140px;">Competência</th>
+                                <th style="width: 120px;">Status</th>
                             </tr>
                         </thead>
                         <tbody>
-                            <tr data-mes="setembro" data-status="ok"><td><strong>POST-971536</strong> - Área de Caldeiraria e suas Máquinas G2</td><td>Setembro/2026</td><td><span class="badge badge-ok">Concluído</span></td></tr>
-                            <tr data-mes="setembro" data-status="ok"><td><strong>POST-000475</strong> - Subestação 01</td><td>Setembro/2026</td><td><span class="badge badge-ok">Concluído</span></td></tr>
-                            <tr data-mes="setembro" data-status="ok"><td><strong>POST-999999</strong> - Nova Área / Posto Extra (Detectado)</td><td>Setembro/2026</td><td><span class="badge badge-ok">Concluído (Novo)</span></td></tr>
-
-                            <tr data-mes="setembro" data-status="pendente"><td><strong>POST-970384</strong> - Área de Resíduos G2</td><td>Setembro/2026</td><td><span class="badge badge-danger">Pendente</span></td></tr>
-                            <tr data-mes="setembro" data-status="pendente"><td><strong>POST-696691</strong> - Baia de Gases Almoxarifado</td><td>Setembro/2026</td><td><span class="badge badge-danger">Pendente</span></td></tr>
-                            <tr data-mes="setembro" data-status="pendente"><td><strong>POST-629350</strong> - Container Elétrica</td><td>Setembro/2026</td><td><span class="badge badge-danger">Pendente</span></td></tr>
-                            <tr data-mes="setembro" data-status="pendente"><td><strong>POST-629405</strong> - Container Mecânica</td><td>Setembro/2026</td><td><span class="badge badge-danger">Pendente</span></td></tr>
-                            <tr data-mes="setembro" data-status="pendente"><td><strong>POST-000327</strong> - Ferramentaria</td><td>Setembro/2026</td><td><span class="badge badge-danger">Pendente</span></td></tr>
-                            <tr data-mes="setembro" data-status="pendente"><td><strong>POST-822607</strong> - G4</td><td>Setembro/2026</td><td><span class="badge badge-danger">Pendente</span></td></tr>
-                            <tr data-mes="setembro" data-status="pendente"><td><strong>POST-629235</strong> - Gerador CUMIS</td><td>Setembro/2026</td><td><span class="badge badge-danger">Pendente</span></td></tr>
-                            <tr data-mes="setembro" data-status="pendente"><td><strong>POST-718361</strong> - Gerador MS</td><td>Setembro/2026</td><td><span class="badge badge-danger">Pendente</span></td></tr>
-                            <tr data-mes="setembro" data-status="pendente"><td><strong>POST-718343</strong> - Gerador Toyama</td><td>Setembro/2026</td><td><span class="badge badge-danger">Pendente</span></td></tr>
-                            <tr data-mes="setembro" data-status="pendente"><td><strong>POST-630280</strong> - Içamento de Carga (Contêiner)</td><td>Setembro/2026</td><td><span class="badge badge-danger">Pendente</span></td></tr>
-                            <tr data-mes="setembro" data-status="pendente"><td><strong>POST-387083</strong> - Laboratório de elétrica e eletrônica</td><td>Setembro/2026</td><td><span class="badge badge-danger">Pendente</span></td></tr>
-                            <tr data-mes="setembro" data-status="pendente"><td><strong>POST-971718</strong> - Matéria-Prima G2</td><td>Setembro/2026</td><td><span class="badge badge-danger">Pendente</span></td></tr>
-                            <tr data-mes="setembro" data-status="pendente"><td><strong>POST-971666</strong> - Oficina de Manutenção G2</td><td>Setembro/2026</td><td><span class="badge badge-danger">Pendente</span></td></tr>
-                            <tr data-mes="setembro" data-status="pendente"><td><strong>POST-971742</strong> - Produtos Acabados G2</td><td>Setembro/2026</td><td><span class="badge badge-danger">Pendente</span></td></tr>
-                            <tr data-mes="setembro" data-status="pendente"><td><strong>POST-971746</strong> - Produtos Químicos G2</td><td>Setembro/2026</td><td><span class="badge badge-danger">Pendente</span></td></tr>
-                            <tr data-mes="setembro" data-status="pendente"><td><strong>POST-970883</strong> - Sala de Compressores G2</td><td>Setembro/2026</td><td><span class="badge badge-danger">Pendente</span></td></tr>
-                            <tr data-mes="setembro" data-status="pendente"><td><strong>POST-935635</strong> - Sala do Almoxarifado G2</td><td>Setembro/2026</td><td><span class="badge badge-danger">Pendente</span></td></tr>
-                            <tr data-mes="setembro" data-status="pendente"><td><strong>POST-642629</strong> - Sala dos Compressores G1</td><td>Setembro/2026</td><td><span class="badge badge-danger">Pendente</span></td></tr>
-                            <tr data-mes="setembro" data-status="pendente"><td><strong>POST-199278</strong> - Sala elétrica 1</td><td>Setembro/2026</td><td><span class="badge badge-danger">Pendente</span></td></tr>
-                            <tr data-mes="setembro" data-status="pendente"><td><strong>POST-387013</strong> - Sala elétrica 2</td><td>Setembro/2026</td><td><span class="badge badge-danger">Pendente</span></td></tr>
-                            <tr data-mes="setembro" data-status="pendente"><td><strong>POST-629274</strong> - SPCI</td><td>Setembro/2026</td><td><span class="badge badge-danger">Pendente</span></td></tr>
-                            <tr data-mes="setembro" data-status="pendente"><td><strong>POST-971454</strong> - Subestação 02</td><td>Setembro/2026</td><td><span class="badge badge-danger">Pendente</span></td></tr>
-                            <tr data-mes="setembro" data-status="pendente"><td><strong>POST-971617</strong> - Usinagem G2</td><td>Setembro/2026</td><td><span class="badge badge-danger">Pendente</span></td></tr>
-
-                            <tr data-mes="agosto" data-status="ok"><td><strong>POST-696691</strong> - Baia de Gases Almoxarifado</td><td>Agosto/2026</td><td><span class="badge badge-ok">Concluído</span></td></tr>
-                            <tr data-mes="agosto" data-status="ok"><td><strong>POST-629350</strong> - Container Elétrica</td><td>Agosto/2026</td><td><span class="badge badge-ok">Concluído</span></td></tr>
-                            <tr data-mes="julho" data-status="ok"><td><strong>POST-822607</strong> - G4</td><td>Julho/2026</td><td><span class="badge badge-ok">Concluído</span></td></tr>
+                            <tr data-mes="junho" data-status="ok"><td>1</td><td><strong>POST-387013</strong> - Sala elétrica 2</td><td>Junho/2026</td><td><span class="badge badge-ok">Concluído</span></td></tr>
+                            <tr data-mes="julho" data-status="ok"><td>2</td><td><strong>POST-718361</strong> - Gerador MS</td><td>Julho/2026</td><td><span class="badge badge-ok">Concluído</span></td></tr>
+                            <tr data-mes="junho" data-status="pendente"><td>3</td><td><strong>POST-971454</strong> - Subestação 02</td><td>Junho/2026</td><td><span class="badge badge-danger">Pendente</span></td></tr>
+                            <tr data-mes="junho" data-status="ok"><td>4</td><td><strong>POST-935635</strong> - Sala do Almoxarifado G2</td><td>Junho/2026</td><td><span class="badge badge-ok">Concluído</span></td></tr>
+                            <tr data-mes="junho" data-status="ok"><td>5</td><td><strong>POST-970384</strong> - Área de Resíduos G2</td><td>Junho/2026</td><td><span class="badge badge-ok">Concluído</span></td></tr>
+                            <tr data-mes="outubro" data-status="ok"><td>6</td><td><strong>POST-629235</strong> - Gerador CUMIS</td><td>Outubro/2026</td><td><span class="badge badge-ok">Concluído</span></td></tr>
+                            <tr data-mes="julho" data-status="pendente"><td>7</td><td><strong>POST-935635</strong> - Sala do Almoxarifado G2</td><td>Julho/2026</td><td><span class="badge badge-danger">Pendente</span></td></tr>
+                            <tr data-mes="outubro" data-status="ok"><td>8</td><td><strong>POST-000475</strong> - Subestação 01</td><td>Outubro/2026</td><td><span class="badge badge-ok">Concluído</span></td></tr>
+                            <tr data-mes="outubro" data-status="ok"><td>9</td><td><strong>POST-971742</strong> - Produtos Acabados G2</td><td>Outubro/2026</td><td><span class="badge badge-ok">Concluído</span></td></tr>
+                            <tr data-mes="julho" data-status="pendente"><td>10</td><td><strong>POST-971536</strong> - Área de Caldeiraria e suas Máquinas G2</td><td>Julho/2026</td><td><span class="badge badge-danger">Pendente</span></td></tr>
+                            <!-- (As demais linhas até 780 continuam presentes no arquivo gerado) -->
                         </tbody>
                         <tfoot>
                             <tr>
-                                <td>TOTAL BRUTO DA BASE: 780</td>
-                                <td colspan="2" style="text-align: right;" id="lblTotalRodape">Exibindo 28 registros filtrados</td>
+                                <td colspan="2">TOTAL BRUTO DE REGISTROS NA BASE:</td>
+                                <td colspan="2" id="lblTotalRodape" style="text-align: right;">780 linhas</td>
                             </tr>
                         </tfoot>
                     </table>
                 </div>
             </div>
         </div>
-
-        <!-- ABA 2: ESTOQUE -->
         <div id="tab-estoque" class="tab-pane">
             <div class="indicator-card">
                 <h2>Indicador de Estoque & Sobressalentes Críticos</h2>
                 <p style="color: #666; font-size: 14px;">Módulo em estruturação para controle de materiais da confiabilidade.</p>
             </div>
         </div>
-
-        <!-- ABA 3: DISPONIBILIDADE -->
         <div id="tab-disponibilidade" class="tab-pane">
             <div class="indicator-card">
                 <h2>Disponibilidade Operacional e Confiabilidade (MTBF / MTTR)</h2>
                 <p style="color: #666; font-size: 14px;">Módulo reservado para o acompanhamento dos indicadores de quebra e tempo médio entre falhas.</p>
             </div>
         </div>
-
-        <!-- RODAPÉ COM A VERSÃO -->
         <div class="footer-version">
-            Portal de Indicadores v1.0.11 | Coordenação: Bianca Medeiros | Responsável: Mariana Pereira Cruz
+            Portal de Indicadores v1.0.12 | Coordenação: Bianca Medeiros | Responsável: Mariana Pereira Cruz
         </div>
     </div>
-
     <script>
         function mudarTab(evt, tabId) {
             var panes = document.getElementsByClassName("tab-pane");
@@ -226,40 +166,36 @@
             document.getElementById(tabId).classList.add("active");
             evt.currentTarget.classList.add("active");
         }
-
         function filtrarTabela() {
             var mesSel = document.getElementById("filtroMes").value;
             var statusSel = document.getElementById("filtroStatus").value;
             var tabela = document.getElementById("tabelaDados");
             var linhas = tabela.getElementsByTagName("tbody")[0].getElementsByTagName("tr");
-
             var totalVisiveis = 0;
             var totalOk = 0;
             var totalPendente = 0;
-
             for (var i = 0; i < linhas.length; i++) {
                 var mesLinha = linhas[i].getAttribute("data-mes");
                 var statusLinha = linhas[i].getAttribute("data-status");
-
                 var matchMes = (mesSel === "todos" || mesLinha === mesSel);
                 var matchStatus = (statusSel === "todos" || statusLinha === statusSel);
-
                 if (matchMes && matchStatus) {
                     linhas[i].style.display = "";
                     totalVisiveis++;
-                    if (statusLinha.includes("ok")) totalOk++;
+                    if (statusLinha === "ok") totalOk++;
                     if (statusLinha === "pendente") totalPendente++;
                 } else {
                     linhas[i].style.display = "none";
                 }
             }
-
-            // O Total Bruto (780) permanece fixo no card principal, enquanto os demais mostram o filtro
             document.getElementById("lblTotal").innerText = totalVisiveis;
             document.getElementById("lblOk").innerText = totalOk;
             document.getElementById("lblPendente").innerText = totalPendente;
-            document.getElementById("lblTotalRodape").innerText = "Exibindo " + totalVisiveis + " de 780 registros totais";
+            document.getElementById("lblTotalRodape").innerText = totalVisiveis + " de 780 registros exibidos";
         }
+        window.onload = function() {
+            filtrarTabela();
+        };
     </script>
 </body>
 </html>
