@@ -40,7 +40,7 @@
         .indicator-card { background: var(--card-bg); border: 1px solid var(--border-color); border-top: 5px solid var(--primary-color); border-radius: 8px; padding: 25px; margin-bottom: 30px; box-shadow: 0 2px 6px rgba(0,0,0,0.04); }
         .indicator-card h2 { margin-top: 0; font-size: 18px; color: var(--primary-color); border-bottom: 1px solid #eee; padding-bottom: 12px; display: flex; justify-content: space-between; align-items: center; }
         
-        .cards-resumo { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; margin-bottom: 20px; }
+        .cards-resumo { display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px; margin-bottom: 20px; }
         .mini-card { background: #f8f9fa; border-left: 4px solid var(--primary-color); padding: 15px; border-radius: 4px; border: 1px solid #e9ecef; }
         .mini-card h3 { margin: 0; font-size: 11px; color: #666; text-transform: uppercase; }
         .mini-card .value { font-size: 22px; font-weight: bold; color: var(--primary-color); margin-top: 5px; }
@@ -118,17 +118,22 @@
                     <span style="font-size: 12px; font-weight: normal; color: #666;">Coordenação: Bianca Medeiros</span>
                 </h2>
 
+                <!-- CARTÕES DE RESUMO COM O TOTAL BRUTO FIXO EM 780 -->
                 <div class="cards-resumo">
+                    <div class="mini-card" style="border-left-color: #2c3e50;">
+                        <h3>Total Bruto da Base</h3>
+                        <div class="value" style="color: #2c3e50;">780 Linhas</div>
+                    </div>
                     <div class="mini-card">
-                        <h3>Registros Exibidos</h3>
+                        <h3>Registros Exibidos (Filtro)</h3>
                         <div class="value" id="lblTotal">28</div>
                     </div>
                     <div class="mini-card">
-                        <h3>Concluídos</h3>
+                        <h3>Concluídos (Filtro)</h3>
                         <div class="value" id="lblOk" style="color: #28a745;">3</div>
                     </div>
                     <div class="mini-card">
-                        <h3>Pendentes</h3>
+                        <h3>Pendentes (Filtro)</h3>
                         <div class="value" id="lblPendente" style="color: #dc3545;">25</div>
                     </div>
                 </div>
@@ -177,8 +182,8 @@
                         </tbody>
                         <tfoot>
                             <tr>
-                                <td colspan="2">TOTAL GERAL DE REGISTROS FILTRADOS:</td>
-                                <td id="lblTotalRodape">28</td>
+                                <td>TOTAL BRUTO DA BASE: 780</td>
+                                <td colspan="2" style="text-align: right;" id="lblTotalRodape">Exibindo 28 registros filtrados</td>
                             </tr>
                         </tfoot>
                     </table>
@@ -204,7 +209,7 @@
 
         <!-- RODAPÉ COM A VERSÃO -->
         <div class="footer-version">
-            Portal de Indicadores v1.0.10 | Coordenação: Bianca Medeiros | Responsável: Mariana Pereira Cruz
+            Portal de Indicadores v1.0.11 | Coordenação: Bianca Medeiros | Responsável: Mariana Pereira Cruz
         </div>
     </div>
 
@@ -249,11 +254,11 @@
                 }
             }
 
-            // Atualiza os contadores dos cards superiores e o rodapé exato
+            // O Total Bruto (780) permanece fixo no card principal, enquanto os demais mostram o filtro
             document.getElementById("lblTotal").innerText = totalVisiveis;
             document.getElementById("lblOk").innerText = totalOk;
             document.getElementById("lblPendente").innerText = totalPendente;
-            document.getElementById("lblTotalRodape").innerText = totalVisiveis + " registros exibidos";
+            document.getElementById("lblTotalRodape").innerText = "Exibindo " + totalVisiveis + " de 780 registros totais";
         }
     </script>
 </body>
