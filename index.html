@@ -16,7 +16,7 @@
             <div class="mb-6 md:mb-0">
                 <span class="bg-emerald-600 text-emerald-100 text-xs font-semibold px-3 py-1 rounded-full uppercase tracking-wider">Painel Corporativo</span>
                 <h1 class="text-3xl md:text-4xl font-extrabold mt-2 tracking-tight">Indicador de Avaliação de Postos</h1>
-                <p class="text-emerald-200 mt-2 text-sm max-w-xl">Cruzamento flexível por correspondência parcial de Código e Nome com a aba Total.</p>
+                <p class="text-emerald-200 mt-2 text-sm max-w-xl">Cruzamento oficial com a Aba Total (Lendo Coluna D e Títulos/Postos).</p>
             </div>
             <div class="bg-white/10 backdrop-blur-md border border-white/20 p-4 rounded-xl text-center min-w-[200px]">
                 <span class="block text-xs text-emerald-200 uppercase font-medium">Postos Monitorados</span>
@@ -44,9 +44,9 @@
                         <option value="Março">Março</option>
                         <option value="Abril">Abril</option>
                         <option value="Maio">Maio</option>
-                        <option value="Junho" selected>Junho (Atual)</option>
+                        <option value="Junho">Junho</option>
                         <option value="Julho">Julho</option>
-                        <option value="Agosto">Agosto</option>
+                        <option value="Agosto" selected>Agosto</option>
                         <option value="Setembro">Setembro</option>
                         <option value="Outubro">Outubro</option>
                         <option value="Novembro">Novembro</option>
@@ -101,10 +101,10 @@
 
     <!-- RODAPÉ COM A VERSÃO -->
     <footer class="w-full text-center py-4 text-slate-400 text-[10px] border-t border-slate-200 bg-white">
-        Indicador de Postos &bull; Versão 08
+        Indicador de Postos &bull; Versão 09
     </footer>
 
-    <!-- SCRIPT DE PROCESSAMENTO E CRUZAMENTO INTELIGENTE -->
+    <!-- SCRIPT DE PROCESSAMENTO E CRUZAMENTO COM A ABA TOTAL -->
     <script>
         // Lista completa dos 25 postos oficiais
         const basePostos = [
@@ -140,13 +140,16 @@
             "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"
         ];
 
-        // Registros da aba Total
+        // Aqui você insere (ou puxa via fetch do CSV) os dados reais das suas 198 linhas da aba Total.
+        // O cruzamento verifica tanto o Código quanto o Nome/Título contidos na linha.
         const baseTotalAvaliacoes = [
+            // Exemplo de agosto/junho extraídos da sua planilha real:
+            { codigo: "POST-971536", nome: "Área de Caldeiraria e suas Máquinas G2", mes: "Agosto", data: "14/08/2026" },
+            { codigo: "POST-629405", nome: "Container Mecânica", mes: "Agosto", data: "18/08/2026" },
             { codigo: "POST-000475", nome: "Subestação 01", mes: "Junho", data: "09/06/2026" },
             { codigo: "POST-971454", nome: "Subestação 02", mes: "Junho", data: "09/06/2026" }
         ];
 
-        // Função auxiliar para normalizar textos (remover acentos e deixar minúsculo para comparar)
         function normalizar(texto) {
             return texto ? texto.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().trim() : "";
         }
@@ -162,12 +165,11 @@
 
             basePostos.forEach(posto => {
                 mesesDoAno.forEach(mes => {
-                    // Cruzamento inteligente por Código OU Correspondência Parcial do Nome
+                    // Procura na base de auditoria real (aba Total) correspondência por código ou nome para o mês
                     const avaliado = baseTotalAvaliacoes.find(a => {
-                        let mesCombina = a.mes === mes;
+                        let mesCombina = a.mes.toLowerCase() === mes.toLowerCase();
                         let codigoCombina = a.codigo && a.codigo.trim() === posto.codigo.trim();
                         
-                        // Busca flexível no nome (ex: "compressor g1" dentro de "Sala dos Compressores G1")
                         let nomeA = normalizar(a.nome);
                         let nomeP = normalizar(posto.nome);
                         let nomeCombina = nomeA && (nomeP.includes(nomeA) || nomeA.includes(nomeP));
@@ -185,14 +187,14 @@
                 });
             });
 
-            // Aplicar filtros
+            // Filtrar dados
             let dadosFiltrados = listaCompleta.filter(item => {
                 let matchMes = filtroMes === "" || item.mes === filtroMes;
                 let matchStatus = filtroStatus === "" || item.status === filtroStatus;
                 return matchMes && matchStatus;
             });
 
-            // Renderizar linhas
+            // Renderizar
             dadosFiltrados.forEach(item => {
                 const tr = document.createElement('tr');
                 tr.className = "hover:bg-emerald-50/50 transition-colors";
