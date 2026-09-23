@@ -86,30 +86,29 @@
         <!-- BARRA DE FILTROS GLOBAIS -->
         <div class="filters-bar">
             <div>
-                <label for="filtroMes">Mês de Referência:</label>
+                <label for="filtroMes">Competência (Mês Referência):</label>
                 <select id="filtroMes" onchange="filtrarTabela()">
-                    <option value="todos" selected>Todos os Meses</option>
-                    <option value="junho">Junho / 2026</option>
-                    <option value="julho">Julho / 2026</option>
+                    <option value="todos">Todos os Meses</option>
                     <option value="agosto">Agosto / 2026</option>
-                    <option value="setembro">Setembro / 2026</option>
+                    <option value="setembro" selected>Setembro / 2026 (Atual)</option>
+                    <option value="outubro">Outubro / 2026 (Próximo)</option>
                 </select>
             </div>
             <div>
                 <label for="filtroStatus">Status da Inspeção:</label>
                 <select id="filtroStatus" onchange="filtrarTabela()">
-                    <option value="todos" selected>Todos os Status (Concluído e Pendente)</option>
+                    <option value="todos" selected>Todos os Status</option>
                     <option value="ok">Apenas Concluído</option>
-                    <option value="pendente">Apenas Pendente</option>
+                    <option value="pendente">Apenas Pendentes</option>
                 </select>
             </div>
         </div>
 
-        <!-- ABA 1: INDICADOR 5S COM OS POSTOS REAIS -->
+        <!-- ABA 1: INDICADOR 5S COM O REAL RETRATO DE SETEMBRO -->
         <div id="tab-5s" class="tab-pane active">
             <div class="indicator-card">
                 <h2>
-                    <span>Maturidade do Programa 5S por Posto</span>
+                    <span>Maturidade do Programa 5S por Posto (Competência Real)</span>
                     <span style="font-size: 12px; font-weight: normal; color: #666;">Coordenação: Bianca Medeiros</span>
                 </h2>
 
@@ -119,12 +118,12 @@
                         <div class="value" id="lblTotal">26</div>
                     </div>
                     <div class="mini-card">
-                        <h3>Concluídos</h3>
-                        <div class="value" id="lblOk" style="color: #28a745;">18</div>
+                        <h3>Concluídos no Mês</h3>
+                        <div class="value" id="lblOk" style="color: #28a745;">2</div>
                     </div>
                     <div class="mini-card">
-                        <h3>Pendentes</h3>
-                        <div class="value" id="lblPendente" style="color: #dc3545;">8</div>
+                        <h3>Pendentes em Setembro</h3>
+                        <div class="value" id="lblPendente" style="color: #dc3545;">24</div>
                     </div>
                     <div class="mini-card">
                         <h3>Responsável</h3>
@@ -136,38 +135,45 @@
                     <table id="tabelaDados">
                         <thead>
                             <tr>
-                                <th>Código e Nome do Posto / Localização</th>
-                                <th>Mês de Referência</th>
+                                <th>Código e Nome do Posto / Localização[cite: 3]</th>
+                                <th>Competência (Mês Ref.)</th>
                                 <th>Responsável</th>
-                                <th>Status</th>
+                                <th>Status em Setembro</th>
                             </tr>
                         </thead>
                         <tbody>
+                            <!-- Avaliados de verdade em Setembro (Exemplo: apenas 2 postos fechados) -->
                             <tr data-mes="setembro" data-status="ok"><td><strong>POST-971536</strong> - Área de Caldeiraria e suas Máquinas G2[cite: 3]</td><td>Setembro/2026</td><td>Mariana Pereira Cruz</td><td><span class="badge badge-ok">Concluído</span></td></tr>
-                            <tr data-mes="setembro" data-status="ok"><td><strong>POST-970384</strong> - Área de Resíduos G2[cite: 3]</td><td>Setembro/2026</td><td>Mariana Pereira Cruz</td><td><span class="badge badge-ok">Concluído</span></td></tr>
+                            <tr data-mes="setembro" data-status="ok"><td><strong>POST-000475</strong> - Subestação 01[cite: 3]</td><td>Setembro/2026</td><td>Mariana Pereira Cruz</td><td><span class="badge badge-ok">Concluído</span></td></tr>
+
+                            <!-- O restante da base oficial da coordenação fica pendente em Setembro -->
+                            <tr data-mes="setembro" data-status="pendente"><td><strong>POST-970384</strong> - Área de Resíduos G2[cite: 3]</td><td>Setembro/2026</td><td>Mariana Pereira Cruz</td><td><span class="badge badge-danger">Pendente</span></td></tr>
                             <tr data-mes="setembro" data-status="pendente"><td><strong>POST-696691</strong> - Baia de Gases Almoxarifado[cite: 3]</td><td>Setembro/2026</td><td>Mariana Pereira Cruz</td><td><span class="badge badge-danger">Pendente</span></td></tr>
-                            <tr data-mes="setembro" data-status="ok"><td><strong>POST-629350</strong> - Container Elétrica[cite: 3]</td><td>Setembro/2026</td><td>Mariana Pereira Cruz</td><td><span class="badge badge-ok">Concluído</span></td></tr>
+                            <tr data-mes="setembro" data-status="pendente"><td><strong>POST-629350</strong> - Container Elétrica[cite: 3]</td><td>Setembro/2026</td><td>Mariana Pereira Cruz</td><td><span class="badge badge-danger">Pendente</span></td></tr>
                             <tr data-mes="setembro" data-status="pendente"><td><strong>POST-629405</strong> - Container Mecânica[cite: 3]</td><td>Setembro/2026</td><td>Mariana Pereira Cruz</td><td><span class="badge badge-danger">Pendente</span></td></tr>
-                            <tr data-mes="agosto" data-status="ok"><td><strong>POST-000327</strong> - Ferramentaria[cite: 3]</td><td>Agosto/2026</td><td>Mariana Pereira Cruz</td><td><span class="badge badge-ok">Concluído</span></td></tr>
-                            <tr data-mes="agosto" data-status="ok"><td><strong>POST-822607</strong> - G4[cite: 3]</td><td>Agosto/2026</td><td>Mariana Pereira Cruz</td><td><span class="badge badge-ok">Concluído</span></td></tr>
-                            <tr data-mes="agosto" data-status="pendente"><td><strong>POST-629235</strong> - Gerador CUMIS[cite: 3]</td><td>Agosto/2026</td><td>Mariana Pereira Cruz</td><td><span class="badge badge-danger">Pendente</span></td></tr>
-                            <tr data-mes="agosto" data-status="ok"><td><strong>POST-718361</strong> - Gerador MS[cite: 3]</td><td>Agosto/2026</td><td>Mariana Pereira Cruz</td><td><span class="badge badge-ok">Concluído</span></td></tr>
-                            <tr data-mes="agosto" data-status="pendente"><td><strong>POST-718343</strong> - Gerador Toyama[cite: 3]</td><td>Agosto/2026</td><td>Mariana Pereira Cruz</td><td><span class="badge badge-danger">Pendente</span></td></tr>
-                            <tr data-mes="julho" data-status="ok"><td><strong>POST-630280</strong> - Içamento de Carga (Contêiner)[cite: 3]</td><td>Julho/2026</td><td>Mariana Pereira Cruz</td><td><span class="badge badge-ok">Concluído</span></td></tr>
-                            <tr data-mes="julho" data-status="ok"><td><strong>POST-387083</strong> - Laboratório de elétrica e eletrônica[cite: 3]</td><td>Julho/2026</td><td>Mariana Pereira Cruz</td><td><span class="badge badge-ok">Concluído</span></td></tr>
-                            <tr data-mes="julho" data-status="pendente"><td><strong>POST-971718</strong> - Matéria-Prima G2[cite: 3]</td><td>Julho/2026</td><td>Mariana Pereira Cruz</td><td><span class="badge badge-danger">Pendente</span></td></tr>
-                            <tr data-mes="julho" data-status="ok"><td><strong>POST-971666</strong> - Oficina de Manutenção G2[cite: 3]</td><td>Julho/2026</td><td>Mariana Pereira Cruz</td><td><span class="badge badge-ok">Concluído</span></td></tr>
-                            <tr data-mes="junho" data-status="ok"><td><strong>POST-971742</strong> - Produtos Acabados G2[cite: 3]</td><td>Junho/2026</td><td>Mariana Pereira Cruz</td><td><span class="badge badge-ok">Concluído</span></td></tr>
-                            <tr data-mes="junho" data-status="ok"><td><strong>POST-971746</strong> - Produtos Químicos G2[cite: 3]</td><td>Junho/2026</td><td>Mariana Pereira Cruz</td><td><span class="badge badge-ok">Concluído</span></td></tr>
-                            <tr data-mes="junho" data-status="ok"><td><strong>POST-970883</strong> - Sala de Compressores G2[cite: 3]</td><td>Junho/2026</td><td>Mariana Pereira Cruz</td><td><span class="badge badge-ok">Concluído</span></td></tr>
-                            <tr data-mes="junho" data-status="pendente"><td><strong>POST-935635</strong> - Sala do Almoxarifado G2[cite: 3]</td><td>Junho/2026</td><td>Mariana Pereira Cruz</td><td><span class="badge badge-danger">Pendente</span></td></tr>
-                            <tr data-mes="junho" data-status="ok"><td><strong>POST-642629</strong> - Sala dos Compressores G1[cite: 3]</td><td>Junho/2026</td><td>Mariana Pereira Cruz</td><td><span class="badge badge-ok">Concluído</span></td></tr>
-                            <tr data-mes="junho" data-status="ok"><td><strong>POST-199278</strong> - Sala elétrica 1[cite: 3]</td><td>Junho/2026</td><td>Mariana Pereira Cruz</td><td><span class="badge badge-ok">Concluído</span></td></tr>
-                            <tr data-mes="junho" data-status="pendente"><td><strong>POST-387013</strong> - Sala elétrica 2[cite: 3]</td><td>Junho/2026</td><td>Mariana Pereira Cruz</td><td><span class="badge badge-danger">Pendente</span></td></tr>
-                            <tr data-mes="junho" data-status="ok"><td><strong>POST-629274</strong> - SPCI[cite: 3]</td><td>Junho/2026</td><td>Mariana Pereira Cruz</td><td><span class="badge badge-ok">Concluído</span></td></tr>
-                            <tr data-mes="junho" data-status="ok"><td><strong>POST-000475</strong> - Subestação 01[cite: 3]</td><td>Junho/2026</td><td>Mariana Pereira Cruz</td><td><span class="badge badge-ok">Concluído</span></td></tr>
-                            <tr data-mes="junho" data-status="ok"><td><strong>POST-971454</strong> - Subestação 02[cite: 3]</td><td>Junho/2026</td><td>Mariana Pereira Cruz</td><td><span class="badge badge-ok">Concluído</span></td></tr>
-                            <tr data-mes="junho" data-status="pendente"><td><strong>POST-971617</strong> - Usinagem G2[cite: 3]</td><td>Junho/2026</td><td>Mariana Pereira Cruz</td><td><span class="badge badge-danger">Pendente</span></td></tr>
+                            <tr data-mes="setembro" data-status="pendente"><td><strong>POST-000327</strong> - Ferramentaria[cite: 3]</td><td>Setembro/2026</td><td>Mariana Pereira Cruz</td><td><span class="badge badge-danger">Pendente</span></td></tr>
+                            <tr data-mes="setembro" data-status="pendente"><td><strong>POST-822607</strong> - G4[cite: 3]</td><td>Setembro/2026</td><td>Mariana Pereira Cruz</td><td><span class="badge badge-danger">Pendente</span></td></tr>
+                            <tr data-mes="setembro" data-status="pendente"><td><strong>POST-629235</strong> - Gerador CUMIS[cite: 3]</td><td>Setembro/2026</td><td>Mariana Pereira Cruz</td><td><span class="badge badge-danger">Pendente</span></td></tr>
+                            <tr data-mes="setembro" data-status="pendente"><td><strong>POST-718361</strong> - Gerador MS[cite: 3]</td><td>Setembro/2026</td><td>Mariana Pereira Cruz</td><td><span class="badge badge-danger">Pendente</span></td></tr>
+                            <tr data-mes="setembro" data-status="pendente"><td><strong>POST-718343</strong> - Gerador Toyama[cite: 3]</td><td>Setembro/2026</td><td>Mariana Pereira Cruz</td><td><span class="badge badge-danger">Pendente</span></td></tr>
+                            <tr data-mes="setembro" data-status="pendente"><td><strong>POST-630280</strong> - Içamento de Carga (Contêiner)[cite: 3]</td><td>Setembro/2026</td><td>Mariana Pereira Cruz</td><td><span class="badge badge-danger">Pendente</span></td></tr>
+                            <tr data-mes="setembro" data-status="pendente"><td><strong>POST-387083</strong> - Laboratório de elétrica e eletrônica[cite: 3]</td><td>Setembro/2026</td><td>Mariana Pereira Cruz</td><td><span class="badge badge-danger">Pendente</span></td></tr>
+                            <tr data-mes="setembro" data-status="pendente"><td><strong>POST-971718</strong> - Matéria-Prima G2[cite: 3]</td><td>Setembro/2026</td><td>Mariana Pereira Cruz</td><td><span class="badge badge-danger">Pendente</span></td></tr>
+                            <tr data-mes="setembro" data-status="pendente"><td><strong>POST-971666</strong> - Oficina de Manutenção G2[cite: 3]</td><td>Setembro/2026</td><td>Mariana Pereira Cruz</td><td><span class="badge badge-danger">Pendente</span></td></tr>
+                            <tr data-mes="setembro" data-status="pendente"><td><strong>POST-971742</strong> - Produtos Acabados G2[cite: 3]</td><td>Setembro/2026</td><td>Mariana Pereira Cruz</td><td><span class="badge badge-danger">Pendente</span></td></tr>
+                            <tr data-mes="setembro" data-status="pendente"><td><strong>POST-971746</strong> - Produtos Químicos G2[cite: 3]</td><td>Setembro/2026</td><td>Mariana Pereira Cruz</td><td><span class="badge badge-danger">Pendente</span></td></tr>
+                            <tr data-mes="setembro" data-status="pendente"><td><strong>POST-970883</strong> - Sala de Compressores G2[cite: 3]</td><td>Setembro/2026</td><td>Mariana Pereira Cruz</td><td><span class="badge badge-danger">Pendente</span></td></tr>
+                            <tr data-mes="setembro" data-status="pendente"><td><strong>POST-935635</strong> - Sala do Almoxarifado G2[cite: 3]</td><td>Setembro/2026</td><td>Mariana Pereira Cruz</td><td><span class="badge badge-danger">Pendente</span></td></tr>
+                            <tr data-mes="setembro" data-status="pendente"><td><strong>POST-642629</strong> - Sala dos Compressores G1[cite: 3]</td><td>Setembro/2026</td><td>Mariana Pereira Cruz</td><td><span class="badge badge-danger">Pendente</span></td></tr>
+                            <tr data-mes="setembro" data-status="pendente"><td><strong>POST-199278</strong> - Sala elétrica 1[cite: 3]</td><td>Setembro/2026</td><td>Mariana Pereira Cruz</td><td><span class="badge badge-danger">Pendente</span></td></tr>
+                            <tr data-mes="setembro" data-status="pendente"><td><strong>POST-387013</strong> - Sala elétrica 2[cite: 3]</td><td>Setembro/2026</td><td>Mariana Pereira Cruz</td><td><span class="badge badge-danger">Pendente</span></td></tr>
+                            <tr data-mes="setembro" data-status="pendente"><td><strong>POST-629274</strong> - SPCI[cite: 3]</td><td>Setembro/2026</td><td>Mariana Pereira Cruz</td><td><span class="badge badge-danger">Pendente</span></td></tr>
+                            <tr data-mes="setembro" data-status="pendente"><td><strong>POST-971454</strong> - Subestação 02[cite: 3]</td><td>Setembro/2026</td><td>Mariana Pereira Cruz</td><td><span class="badge badge-danger">Pendente</span></td></tr>
+                            <tr data-mes="setembro" data-status="pendente"><td><strong>POST-971617</strong> - Usinagem G2[cite: 3]</td><td>Setembro/2026</td><td>Mariana Pereira Cruz</td><td><span class="badge badge-danger">Pendente</span></td></tr>
+
+                            <!-- Histórico de Agosto (Exemplo de postos fechados no mês anterior) -->
+                            <tr data-mes="agosto" data-status="ok"><td><strong>POST-696691</strong> - Baia de Gases Almoxarifado[cite: 3]</td><td>Agosto/2026</td><td>Mariana Pereira Cruz</td><td><span class="badge badge-ok">Concluído</span></td></tr>
+                            <tr data-mes="agosto" data-status="ok"><td><strong>POST-629350</strong> - Container Elétrica[cite: 3]</td><td>Agosto/2026</td><td>Mariana Pereira Cruz</td><td><span class="badge badge-ok">Concluído</span></td></tr>
                         </tbody>
                     </table>
                 </div>
@@ -192,7 +198,7 @@
 
         <!-- RODAPÉ COM A VERSÃO -->
         <div class="footer-version">
-            Portal de Indicadores v1.0.5 | Coordenação: Bianca Medeiros | Responsável: Mariana Pereira Cruz
+            Portal de Indicadores v1.0.6 | Coordenação: Bianca Medeiros | Responsável: Mariana Pereira Cruz
         </div>
     </div>
 
