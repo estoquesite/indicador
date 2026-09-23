@@ -45,7 +45,7 @@
         .mini-card h3 { margin: 0; font-size: 11px; color: #666; text-transform: uppercase; }
         .mini-card .value { font-size: 22px; font-weight: bold; color: var(--primary-color); margin-top: 5px; }
 
-        .table-container { max-height: 400px; overflow-y: auto; border: 1px solid var(--border-color); border-radius: 6px; }
+        .table-container { max-height: 420px; overflow-y: auto; border: 1px solid var(--border-color); border-radius: 6px; }
         table { width: 100%; border-collapse: collapse; }
         th, td { padding: 12px 15px; text-align: left; border-bottom: 1px solid var(--border-color); font-size: 13px; }
         th { background-color: #f1f3f5; color: #333; position: sticky; top: 0; z-index: 10; font-weight: 600; }
@@ -88,7 +88,7 @@
             <div>
                 <label for="filtroMes">Mês de Referência:</label>
                 <select id="filtroMes" onchange="filtrarTabela()">
-                    <option value="todos" selected>Todos os Meses (Jun - Set)</option>
+                    <option value="todos" selected>Todos os Meses</option>
                     <option value="junho">Junho / 2026</option>
                     <option value="julho">Julho / 2026</option>
                     <option value="agosto">Agosto / 2026</option>
@@ -105,30 +105,30 @@
             </div>
         </div>
 
-        <!-- ABA 1: INDICADOR 5S (DEFAULT) -->
+        <!-- ABA 1: INDICADOR 5S COM OS POSTOS REAIS -->
         <div id="tab-5s" class="tab-pane active">
             <div class="indicator-card">
                 <h2>
                     <span>Maturidade do Programa 5S por Posto</span>
-                    <span style="font-size: 12px; font-weight: normal; color: #666;">Formulário Padrão: DISTM_MATURIDADE_5S_RV1</span>
+                    <span style="font-size: 12px; font-weight: normal; color: #666;">Coordenação: Bianca Medeiros</span>
                 </h2>
 
                 <div class="cards-resumo">
                     <div class="mini-card">
-                        <h3>Total de Registros</h3>
-                        <div class="value" id="lblTotal">12</div>
+                        <h3>Total de Postos</h3>
+                        <div class="value" id="lblTotal">26</div>
                     </div>
                     <div class="mini-card">
                         <h3>Concluídos</h3>
-                        <div class="value" id="lblOk" style="color: #28a745;">8</div>
+                        <div class="value" id="lblOk" style="color: #28a745;">18</div>
                     </div>
                     <div class="mini-card">
                         <h3>Pendentes</h3>
-                        <div class="value" id="lblPendente" style="color: #dc3545;">4</div>
+                        <div class="value" id="lblPendente" style="color: #dc3545;">8</div>
                     </div>
                     <div class="mini-card">
-                        <h3>Período Analisado</h3>
-                        <div class="value" style="font-size: 14px; margin-top: 8px;">Jun - Set / 2026</div>
+                        <h3>Responsável</h3>
+                        <div class="value" style="font-size: 13px; margin-top: 8px;">Mariana Cruz</div>
                     </div>
                 </div>
 
@@ -136,105 +136,38 @@
                     <table id="tabelaDados">
                         <thead>
                             <tr>
-                                <th>Posto / Localização</th>
-                                <th>Mês / Registro</th>
-                                <th>Inspetor / Responsável</th>
-                                <th>% Conformidade</th>
+                                <th>Código e Nome do Posto / Localização</th>
+                                <th>Mês de Referência</th>
+                                <th>Responsável</th>
                                 <th>Status</th>
                             </tr>
                         </thead>
                         <tbody>
-                            <!-- Junho -->
-                            <tr data-mes="junho" data-status="ok">
-                                <td><strong>POST-000475 Subestação 01</strong></td>
-                                <td>Junho/2026</td>
-                                <td>Mariana Pereira Cruz</td>
-                                <td>100%</td>
-                                <td><span class="badge badge-ok">Concluído</span></td>
-                            </tr>
-                            <tr data-mes="junho" data-status="ok">
-                                <td><strong>POST-000482 Oficinas Centrais</strong></td>
-                                <td>Junho/2026</td>
-                                <td>Mariana Pereira Cruz</td>
-                                <td>88.5%</td>
-                                <td><span class="badge badge-ok">Concluído</span></td>
-                            </tr>
-                            <tr data-mes="junho" data-status="pendente">
-                                <td><strong>POST-000490 Pátio de Correias</strong></td>
-                                <td>Junho/2026</td>
-                                <td>Mariana Pereira Cruz</td>
-                                <td>--</td>
-                                <td><span class="badge badge-danger">Pendente</span></td>
-                            </tr>
-
-                            <!-- Julho -->
-                            <tr data-mes="julho" data-status="ok">
-                                <td><strong>POST-000475 Subestação 01</strong></td>
-                                <td>Julho/2026</td>
-                                <td>Mariana Pereira Cruz</td>
-                                <td>95.0%</td>
-                                <td><span class="badge badge-ok">Concluído</span></td>
-                            </tr>
-                            <tr data-mes="julho" data-status="pendente">
-                                <td><strong>POST-000482 Oficinas Centrais</strong></td>
-                                <td>Julho/2026</td>
-                                <td>Mariana Pereira Cruz</td>
-                                <td>--</td>
-                                <td><span class="badge badge-danger">Pendente</span></td>
-                            </tr>
-                            <tr data-mes="julho" data-status="ok">
-                                <td><strong>POST-000510 Casa de Bombas Principal</strong></td>
-                                <td>Julho/2026</td>
-                                <td>Mariana Pereira Cruz</td>
-                                <td>90.0%</td>
-                                <td><span class="badge badge-ok">Concluído</span></td>
-                            </tr>
-
-                            <!-- Agosto -->
-                            <tr data-mes="agosto" data-status="ok">
-                                <td><strong>POST-000475 Subestação 01</strong></td>
-                                <td>Agosto/2026</td>
-                                <td>Mariana Pereira Cruz</td>
-                                <td>96.0%</td>
-                                <td><span class="badge badge-ok">Concluído</span></td>
-                            </tr>
-                            <tr data-mes="agosto" data-status="ok">
-                                <td><strong>POST-000482 Oficinas Centrais</strong></td>
-                                <td>Agosto/2026</td>
-                                <td>Mariana Pereira Cruz</td>
-                                <td>92.0%</td>
-                                <td><span class="badge badge-ok">Concluído</span></td>
-                            </tr>
-                            <tr data-mes="agosto" data-status="pendente">
-                                <td><strong>POST-000520 Britagem Secundária</strong></td>
-                                <td>Agosto/2026</td>
-                                <td>Mariana Pereira Cruz</td>
-                                <td>--</td>
-                                <td><span class="badge badge-danger">Pendente</span></td>
-                            </tr>
-
-                            <!-- Setembro -->
-                            <tr data-mes="setembro" data-status="ok">
-                                <td><strong>POST-000475 Subestação 01</strong></td>
-                                <td>Setembro/2026</td>
-                                <td>Mariana Pereira Cruz</td>
-                                <td>98.0%</td>
-                                <td><span class="badge badge-ok">Concluído</span></td>
-                            </tr>
-                            <tr data-mes="setembro" data-status="pendente">
-                                <td><strong>POST-000490 Pátio de Correias</strong></td>
-                                <td>Setembro/2026</td>
-                                <td>Mariana Pereira Cruz</td>
-                                <td>--</td>
-                                <td><span class="badge badge-danger">Pendente</span></td>
-                            </tr>
-                            <tr data-mes="setembro" data-status="pendente">
-                                <td><strong>POST-000510 Casa de Bombas Principal</strong></td>
-                                <td>Setembro/2026</td>
-                                <td>Mariana Pereira Cruz</td>
-                                <td>--</td>
-                                <td><span class="badge badge-danger">Pendente</span></td>
-                            </tr>
+                            <tr data-mes="setembro" data-status="ok"><td><strong>POST-971536</strong> - Área de Caldeiraria e suas Máquinas G2[cite: 3]</td><td>Setembro/2026</td><td>Mariana Pereira Cruz</td><td><span class="badge badge-ok">Concluído</span></td></tr>
+                            <tr data-mes="setembro" data-status="ok"><td><strong>POST-970384</strong> - Área de Resíduos G2[cite: 3]</td><td>Setembro/2026</td><td>Mariana Pereira Cruz</td><td><span class="badge badge-ok">Concluído</span></td></tr>
+                            <tr data-mes="setembro" data-status="pendente"><td><strong>POST-696691</strong> - Baia de Gases Almoxarifado[cite: 3]</td><td>Setembro/2026</td><td>Mariana Pereira Cruz</td><td><span class="badge badge-danger">Pendente</span></td></tr>
+                            <tr data-mes="setembro" data-status="ok"><td><strong>POST-629350</strong> - Container Elétrica[cite: 3]</td><td>Setembro/2026</td><td>Mariana Pereira Cruz</td><td><span class="badge badge-ok">Concluído</span></td></tr>
+                            <tr data-mes="setembro" data-status="pendente"><td><strong>POST-629405</strong> - Container Mecânica[cite: 3]</td><td>Setembro/2026</td><td>Mariana Pereira Cruz</td><td><span class="badge badge-danger">Pendente</span></td></tr>
+                            <tr data-mes="agosto" data-status="ok"><td><strong>POST-000327</strong> - Ferramentaria[cite: 3]</td><td>Agosto/2026</td><td>Mariana Pereira Cruz</td><td><span class="badge badge-ok">Concluído</span></td></tr>
+                            <tr data-mes="agosto" data-status="ok"><td><strong>POST-822607</strong> - G4[cite: 3]</td><td>Agosto/2026</td><td>Mariana Pereira Cruz</td><td><span class="badge badge-ok">Concluído</span></td></tr>
+                            <tr data-mes="agosto" data-status="pendente"><td><strong>POST-629235</strong> - Gerador CUMIS[cite: 3]</td><td>Agosto/2026</td><td>Mariana Pereira Cruz</td><td><span class="badge badge-danger">Pendente</span></td></tr>
+                            <tr data-mes="agosto" data-status="ok"><td><strong>POST-718361</strong> - Gerador MS[cite: 3]</td><td>Agosto/2026</td><td>Mariana Pereira Cruz</td><td><span class="badge badge-ok">Concluído</span></td></tr>
+                            <tr data-mes="agosto" data-status="pendente"><td><strong>POST-718343</strong> - Gerador Toyama[cite: 3]</td><td>Agosto/2026</td><td>Mariana Pereira Cruz</td><td><span class="badge badge-danger">Pendente</span></td></tr>
+                            <tr data-mes="julho" data-status="ok"><td><strong>POST-630280</strong> - Içamento de Carga (Contêiner)[cite: 3]</td><td>Julho/2026</td><td>Mariana Pereira Cruz</td><td><span class="badge badge-ok">Concluído</span></td></tr>
+                            <tr data-mes="julho" data-status="ok"><td><strong>POST-387083</strong> - Laboratório de elétrica e eletrônica[cite: 3]</td><td>Julho/2026</td><td>Mariana Pereira Cruz</td><td><span class="badge badge-ok">Concluído</span></td></tr>
+                            <tr data-mes="julho" data-status="pendente"><td><strong>POST-971718</strong> - Matéria-Prima G2[cite: 3]</td><td>Julho/2026</td><td>Mariana Pereira Cruz</td><td><span class="badge badge-danger">Pendente</span></td></tr>
+                            <tr data-mes="julho" data-status="ok"><td><strong>POST-971666</strong> - Oficina de Manutenção G2[cite: 3]</td><td>Julho/2026</td><td>Mariana Pereira Cruz</td><td><span class="badge badge-ok">Concluído</span></td></tr>
+                            <tr data-mes="junho" data-status="ok"><td><strong>POST-971742</strong> - Produtos Acabados G2[cite: 3]</td><td>Junho/2026</td><td>Mariana Pereira Cruz</td><td><span class="badge badge-ok">Concluído</span></td></tr>
+                            <tr data-mes="junho" data-status="ok"><td><strong>POST-971746</strong> - Produtos Químicos G2[cite: 3]</td><td>Junho/2026</td><td>Mariana Pereira Cruz</td><td><span class="badge badge-ok">Concluído</span></td></tr>
+                            <tr data-mes="junho" data-status="ok"><td><strong>POST-970883</strong> - Sala de Compressores G2[cite: 3]</td><td>Junho/2026</td><td>Mariana Pereira Cruz</td><td><span class="badge badge-ok">Concluído</span></td></tr>
+                            <tr data-mes="junho" data-status="pendente"><td><strong>POST-935635</strong> - Sala do Almoxarifado G2[cite: 3]</td><td>Junho/2026</td><td>Mariana Pereira Cruz</td><td><span class="badge badge-danger">Pendente</span></td></tr>
+                            <tr data-mes="junho" data-status="ok"><td><strong>POST-642629</strong> - Sala dos Compressores G1[cite: 3]</td><td>Junho/2026</td><td>Mariana Pereira Cruz</td><td><span class="badge badge-ok">Concluído</span></td></tr>
+                            <tr data-mes="junho" data-status="ok"><td><strong>POST-199278</strong> - Sala elétrica 1[cite: 3]</td><td>Junho/2026</td><td>Mariana Pereira Cruz</td><td><span class="badge badge-ok">Concluído</span></td></tr>
+                            <tr data-mes="junho" data-status="pendente"><td><strong>POST-387013</strong> - Sala elétrica 2[cite: 3]</td><td>Junho/2026</td><td>Mariana Pereira Cruz</td><td><span class="badge badge-danger">Pendente</span></td></tr>
+                            <tr data-mes="junho" data-status="ok"><td><strong>POST-629274</strong> - SPCI[cite: 3]</td><td>Junho/2026</td><td>Mariana Pereira Cruz</td><td><span class="badge badge-ok">Concluído</span></td></tr>
+                            <tr data-mes="junho" data-status="ok"><td><strong>POST-000475</strong> - Subestação 01[cite: 3]</td><td>Junho/2026</td><td>Mariana Pereira Cruz</td><td><span class="badge badge-ok">Concluído</span></td></tr>
+                            <tr data-mes="junho" data-status="ok"><td><strong>POST-971454</strong> - Subestação 02[cite: 3]</td><td>Junho/2026</td><td>Mariana Pereira Cruz</td><td><span class="badge badge-ok">Concluído</span></td></tr>
+                            <tr data-mes="junho" data-status="pendente"><td><strong>POST-971617</strong> - Usinagem G2[cite: 3]</td><td>Junho/2026</td><td>Mariana Pereira Cruz</td><td><span class="badge badge-danger">Pendente</span></td></tr>
                         </tbody>
                     </table>
                 </div>
@@ -259,7 +192,7 @@
 
         <!-- RODAPÉ COM A VERSÃO -->
         <div class="footer-version">
-            Portal de Indicadores v1.0.4 | Coordenação: Bianca Medeiros | Responsável: Mariana Pereira Cruz
+            Portal de Indicadores v1.0.5 | Coordenação: Bianca Medeiros | Responsável: Mariana Pereira Cruz
         </div>
     </div>
 
