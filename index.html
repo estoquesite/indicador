@@ -16,7 +16,7 @@
             <div class="mb-6 md:mb-0">
                 <span class="bg-emerald-600 text-emerald-100 text-xs font-semibold px-3 py-1 rounded-full uppercase tracking-wider">Painel Corporativo</span>
                 <h1 class="text-3xl md:text-4xl font-extrabold mt-2 tracking-tight">Indicador de Avaliação de Postos</h1>
-                <p class="text-emerald-200 mt-2 text-sm max-w-xl">Cruzamento inteligente otimizado (sem restrição de acentos ou maiúsculas) com a Aba Total.</p>
+                <p class="text-emerald-200 mt-2 text-sm max-w-xl">Acompanhamento detalhado com exibição da data real (Coluna D) e Número da Inspeção/Auditoria.</p>
             </div>
             <div class="bg-white/10 backdrop-blur-md border border-white/20 p-4 rounded-xl text-center min-w-[200px]">
                 <span class="block text-xs text-emerald-200 uppercase font-medium">Postos Monitorados</span>
@@ -46,8 +46,8 @@
                         <option value="Maio">Maio</option>
                         <option value="Junho">Junho</option>
                         <option value="Julho">Julho</option>
-                        <option value="Agosto" selected>Agosto</option>
-                        <option value="Setembro">Setembro</option>
+                        <option value="Agosto">Agosto</option>
+                        <option value="Setembro" selected>Setembro</option>
                         <option value="Outubro">Outubro</option>
                         <option value="Novembro">Novembro</option>
                         <option value="Dezembro">Dezembro</option>
@@ -86,13 +86,13 @@
                             <th class="p-4">Código do Posto</th>
                             <th class="p-4">Nome do Posto / Título</th>
                             <th class="p-4">Mês de Referência</th>
-                            <th class="p-4">Data Registro (Coluna D)</th>
+                            <th class="p-4">Data Real (Coluna D) & Nº Auditoria</th>
                             <th class="p-4">Status</th>
                         </tr>
                     </thead>
                     <tbody id="tabelaCorpo" class="divide-y divide-slate-200 text-sm">
                         <tr>
-                            <td colspan="5" class="p-8 text-center text-slate-400">Lendo dados do Google Drive...</td>
+                            <td colspan="5" class="p-8 text-center text-slate-400">Lendo dados detalhados do Google Drive...</td>
                         </tr>
                     </tbody>
                 </table>
@@ -103,10 +103,10 @@
 
     <!-- RODAPÉ COM A VERSÃO -->
     <footer class="w-full text-center py-4 text-slate-400 text-[10px] border-t border-slate-200 bg-white">
-        Indicador de Postos &bull; Versão 11
+        Indicador de Postos &bull; Versão 12
     </footer>
 
-    <!-- SCRIPT COM NORMALIZAÇÃO ROBUSTA DE TEXTO -->
+    <!-- SCRIPT DE PROCESSAMENTO DETALHADO -->
     <script>
         const CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQUoRnkIRo0UhP2r1_IbUfJ2abD3UyvsFBGR8c8tUKYtsUQqQvyfdVC2tDRIymeEA/pub?gid=786393118&single=true&output=csv";
 
@@ -143,16 +143,11 @@
             "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"
         ];
 
-        let dadosAuditoria = [];
+        let dadosAuditoriaDetalhados = [];
 
-        // Remove acentos, cedilhas, maiúsculas e espaços extras para garantir o match perfeito
         function normalizar(texto) {
             if (!texto) return "";
-            return texto.toString()
-                .normalize("NFD")
-                .replace(/[\u0300-\u036f]/g, "")
-                .toLowerCase()
-                .trim();
+            return texto.toString().normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().trim();
         }
 
         async function carregarDadosDrive() {
@@ -161,17 +156,42 @@
                 const textoCsv = await response.text();
                 const linhas = textoCsv.split('\n');
                 
-                dadosAuditoria = [];
+                dadosAuditoriaDetalhados = [];
 
+                // Exemplo de colunas comuns: 
+                // Coluna 0: Número da Inspeção / Auditoria
+                // Coluna 3: Data (Coluna D)
+                // Coluna X: Título / Posto
                 for (let i = 1; i < linhas.length; i++) {
                     const linha = linhas[i];
                     if (!linha.trim()) continue;
                     
-                    // Armazena a linha inteira normalizada para busca flexível
-                    dadosAuditoria.push({
-                        textoOriginal: linha,
-                        textoNormalizado: normalizar(linha)
-                    });
+                    const colunas = linha.split(',');
+                    if (colunas.length > 3) {
+                        const numAuditoria = colunas[0] ? colunas[0].replace(/"/g, '').trim() : "N/D";
+                        const dataRegistro = colunas[3] ? colunas[3].replace(/"/g, '').trim() : "-";
+                        
+                        // Tenta extrair o mês aproximado da data (ex: formato DD/MM/AAAA ou MM/DD/AAAA)
+                        let mesDetectado = "";
+                        if (dataRegistro.includes("/")) {
+                            const partes = dataRegistro.split('/');
+                            if (partes.length >= 2) {
+                                const mesNum = parseInt(partes[1], 10);
+                                const mesesNomes = ["Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho", "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"];
+                                if (mesNum >= 1 && mesNum <= 12) {
+                                    mesDetectado = mesesNomes[mesNum - 1];
+                                }
+                            }
+                        }
+
+                        const linhaStr = colunas.join(' ');
+                        dadosAuditoriaDetalhados.push({
+                            numAuditoria: numAuditoria,
+                            dataRegistro: dataRegistro,
+                            mesDetectado: mesDetectado,
+                            textoNormalizado: normalizar(linhaStr)
+                        });
+                    }
                 }
                 renderizarTabela();
             } catch (erro) {
@@ -191,9 +211,6 @@
             basePostos.forEach(posto => {
                 mesesDoAno.forEach(mes => {
                     const codigoNorm = normalizar(posto.codigo);
-                    
-                    // Pega partes principais do nome (ex: "residuos g2", "caldeiraria", "container mecanica")
-                    // removendo palavras genéricas para facilitar a localização
                     let nomeCurto = normalizar(posto.nome)
                         .replace("area de", "")
                         .replace("sala de", "")
@@ -204,11 +221,11 @@
 
                     const mesNorm = normalizar(mes);
 
-                    // Procura na planilha se existe uma linha que contenha o código OU o nome E o mês correspondente
-                    const registroEncontrado = dadosAuditoria.find(item => {
+                    // Procura o registro correspondente ao posto e ao mês
+                    const achou = dadosAuditoriaDetalhados.find(item => {
                         let t = item.textoNormalizado;
                         let temPosto = t.includes(codigoNorm) || (nomeCurto.length > 3 && t.includes(nomeCurto));
-                        let temMes = t.includes(mesNorm);
+                        let temMes = t.includes(mesNorm) || item.mesDetectado.toLowerCase() === mes.toLowerCase();
                         return temPosto && temMes;
                     });
 
@@ -216,8 +233,9 @@
                         codigo: posto.codigo,
                         nome: posto.nome,
                         mes: mes,
-                        data: registroEncontrado ? "Registrado no Mês" : "-",
-                        status: registroEncontrado ? "Avaliado" : "Pendente"
+                        dataExata: achou ? achou.dataRegistro : "-",
+                        numAuditoria: achou ? `Auditoria #${achou.numAuditoria}` : "",
+                        status: achou ? "Avaliado" : "Pendente"
                     });
                 });
             });
@@ -242,11 +260,15 @@
                     ? `<span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold bg-emerald-100 text-emerald-800"><i class="fa-solid fa-check mr-1.5"></i> Avaliado no Mês</span>`
                     : `<span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold bg-amber-100 text-amber-800"><i class="fa-solid fa-clock mr-1.5"></i> Pendente de Avaliação</span>`;
 
+                const infoDetalhe = item.dataExata !== "-" 
+                    ? `<span class="font-semibold text-slate-900">${item.dataExata}</span> <span class="text-xs text-emerald-700 bg-emerald-100 px-2 py-0.5 rounded ml-1">${item.numAuditoria}</span>`
+                    : `<span class="text-slate-400">-</span>`;
+
                 tr.innerHTML = `
                     <td class="p-4 font-semibold text-slate-900">${item.codigo}</td>
                     <td class="p-4 font-medium text-slate-700">${item.nome}</td>
                     <td class="p-4 font-medium text-emerald-900">${item.mes}</td>
-                    <td class="p-4 text-slate-600">${item.data}</td>
+                    <td class="p-4 text-slate-600">${infoDetalhe}</td>
                     <td class="p-4">${badgeStatus}</td>
                 `;
                 tbody.appendChild(tr);
