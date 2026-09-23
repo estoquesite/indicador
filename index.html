@@ -51,7 +51,7 @@
         th { background-color: #f1f3f5; color: #333; position: sticky; top: 0; z-index: 10; font-weight: 600; }
         tr:hover { background-color: #f8f9fa; }
         
-        /* Linha de Totalizador no Rodapé da Tabela */
+        /* Rodapé Fixo da Tabela */
         tfoot td { background-color: #e9ecef; font-weight: bold; color: var(--primary-color); border-top: 2px solid var(--primary-color); position: sticky; bottom: 0; }
 
         .badge { padding: 5px 10px; border-radius: 12px; font-size: 11px; font-weight: bold; }
@@ -177,7 +177,7 @@
                         </tbody>
                         <tfoot>
                             <tr>
-                                <td colspan="2">TOTAL GERAL DE LINHAS EXIBIDAS:</td>
+                                <td colspan="2">TOTAL GERAL DE REGISTROS FILTRADOS:</td>
                                 <td id="lblTotalRodape">28</td>
                             </tr>
                         </tfoot>
@@ -204,7 +204,7 @@
 
         <!-- RODAPÉ COM A VERSÃO -->
         <div class="footer-version">
-            Portal de Indicadores v1.0.9 | Coordenação: Bianca Medeiros | Responsável: Mariana Pereira Cruz
+            Portal de Indicadores v1.0.10 | Coordenação: Bianca Medeiros | Responsável: Mariana Pereira Cruz
         </div>
     </div>
 
@@ -249,11 +249,11 @@
                 }
             }
 
-            // Atualiza os contadores dos cards e o rodapé da tabela
+            // Atualiza os contadores dos cards superiores e o rodapé exato
             document.getElementById("lblTotal").innerText = totalVisiveis;
             document.getElementById("lblOk").innerText = totalOk;
             document.getElementById("lblPendente").innerText = totalPendente;
-            document.getElementById("lblTotalRodape").innerText = totalVisiveis + " registros filtrados";
+            document.getElementById("lblTotalRodape").innerText = totalVisiveis + " registros exibidos";
         }
     </script>
 </body>
