@@ -2,7 +2,7 @@
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
-    <title>Portal de Indicadores - Confiabilidade & Gestão de Ativos (Vale)</title>
+    <title>Portal de Indicadores - Auditoria 5S (Por Posto)</title>
     <style>
         :root {
             --primary-color: #1f4e79;
@@ -18,7 +18,7 @@
         .sidebar-header h2 { font-size: 16px; margin: 0; color: #ecf0f1; }
         .sidebar-header p { font-size: 11px; margin: 5px 0 0 0; color: #bdc3c7; }
         .menu-list { list-style: none; padding: 0; margin: 0; flex-grow: 1; }
-        .menu-item { padding: 15px 20px; font-size: 14px; cursor: pointer; border-bottom: 1px solid #34495e; transition: background 0.2s; display: flex; align-items: center; gap: 10px; background-color: var(--primary-color); color: white; }
+        .menu-item { padding: 15px 20px; font-size: 14px; cursor: pointer; border-bottom: 1px solid #34495e; background-color: var(--primary-color); color: white; display: flex; align-items: center; gap: 10px; }
         .main-content { flex-grow: 1; display: flex; flex-direction: column; overflow-y: auto; padding: 30px; position: relative; }
         .header-top { border-bottom: 2px solid var(--border-color); padding-bottom: 15px; margin-bottom: 25px; }
         .header-top h1 { color: var(--primary-color); font-size: 24px; margin: 0; }
@@ -51,12 +51,12 @@
             <p>Confiabilidade & Ativos</p>
         </div>
         <ul class="menu-list">
-            <li class="menu-item">📊 Auditoria 5S</li>
+            <li class="menu-item">📊 Auditoria 5S (Por Posto)</li>
         </ul>
     </div>
     <div class="main-content">
         <div class="header-top">
-            <h1>Portal de Indicadores - Auditoria 5S (Base Real)</h1>
+            <h1>Portal de Indicadores - Acompanhamento por Posto</h1>
         </div>
         <div class="filters-bar">
             <div>
@@ -70,30 +70,30 @@
                 </select>
             </div>
             <div>
-                <label for="filtroStatus">Status da Inspeção:</label>
+                <label for="filtroStatus">Status do Posto:</label>
                 <select id="filtroStatus" onchange="renderizarTabela()">
                     <option value="todos" selected>Todos os Status</option>
-                    <option value="Encerrado">Apenas Encerrado</option>
-                    <option value="Novo">Apenas Novo (Pendente)</option>
+                    <option value="Encerrado">Apenas Avaliado / Encerrado</option>
+                    <option value="Novo">Apenas Pendente (Novo)</option>
                 </select>
             </div>
         </div>
         <div class="indicator-card">
             <h2>
-                <span>Maturidade do Programa 5S - Coordenação: Bianca Medeiros</span>
+                <span>Maturidade 5S por Posto - Coordenação: Bianca Medeiros</span>
                 <span style="font-size: 12px; font-weight: normal; color: #666;">Responsável: Mariana Pereira Cruz</span>
             </h2>
             <div class="cards-resumo">
                 <div class="mini-card">
-                    <h3>Registros Exibidos</h3>
+                    <h3>Postos Exibidos</h3>
                     <div class="value" id="lblTotal">0</div>
                 </div>
                 <div class="mini-card">
-                    <h3>Encerrados</h3>
+                    <h3>Avaliados (Encerrados)</h3>
                     <div class="value" id="lblEncerrado" style="color: #28a745;">0</div>
                 </div>
                 <div class="mini-card">
-                    <h3>Pendentes (Novo)</h3>
+                    <h3>Pendentes</h3>
                     <div class="value" id="lblPendente" style="color: #dc3545;">0</div>
                 </div>
             </div>
@@ -103,9 +103,9 @@
                         <tr>
                             <th style="width: 50px;">#</th>
                             <th>Nº Inspeção</th>
-                            <th>Data Registro</th>
+                            <th>Data Real</th>
                             <th>Mês</th>
-                            <th>Título da Inspeção</th>
+                            <th>Posto / Área</th>
                             <th>Status</th>
                             <th>Conformidade</th>
                         </tr>
@@ -113,77 +113,77 @@
                     <tbody id="corpoTabela"></tbody>
                     <tfoot>
                         <tr>
-                            <td colspan="4">TOTAL BRUTO DE REGISTROS EXIBIDOS:</td>
-                            <td colspan="3" id="lblTotalRodape" style="text-align: right;">0 linhas</td>
+                            <td colspan="4">TOTAL DE POSTOS EXIBIDOS:</td>
+                            <td colspan="3" id="lblTotalRodape" style="text-align: right;">0 postos</td>
                         </tr>
                     </tfoot>
                 </table>
             </div>
         </div>
         <div class="footer-version">
-            Portal de Indicadores v1.0.14 | Auditoria Oficial Vale S.A.
+            Portal de Indicadores v2.0 | Auditoria Oficial Vale S.A.
         </div>
     </div>
 
     <script>
         const dadosBase = [
-            {"Número da Inspeção / Auditoria": 24995079, "Data do Registro Inicial": "2026-06-09", "Mês do Registro Inicial": "Junho", "Título da Inspeção / Auditoria": "Inspeção de 5S - Área Subestação 01", "Status da Inspeção": "Encerrado", "% de Conformidade da Inspeção": 100.0},
-            {"Número da Inspeção / Auditoria": 24995143, "Data do Registro Inicial": "2026-06-09", "Mês do Registro Inicial": "Junho", "Título da Inspeção / Auditoria": "Inspeção de 5S - Área Subestação 02", "Status da Inspeção": "Encerrado", "% de Conformidade da Inspeção": 100.0},
-            {"Número da Inspeção / Auditoria": 25280607, "Data do Registro Inicial": "2026-07-23", "Mês do Registro Inicial": "Junho", "Título da Inspeção / Auditoria": "Inspeção de 5S - Área Sala de Compressores G2", "Status da Inspeção": "Encerrado", "% de Conformidade da Inspeção": 100.0},
-            {"Número da Inspeção / Auditoria": 25280651, "Data do Registro Inicial": "2026-07-23", "Mês do Registro Inicial": "Junho", "Título da Inspeção / Auditoria": "Inspeção de 5S - Usinagem G2", "Status da Inspeção": "Novo", "% de Conformidade da Inspeção": 93.3333},
-            {"Número da Inspeção / Auditoria": 25288610, "Data do Registro Inicial": "2026-07-24", "Mês do Registro Inicial": "Junho", "Título da Inspeção / Auditoria": "Inspeção de 5S - Área Sala dos Compressores G1", "Status da Inspeção": "Encerrado", "% de Conformidade da Inspeção": 100.0},
-            {"Número da Inspeção / Auditoria": 25302078, "Data do Registro Inicial": "2026-07-27", "Mês do Registro Inicial": "Julho", "Título da Inspeção / Auditoria": "Inspeção de 5S - Área sala elétrica /eletrônica", "Status da Inspeção": "Encerrado", "% de Conformidade da Inspeção": 100.0},
-            {"Número da Inspeção / Auditoria": 25302284, "Data do Registro Inicial": "2026-07-27", "Mês do Registro Inicial": "Julho", "Título da Inspeção / Auditoria": "Inspeção de 5S na área Área Sala elétrica", "Status da Inspeção": "Encerrado", "% de Conformidade da Inspeção": 100.0},
-            {"Número da Inspeção / Auditoria": 25302289, "Data do Registro Inicial": "2026-07-27", "Mês do Registro Inicial": "Julho", "Título da Inspeção / Auditoria": "(código do posto: POST-000475)", "Status da Inspeção": "Encerrado", "% de Conformidade da Inspeção": 100.0},
-            {"Número da Inspeção / Auditoria": 25302316, "Data do Registro Inicial": "2026-07-27", "Mês do Registro Inicial": "Julho", "Título da Inspeção / Auditoria": "Inspeção de 5S na área Área Subestação 02", "Status da Inspeção": "Encerrado", "% de Conformidade da Inspeção": 100.0},
-            {"Número da Inspeção / Auditoria": 25302352, "Data do Registro Inicial": "2026-07-27", "Mês do Registro Inicial": "Julho", "Título da Inspeção / Auditoria": "Inspeção de 5S na área Área Sala elétrica 02", "Status da Inspeção": "Encerrado", "% de Conformidade da Inspeção": 100.0},
-            {"Número da Inspeção / Auditoria": 25303711, "Data do Registro Inicial": "2026-07-27", "Mês do Registro Inicial": "Julho", "Título da Inspeção / Auditoria": "Inspeção de 5S na área  Sala do Almoxarifado G2", "Status da Inspeção": "Encerrado", "% de Conformidade da Inspeção": 100.0},
-            {"Número da Inspeção / Auditoria": 25304945, "Data do Registro Inicial": "2026-07-27", "Mês do Registro Inicial": "Julho", "Título da Inspeção / Auditoria": "Inspeção de 5S na área Área Ferramentaria", "Status da Inspeção": "Encerrado", "% de Conformidade da Inspeção": 100.0},
-            {"Número da Inspeção / Auditoria": 25305079, "Data do Registro Inicial": "2026-07-27", "Mês do Registro Inicial": "Julho", "Título da Inspeção / Auditoria": "Inspeção de 5S na Área Içamento de Carga (Contêiner)", "Status da Inspeção": "Encerrado", "% de Conformidade da Inspeção": 100.0},
-            {"Número da Inspeção / Auditoria": 25312170, "Data do Registro Inicial": "2026-07-28", "Mês do Registro Inicial": "Julho", "Título da Inspeção / Auditoria": "Inspeção de 5S na área Área de Caldeiraria e suas Máquinas G2", "Status da Inspeção": "Encerrado", "% de Conformidade da Inspeção": 100.0},
-            {"Número da Inspeção / Auditoria": 25325972, "Data do Registro Inicial": "2026-07-30", "Mês do Registro Inicial": "Julho", "Título da Inspeção / Auditoria": "Inspeção de 5S na área Baia de Gases Almoxarifado", "Status da Inspeção": "Encerrado", "% de Conformidade da Inspeção": 100.0},
-            {"Número da Inspeção / Auditoria": 25326025, "Data do Registro Inicial": "2026-07-30", "Mês do Registro Inicial": "Julho", "Título da Inspeção / Auditoria": "Inspeção de 5S na área Container Elétrica", "Status da Inspeção": "Encerrado", "% de Conformidade da Inspeção": 100.0},
-            {"Número da Inspeção / Auditoria": 25326096, "Data do Registro Inicial": "2026-07-30", "Mês do Registro Inicial": "Julho", "Título da Inspeção / Auditoria": "Inspeção de 5S na área Área Container Mecânica", "Status da Inspeção": "Encerrado", "% de Conformidade da Inspeção": 100.0},
-            {"Número da Inspeção / Auditoria": 25326126, "Data do Registro Inicial": "2026-07-30", "Mês do Registro Inicial": "Julho", "Título da Inspeção / Auditoria": "Inspeção de 5S na área Área G4", "Status da Inspeção": "Encerrado", "% de Conformidade da Inspeção": 100.0},
-            {"Número da Inspeção / Auditoria": 25326158, "Data do Registro Inicial": "2026-07-30", "Mês do Registro Inicial": "Julho", "Título da Inspeção / Auditoria": "Inspeção de 5S na área Área Produtos Acabados G2", "Status da Inspeção": "Encerrado", "% de Conformidade da Inspeção": 100.0},
-            {"Número da Inspeção / Auditoria": 25326248, "Data do Registro Inicial": "2026-07-30", "Mês do Registro Inicial": "Julho", "Título da Inspeção / Auditoria": "Inspeção de 5S na área Área Matéria-Prima G2", "Status da Inspeção": "Encerrado", "% de Conformidade da Inspeção": 100.0},
-            {"Número da Inspeção / Auditoria": 25326325, "Data do Registro Inicial": "2026-07-30", "Mês do Registro Inicial": "Julho", "Título da Inspeção / Auditoria": "Inspeção de 5S na área Área Usinagem G2", "Status da Inspeção": "Encerrado", "% de Conformidade da Inspeção": 100.0},
-            {"Número da Inspeção / Auditoria": 25326390, "Data do Registro Inicial": "2026-07-30", "Mês do Registro Inicial": "Julho", "Título da Inspeção / Auditoria": "Inspeção de 5S na área Área Sala de Compressores G2", "Status da Inspeção": "Encerrado", "% de Conformidade da Inspeção": 100.0},
-            {"Número da Inspeção / Auditoria": 25326567, "Data do Registro Inicial": "2026-07-30", "Mês do Registro Inicial": "Julho", "Título da Inspeção / Auditoria": "Inspeção de 5S na área Área Sala dos Compressores G1", "Status da Inspeção": "Encerrado", "% de Conformidade da Inspeção": 100.0},
-            {"Número da Inspeção / Auditoria": 25326689, "Data do Registro Inicial": "2026-07-30", "Mês do Registro Inicial": "Julho", "Título da Inspeção / Auditoria": "Inspeção de 5S na área Área Gerador CUMIS", "Status da Inspeção": "Encerrado", "% de Conformidade da Inspeção": 100.0},
-            {"Número da Inspeção / Auditoria": 25326734, "Data do Registro Inicial": "2026-07-30", "Mês do Registro Inicial": "Julho", "Título da Inspeção / Auditoria": "Inspeção de 5S na área Área Gerador MS", "Status da Inspeção": "Encerrado", "% de Conformidade da Inspeção": 100.0},
-            {"Número da Inspeção / Auditoria": 25326815, "Data do Registro Inicial": "2026-07-30", "Mês do Registro Inicial": "Julho", "Título da Inspeção / Auditoria": "Inspeção de 5S na área Área Gerador Toyam", "Status da Inspeção": "Encerrado", "% de Conformidade da Inspeção": 100.0},
-            {"Número da Inspeção / Auditoria": 25326847, "Data do Registro Inicial": "2026-07-30", "Mês do Registro Inicial": "Julho", "Título da Inspeção / Auditoria": "Inspeção de 5S na área Área SPCI", "Status da Inspeção": "Encerrado", "% de Conformidade da Inspeção": 100.0},
-            {"Número da Inspeção / Auditoria": 25355828, "Data do Registro Inicial": "2026-08-03", "Mês do Registro Inicial": "Julho", "Título da Inspeção / Auditoria": "Desmontagem de eixo na peneira", "Status da Inspeção": "Encerrado", "% de Conformidade da Inspeção": 100.0},
-            {"Número da Inspeção / Auditoria": 25505712, "Data do Registro Inicial": "2026-08-26", "Mês do Registro Inicial": "Agosto", "Título da Inspeção / Auditoria": "Inspeção de 5S na área Área Ferramentaria", "Status da Inspeção": "Encerrado", "% de Conformidade da Inspeção": 100.0},
-            {"Número da Inspeção / Auditoria": 25505751, "Data do Registro Inicial": "2026-08-26", "Mês do Registro Inicial": "Agosto", "Título da Inspeção / Auditoria": "Inspeção de 5S na área  Sala do Almoxarifado G2", "Status da Inspeção": "Encerrado", "% de Conformidade da Inspeção": 100.0},
-            {"Número da Inspeção / Auditoria": 25505800, "Data do Registro Inicial": "2026-08-26", "Mês do Registro Inicial": "Agosto", "Título da Inspeção / Auditoria": "Inspeção de 5S na área  G4 (código do posto:POST-822607)", "Status da Inspeção": "Encerrado", "% de Conformidade da Inspeção": 100.0},
-            {"Número da Inspeção / Auditoria": 25505855, "Data do Registro Inicial": "2026-08-26", "Mês do Registro Inicial": "Agosto", "Título da Inspeção / Auditoria": "Inspeção de 5S na área Içamento de Carga (Contêiner)", "Status da Inspeção": "Encerrado", "% de Conformidade da Inspeção": 100.0},
-            {"Número da Inspeção / Auditoria": 25505888, "Data do Registro Inicial": "2026-08-26", "Mês do Registro Inicial": "Agosto", "Título da Inspeção / Auditoria": "Inspeção de 5S na área Baia de Gases Almoxarifado", "Status da Inspeção": "Encerrado", "% de Conformidade da Inspeção": 100.0},
-            {"Número da Inspeção / Auditoria": 25512623, "Data do Registro Inicial": "2026-08-27", "Mês do Registro Inicial": "Agosto", "Título da Inspeção / Auditoria": "Inspeção de 5S na área Sala elétrica 1", "Status da Inspeção": "Encerrado", "% de Conformidade da Inspeção": 100.0},
-            {"Número da Inspeção / Auditoria": 25512800, "Data do Registro Inicial": "2026-08-27", "Mês do Registro Inicial": "Agosto", "Título da Inspeção / Auditoria": "Inspeção de 5S na área Sala elétrica 2", "Status da Inspeção": "Encerrado", "% de Conformidade da Inspeção": 100.0},
-            {"Número da Inspeção / Auditoria": 25512833, "Data do Registro Inicial": "2026-08-27", "Mês do Registro Inicial": "Agosto", "Título da Inspeção / Auditoria": "Inspeção de 5S na área Subestação 01", "Status da Inspeção": "Encerrado", "% de Conformidade da Inspeção": 100.0},
-            {"Número da Inspeção / Auditoria": 25512890, "Data do Registro Inicial": "2026-08-27", "Mês do Registro Inicial": "Agosto", "Título da Inspeção / Auditoria": "Inspeção de 5S na área Subestação 02 (código do posto:POST-971454)", "Status da Inspeção": "Encerrado", "% de Conformidade da Inspeção": 100.0},
-            {"Número da Inspeção / Auditoria": 25512968, "Data do Registro Inicial": "2026-08-27", "Mês do Registro Inicial": "Agosto", "Título da Inspeção / Auditoria": "Inspeção de 5S na área Container Elétrica", "Status da Inspeção": "Encerrado", "% de Conformidade da Inspeção": 100.0},
-            {"Número da Inspeção / Auditoria": 25513026, "Data do Registro Inicial": "2026-08-27", "Mês do Registro Inicial": "Agosto", "Título da Inspeção / Auditoria": "Inspeção de 5S na área Container Mecânica (código do posto:POST-629405)", "Status da Inspeção": "Encerrado", "% de Conformidade da Inspeção": 100.0},
-            {"Número da Inspeção / Auditoria": 25517037, "Data do Registro Inicial": "2026-08-27", "Mês do Registro Inicial": "Agosto", "Título da Inspeção / Auditoria": "Inspeção de 5S na área Área de Caldeiraria e suas Máquinas G2", "Status da Inspeção": "Encerrado", "% de Conformidade da Inspeção": 100.0},
-            {"Número da Inspeção / Auditoria": 25517104, "Data do Registro Inicial": "2026-08-27", "Mês do Registro Inicial": "Agosto", "Título da Inspeção / Auditoria": "Inspeção de 5S na área Oficina de Manutenção G2", "Status da Inspeção": "Encerrado", "% de Conformidade da Inspeção": 100.0},
-            {"Número da Inspeção / Auditoria": 25587408, "Data do Registro Inicial": "2026-09-08", "Mês do Registro Inicial": "Setembro", "Título da Inspeção / Auditoria": "Inspeção de 5S na área Oficina de Manutenção G2", "Status da Inspeção": "Encerrado", "% de Conformidade da Inspeção": 100.0},
-            {"Número da Inspeção / Auditoria": 25590205, "Data do Registro Inicial": "2026-09-08", "Mês do Registro Inicial": "Setembro", "Título da Inspeção / Auditoria": "Inspeção de 5S na área Laboratório de elétrica e eletrônica", "Status da Inspeção": "Encerrado", "% de Conformidade da Inspeção": 100.0},
-            {"Número da Inspeção / Auditoria": 25640498, "Data do Registro Inicial": "2026-09-16", "Mês do Registro Inicial": "Setembro", "Título da Inspeção / Auditoria": "Inspeção de 5S na área Gerador CUMIS", "Status da Inspeção": "Encerrado", "% de Conformidade da Inspeção": 100.0},
-            {"Número da Inspeção / Auditoria": 25640526, "Data do Registro Inicial": "2026-09-16", "Mês do Registro Inicial": "Setembro", "Título da Inspeção / Auditoria": "Inspeção de 5S na área Gerador MS (código do posto:POST-718361)", "Status da Inspeção": "Novo", "% de Conformidade da Inspeção": 93.3333},
-            {"Número da Inspeção / Auditoria": 25640564, "Data do Registro Inicial": "2026-09-16", "Mês do Registro Inicial": "Setembro", "Título da Inspeção / Auditoria": "Inspeção de 5S na área Gerador Toyama (código do posto:POST-718343)", "Status da Inspeção": "Encerrado", "% de Conformidade da Inspeção": 100.0},
-            {"Número da Inspeção / Auditoria": 25640586, "Data do Registro Inicial": "2026-09-16", "Mês do Registro Inicial": "Setembro", "Título da Inspeção / Auditoria": "Inspeção de 5S na área Sala de Compressores G2 (código do posto:POST-970883)", "Status da Inspeção": "Encerrado", "% de Conformidade da Inspeção": 100.0},
-            {"Número da Inspeção / Auditoria": 25640660, "Data do Registro Inicial": "2026-09-16", "Mês do Registro Inicial": "Setembro", "Título da Inspeção / Auditoria": "Inspeção de 5S na área Sala dos Compressores G1 (código do posto:POST-642629)", "Status da Inspeção": "Encerrado", "% de Conformidade da Inspeção": 100.0},
-            {"Número da Inspeção / Auditoria": 25640749, "Data do Registro Inicial": "2026-09-16", "Mês do Registro Inicial": "Setembro", "Título da Inspeção / Auditoria": "Inspeção de 5S na área SPCI (código do posto:POST-629274)", "Status da Inspeção": "Encerrado", "% de Conformidade da Inspeção": 100.0},
-            {"Número da Inspeção / Auditoria": 25640801, "Data do Registro Inicial": "2026-09-16", "Mês do Registro Inicial": "Agosto", "Título da Inspeção / Auditoria": "Inspeção de 5S na área Gerador CUMIS (código do posto:POST-629235)", "Status da Inspeção": "Encerrado", "% de Conformidade da Inspeção": 100.0},
-            {"Número da Inspeção / Auditoria": 25640858, "Data do Registro Inicial": "2026-09-16", "Mês do Registro Inicial": "Agosto", "Título da Inspeção / Auditoria": "Inspeção de 5S na área Gerador MS (código do posto:POST-718361)", "Status da Inspeção": "Encerrado", "% de Conformidade da Inspeção": 100.0},
-            {"Número da Inspeção / Auditoria": 25640901, "Data do Registro Inicial": "2026-09-16", "Mês do Registro Inicial": "Setembro", "Título da Inspeção / Auditoria": "Inspeção de 5S na área Gerador Toyama (código do posto:POST-718343)", "Status da Inspeção": "Encerrado", "% de Conformidade da Inspeção": 100.0},
-            {"Número da Inspeção / Auditoria": 25640950, "Data do Registro Inicial": "2026-09-16", "Mês do Registro Inicial": "Agosto", "Título da Inspeção / Auditoria": "Inspeção de 5S na área Sala de Compressores G2 (código do posto:POST-970883)", "Status da Inspeção": "Encerrado", "% de Conformidade da Inspeção": 100.0},
-            {"Número da Inspeção / Auditoria": 25640993, "Data do Registro Inicial": "2026-09-16", "Mês do Registro Inicial": "Setembro", "Título da Inspeção / Auditoria": "Inspeção de 5S na área Sala dos Compressores G1 (código do posto:POST-642629)", "Status da Inspeção": "Encerrado", "% de Conformidade da Inspeção": 100.0},
-            {"Número da Inspeção / Auditoria": 25641080, "Data do Registro Inicial": "2026-09-16", "Mês do Registro Inicial": "Agosto", "Título da Inspeção / Auditoria": "Inspeção de 5S na área SPCI (código do posto:POST-629274)", "Status da Inspeção": "Encerrado", "% de Conformidade da Inspeção": 100.0},
-            {"Número da Inspeção / Auditoria": 25641150, "Data do Registro Inicial": "2026-09-16", "Mês do Registro Inicial": "Agosto", "Título da Inspeção / Auditoria": "Inspeção de 5S na área Gerador Toyama (código do posto:POST-718343)", "Status da Inspeção": "Encerrado", "% de Conformidade da Inspeção": 100.0},
-            {"Número da Inspeção / Auditoria": 25641174, "Data do Registro Inicial": "2026-09-16", "Mês do Registro Inicial": "Agosto", "Título da Inspeção / Auditoria": "Inspeção de 5S na área Sala dos Compressores G1 (código do posto:POST-642629)", "Status da Inspeção": "Encerrado", "% de Conformidade da Inspeção": 100.0}
+            {"Inspeção": 24995079, "Data": "2026-06-09", "Mes": "Junho", "Titulo": "Inspeção de 5S - Área Subestação 01", "Status": "Encerrado", "Conformidade": 100.0},
+            {"Inspeção": 24995143, "Data": "2026-06-09", "Mes": "Junho", "Titulo": "Inspeção de 5S - Área Subestação 02", "Status": "Encerrado", "Conformidade": 100.0},
+            {"Inspeção": 25280607, "Data": "2026-06-30", "Mes": "Junho", "Titulo": "Inspeção de 5S - Área Sala de Compressores G2", "Status": "Encerrado", "Conformidade": 100.0},
+            {"Inspeção": 25280651, "Data": "2026-06-30", "Mes": "Junho", "Titulo": "Inspeção de 5S - Usinagem G2", "Status": "Novo", "Conformidade": 93.3333},
+            {"Inspeção": 25288610, "Data": "2026-06-30", "Mes": "Junho", "Titulo": "Inspeção de 5S - Área Sala dos Compressores G1", "Status": "Encerrado", "Conformidade": 100.0},
+            {"Inspeção": 25302078, "Data": "2026-07-27", "Mes": "Julho", "Titulo": "Inspeção de 5S - Área sala elétrica /eletrônica", "Status": "Encerrado", "Conformidade": 100.0},
+            {"Inspeção": 25302284, "Data": "2026-07-27", "Mes": "Julho", "Titulo": "Inspeção de 5S na área Área Sala elétrica", "Status": "Encerrado", "Conformidade": 100.0},
+            {"Inspeção": 25302289, "Data": "2026-07-27", "Mes": "Julho", "Titulo": "(código do posto: POST-000475)", "Status": "Encerrado", "Conformidade": 100.0},
+            {"Inspeção": 25302316, "Data": "2026-07-27", "Mes": "Julho", "Titulo": "Inspeção de 5S na área Área Subestação 02", "Status": "Encerrado", "Conformidade": 100.0},
+            {"Inspeção": 25302352, "Data": "2026-07-27", "Mes": "Julho", "Titulo": "Inspeção de 5S na área Área Sala elétrica 02", "Status": "Encerrado", "Conformidade": 100.0},
+            {"Inspeção": 25303711, "Data": "2026-07-27", "Mes": "Julho", "Titulo": "Inspeção de 5S na área  Sala do Almoxarifado G2", "Status": "Encerrado", "Conformidade": 100.0},
+            {"Inspeção": 25304945, "Data": "2026-07-27", "Mes": "Julho", "Titulo": "Inspeção de 5S na área Área Ferramentaria", "Status": "Encerrado", "Conformidade": 100.0},
+            {"Inspeção": 25305079, "Data": "2026-07-27", "Mes": "Julho", "Titulo": "Inspeção de 5S na Área Içamento de Carga (Contêiner)", "Status": "Encerrado", "Conformidade": 100.0},
+            {"Inspeção": 25312170, "Data": "2026-07-28", "Mes": "Julho", "Titulo": "Inspeção de 5S na área Área de Caldeiraria e suas Máquinas G2", "Status": "Encerrado", "Conformidade": 100.0},
+            {"Inspeção": 25325972, "Data": "2026-07-30", "Mes": "Julho", "Titulo": "Inspeção de 5S na área Baia de Gases Almoxarifado", "Status": "Encerrado", "Conformidade": 100.0},
+            {"Inspeção": 25326025, "Data": "2026-07-30", "Mes": "Julho", "Titulo": "Inspeção de 5S na área Container Elétrica", "Status": "Encerrado", "Conformidade": 100.0},
+            {"Inspeção": 25326096, "Data": "2026-07-30", "Mes": "Julho", "Titulo": "Inspeção de 5S na área Área Container Mecânica", "Status": "Encerrado", "Conformidade": 100.0},
+            {"Inspeção": 25326126, "Data": "2026-07-30", "Mes": "Julho", "Titulo": "Inspeção de 5S na área Área G4", "Status": "Encerrado", "Conformidade": 100.0},
+            {"Inspeção": 25326158, "Data": "2026-07-30", "Mes": "Julho", "Titulo": "Inspeção de 5S na área Área Produtos Acabados G2", "Status": "Encerrado", "Conformidade": 100.0},
+            {"Inspeção": 25326248, "Data": "2026-07-30", "Mes": "Julho", "Titulo": "Inspeção de 5S na área Área Matéria-Prima G2", "Status": "Encerrado", "Conformidade": 100.0},
+            {"Inspeção": 25326325, "Data": "2026-07-30", "Mes": "Julho", "Titulo": "Inspeção de 5S na área Área Usinagem G2", "Status": "Encerrado", "Conformidade": 100.0},
+            {"Inspeção": 25326390, "Data": "2026-07-30", "Mes": "Julho", "Titulo": "Inspeção de 5S na área Área Sala de Compressores G2", "Status": "Encerrado", "Conformidade": 100.0},
+            {"Inspeção": 25326567, "Data": "2026-07-30", "Mes": "Julho", "Titulo": "Inspeção de 5S na área Área Sala dos Compressores G1", "Status": "Encerrado", "Conformidade": 100.0},
+            {"Inspeção": 25326689, "Data": "2026-07-30", "Mes": "Julho", "Titulo": "Inspeção de 5S na área Área Gerador CUMIS", "Status": "Encerrado", "Conformidade": 100.0},
+            {"Inspeção": 25326734, "Data": "2026-07-30", "Mes": "Julho", "Titulo": "Inspeção de 5S na área Área Gerador MS", "Status": "Encerrado", "Conformidade": 100.0},
+            {"Inspeção": 25326815, "Data": "2026-07-30", "Mes": "Julho", "Titulo": "Inspeção de 5S na área Área Gerador Toyam", "Status": "Encerrado", "Conformidade": 100.0},
+            {"Inspeção": 25326847, "Data": "2026-07-30", "Mes": "Julho", "Titulo": "Inspeção de 5S na área Área SPCI", "Status": "Encerrado", "Conformidade": 100.0},
+            {"Inspeção": 25355828, "Data": "2026-07-30", "Mes": "Julho", "Titulo": "Desmontagem de eixo na peneira", "Status": "Encerrado", "Conformidade": 100.0},
+            {"Inspeção": 25505712, "Data": "2026-08-26", "Mes": "Agosto", "Titulo": "Inspeção de 5S na área Área Ferramentaria", "Status": "Encerrado", "Conformidade": 100.0},
+            {"Inspeção": 25505751, "Data": "2026-08-26", "Mes": "Agosto", "Titulo": "Inspeção de 5S na área  Sala do Almoxarifado G2", "Status": "Encerrado", "Conformidade": 100.0},
+            {"Inspeção": 25505800, "Data": "2026-08-26", "Mes": "Agosto", "Titulo": "Inspeção de 5S na área  G4 (código do posto:POST-822607)", "Status": "Encerrado", "Conformidade": 100.0},
+            {"Inspeção": 25505855, "Data": "2026-08-26", "Mes": "Agosto", "Titulo": "Inspeção de 5S na área Içamento de Carga (Contêiner)", "Status": "Encerrado", "Conformidade": 100.0},
+            {"Inspeção": 25505888, "Data": "2026-08-26", "Mes": "Agosto", "Titulo": "Inspeção de 5S na área Baia de Gases Almoxarifado", "Status": "Encerrado", "Conformidade": 100.0},
+            {"Inspeção": 25512623, "Data": "2026-08-27", "Mes": "Agosto", "Titulo": "Inspeção de 5S na área Sala elétrica 1", "Status": "Encerrado", "Conformidade": 100.0},
+            {"Inspeção": 25512800, "Data": "2026-08-27", "Mes": "Agosto", "Titulo": "Inspeção de 5S na área Sala elétrica 2", "Status": "Encerrado", "Conformidade": 100.0},
+            {"Inspeção": 25512833, "Data": "2026-08-27", "Mes": "Agosto", "Titulo": "Inspeção de 5S na área Subestação 01", "Status": "Encerrado", "Conformidade": 100.0},
+            {"Inspeção": 25512890, "Data": "2026-08-27", "Mes": "Agosto", "Titulo": "Inspeção de 5S na área Subestação 02 (código do posto:POST-971454)", "Status": "Encerrado", "Conformidade": 100.0},
+            {"Inspeção": 25512968, "Data": "2026-08-27", "Mes": "Agosto", "Titulo": "Inspeção de 5S na área Container Elétrica", "Status": "Encerrado", "Conformidade": 100.0},
+            {"Inspeção": 25513026, "Data": "2026-08-27", "Mes": "Agosto", "Titulo": "Inspeção de 5S na área Container Mecânica (código do posto:POST-629405)", "Status": "Encerrado", "Conformidade": 100.0},
+            {"Inspeção": 25517037, "Data": "2026-08-27", "Mes": "Agosto", "Titulo": "Inspeção de 5S na área Área de Caldeiraria e suas Máquinas G2", "Status": "Encerrado", "Conformidade": 100.0},
+            {"Inspeção": 25517104, "Data": "2026-08-27", "Mes": "Agosto", "Titulo": "Inspeção de 5S na área Oficina de Manutenção G2", "Status": "Encerrado", "Conformidade": 100.0},
+            {"Inspeção": 25587408, "Data": "2026-09-08", "Mes": "Setembro", "Titulo": "Inspeção de 5S na área Oficina de Manutenção G2", "Status": "Encerrado", "Conformidade": 100.0},
+            {"Inspeção": 25590205, "Data": "2026-09-08", "Mes": "Setembro", "Titulo": "Inspeção de 5S na área Laboratório de elétrica e eletrônica", "Status": "Encerrado", "Conformidade": 100.0},
+            {"Inspeção": 25640498, "Data": "2026-09-16", "Mes": "Setembro", "Titulo": "Inspeção de 5S na área Gerador CUMIS", "Status": "Encerrado", "Conformidade": 100.0},
+            {"Inspeção": 25640526, "Data": "2026-09-16", "Mes": "Setembro", "Titulo": "Inspeção de 5S na área Gerador MS (código do posto:POST-718361)", "Status": "Novo", "Conformidade": 93.3333},
+            {"Inspeção": 25640564, "Data": "2026-09-16", "Mes": "Setembro", "Titulo": "Inspeção de 5S na área Gerador Toyama (código do posto:POST-718343)", "Status": "Encerrado", "Conformidade": 100.0},
+            {"Inspeção": 25640586, "Data": "2026-09-16", "Mes": "Setembro", "Titulo": "Inspeção de 5S na área Sala de Compressores G2 (código do posto:POST-970883)", "Status": "Encerrado", "Conformidade": 100.0},
+            {"Inspeção": 25640660, "Data": "2026-09-16", "Mes": "Setembro", "Titulo": "Inspeção de 5S na área Sala dos Compressores G1 (código do posto:POST-642629)", "Status": "Encerrado", "Conformidade": 100.0},
+            {"Inspeção": 25640749, "Data": "2026-09-16", "Mes": "Setembro", "Titulo": "Inspeção de 5S na área SPCI (código do posto:POST-629274)", "Status": "Encerrado", "Conformidade": 100.0},
+            {"Inspeção": 25640801, "Data": "2026-08-30", "Mes": "Agosto", "Titulo": "Inspeção de 5S na área Gerador CUMIS (código do posto:POST-629235)", "Status": "Encerrado", "Conformidade": 100.0},
+            {"Inspeção": 25640858, "Data": "2026-08-30", "Mes": "Agosto", "Titulo": "Inspeção de 5S na área Gerador MS (código do posto:POST-718361)", "Status": "Encerrado", "Conformidade": 100.0},
+            {"Inspeção": 25640901, "Data": "2026-09-16", "Mes": "Setembro", "Titulo": "Inspeção de 5S na área Gerador Toyama (código do posto:POST-718343)", "Status": "Encerrado", "Conformidade": 100.0},
+            {"Inspeção": 25640950, "Data": "2026-08-30", "Mes": "Agosto", "Titulo": "Inspeção de 5S na área Sala de Compressores G2 (código do posto:POST-970883)", "Status": "Encerrado", "Conformidade": 100.0},
+            {"Inspeção": 25640993, "Data": "2026-09-16", "Mes": "Setembro", "Titulo": "Inspeção de 5S na área Sala dos Compressores G1 (código do posto:POST-642629)", "Status": "Encerrado", "Conformidade": 100.0},
+            {"Inspeção": 25641080, "Data": "2026-08-30", "Mes": "Agosto", "Titulo": "Inspeção de 5S na área SPCI (código do posto:POST-629274)", "Status": "Encerrado", "Conformidade": 100.0},
+            {"Inspeção": 25641150, "Data": "2026-08-30", "Mes": "Agosto", "Titulo": "Inspeção de 5S na área Gerador Toyama (código do posto:POST-718343)", "Status": "Encerrado", "Conformidade": 100.0},
+            {"Inspeção": 25641174, "Data": "2026-08-30", "Mes": "Agosto", "Titulo": "Inspeção de 5S na área Sala dos Compressores G1 (código do posto:POST-642629)", "Status": "Encerrado", "Conformidade": 100.0}
         ];
 
         function renderizarTabela() {
@@ -192,8 +192,8 @@
             const tbody = document.getElementById("corpoTabela");
 
             let filtrados = dadosBase.filter(row => {
-                let matchMes = (mesSel === "todos" || row["Mês do Registro Inicial"] === mesSel);
-                let matchStatus = (statusSel === "todos" || row["Status da Inspeção"] === statusSel);
+                let matchMes = (mesSel === "todos" || row["Mes"] === mesSel);
+                let matchStatus = (statusSel === "todos" || row["Status"] === statusSel);
                 return matchMes && matchStatus;
             });
 
@@ -202,19 +202,19 @@
             let countPendente = 0;
 
             filtrados.forEach((row, idx) => {
-                let status = row["Status da Inspeção"];
+                let status = row["Status"];
                 let badgeClass = (status === "Encerrado") ? "badge-ok" : "badge-danger";
                 if(status === "Encerrado") countEncerrado++;
                 else countPendente++;
 
                 html += `<tr>
                     <td>${idx + 1}</td>
-                    <td><strong>${row["Número da Inspeção / Auditoria"]}</strong></td>
-                    <td>${row["Data do Registro Inicial"]}</td>
-                    <td>${row["Mês do Registro Inicial"]}</td>
-                    <td>${row["Título da Inspeção / Auditoria"]}</td>
-                    <td><span class="badge ${badgeClass}">${status}</span></td>
-                    <td>${row["% de Conformidade da Inspeção"] !== "" ? row["% de Conformidade da Inspeção"] + "%" : "-"}</td>
+                    <td><strong>${row["Inspeção"]}</strong></td>
+                    <td>${row["Data"]}</td>
+                    <td>${row["Mes"]}</td>
+                    <td>${row["Titulo"]}</td>
+                    <td><span class="badge ${badgeClass}">${status === "Encerrado" ? "Avaliado" : "Pendente"}</span></td>
+                    <td>${row["Conformidade"] !== "" ? row["Conformidade"] + "%" : "-"}</td>
                 </tr>`;
             });
 
@@ -222,7 +222,7 @@
             document.getElementById("lblTotal").innerText = filtrados.length;
             document.getElementById("lblEncerrado").innerText = countEncerrado;
             document.getElementById("lblPendente").innerText = countPendente;
-            document.getElementById("lblTotalRodape").innerText = filtrados.length + " de " + dadosBase.length + " registros exibidos";
+            document.getElementById("lblTotalRodape").innerText = filtrados.length + " de " + dadosBase.length + " postos exibidos";
         }
 
         window.onload = function() {
