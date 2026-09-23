@@ -16,7 +16,7 @@
             <div class="mb-6 md:mb-0">
                 <span class="bg-emerald-600 text-emerald-100 text-xs font-semibold px-3 py-1 rounded-full uppercase tracking-wider">Painel Corporativo</span>
                 <h1 class="text-3xl md:text-4xl font-extrabold mt-2 tracking-tight">Indicador de Avaliação de Postos</h1>
-                <p class="text-emerald-200 mt-2 text-sm max-w-xl">Sincronizado em tempo real com a Aba Total do Google Drive (Coluna D).</p>
+                <p class="text-emerald-200 mt-2 text-sm max-w-xl">Cruzamento inteligente otimizado (sem restrição de acentos ou maiúsculas) com a Aba Total.</p>
             </div>
             <div class="bg-white/10 backdrop-blur-md border border-white/20 p-4 rounded-xl text-center min-w-[200px]">
                 <span class="block text-xs text-emerald-200 uppercase font-medium">Postos Monitorados</span>
@@ -44,9 +44,9 @@
                         <option value="Março">Março</option>
                         <option value="Abril">Abril</option>
                         <option value="Maio">Maio</option>
-                        <option value="Junho" selected>Junho (Atual)</option>
+                        <option value="Junho">Junho</option>
                         <option value="Julho">Julho</option>
-                        <option value="Agosto">Agosto</option>
+                        <option value="Agosto" selected>Agosto</option>
                         <option value="Setembro">Setembro</option>
                         <option value="Outubro">Outubro</option>
                         <option value="Novembro">Novembro</option>
@@ -92,7 +92,7 @@
                     </thead>
                     <tbody id="tabelaCorpo" class="divide-y divide-slate-200 text-sm">
                         <tr>
-                            <td colspan="5" class="p-8 text-center text-slate-400">Carregando dados do Google Drive...</td>
+                            <td colspan="5" class="p-8 text-center text-slate-400">Lendo dados do Google Drive...</td>
                         </tr>
                     </tbody>
                 </table>
@@ -103,14 +103,13 @@
 
     <!-- RODAPÉ COM A VERSÃO -->
     <footer class="w-full text-center py-4 text-slate-400 text-[10px] border-t border-slate-200 bg-white">
-        Indicador de Postos &bull; Versão 10
+        Indicador de Postos &bull; Versão 11
     </footer>
 
-    <!-- SCRIPT DE LEITURA CSV DO DRIVE E CRUZAMENTO -->
+    <!-- SCRIPT COM NORMALIZAÇÃO ROBUSTA DE TEXTO -->
     <script>
         const CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQUoRnkIRo0UhP2r1_IbUfJ2abD3UyvsFBGR8c8tUKYtsUQqQvyfdVC2tDRIymeEA/pub?gid=786393118&single=true&output=csv";
 
-        // Lista oficial dos 25 postos
         const basePostos = [
             { codigo: "POST-971536", nome: "Área de Caldeiraria e suas Máquinas G2" },
             { codigo: "POST-970384", nome: "Área de Resíduos G2" },
@@ -144,41 +143,40 @@
             "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"
         ];
 
-        let dadosAvaliacoesGlobais = [];
+        let dadosAuditoria = [];
 
+        // Remove acentos, cedilhas, maiúsculas e espaços extras para garantir o match perfeito
         function normalizar(texto) {
-            return texto ? texto.normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().trim() : "";
+            if (!texto) return "";
+            return texto.toString()
+                .normalize("NFD")
+                .replace(/[\u0300-\u036f]/g, "")
+                .toLowerCase()
+                .trim();
         }
 
-        // Função para ler o CSV gerado pelo Google Sheets
         async function carregarDadosDrive() {
             try {
                 const response = await fetch(CSV_URL);
                 const textoCsv = await response.text();
-                
-                // Parse simples de CSV
                 const linhas = textoCsv.split('\n');
-                dadosAvaliacoesGlobais = [];
+                
+                dadosAuditoria = [];
 
                 for (let i = 1; i < linhas.length; i++) {
                     const linha = linhas[i];
                     if (!linha.trim()) continue;
                     
-                    // Quebra respeitando vírgulas simples ou colunas
-                    const colunas = linha.split(',');
-                    if (colunas.length > 5) {
-                        // Coluna D (índice 3 ou similar dependendo da estrutura)
-                        // Vamos varrer a linha inteira para achar correspondências de data e texto do posto
-                        const linhaStr = colunas.join(' ');
-                        dadosAvaliacoesGlobais.push({
-                            conteudo: linhaStr
-                        });
-                    }
+                    // Armazena a linha inteira normalizada para busca flexível
+                    dadosAuditoria.push({
+                        textoOriginal: linha,
+                        textoNormalizado: normalizar(linha)
+                    });
                 }
                 renderizarTabela();
             } catch (erro) {
-                console.error("Erro ao carregar CSV:", erro);
-                document.getElementById('tabelaCorpo').innerHTML = `<tr><td colspan="5" class="p-8 text-center text-rose-500">Erro ao carregar dados do Drive. Verifique se a publicação CSV está ativa.</td></tr>`;
+                console.error("Erro ao ler CSV:", erro);
+                document.getElementById('tabelaCorpo').innerHTML = `<tr><td colspan="5" class="p-8 text-center text-rose-500">Erro ao carregar dados do Drive.</td></tr>`;
             }
         }
 
@@ -192,16 +190,25 @@
 
             basePostos.forEach(posto => {
                 mesesDoAno.forEach(mes => {
-                    // Procura nas linhas da aba Total se o posto e o mês aparecem
-                    const achou = dadosAvaliacoesGlobais.find(item => {
-                        let textoNorm = normalizar(item.conteudo);
-                        let codigoNorm = normalizar(posto.codigo);
-                        let nomeNorm = normalizar(posto.nome);
-                        let mesNorm = normalizar(mes);
+                    const codigoNorm = normalizar(posto.codigo);
+                    
+                    // Pega partes principais do nome (ex: "residuos g2", "caldeiraria", "container mecanica")
+                    // removendo palavras genéricas para facilitar a localização
+                    let nomeCurto = normalizar(posto.nome)
+                        .replace("area de", "")
+                        .replace("sala de", "")
+                        .replace("sala dos", "")
+                        .replace("gerador", "")
+                        .replace("container", "")
+                        .trim();
 
-                        let temPosto = textoNorm.includes(codigoNorm) || textoNorm.includes(nomeNorm);
-                        let temMes = textoNorm.includes(mesNorm);
+                    const mesNorm = normalizar(mes);
 
+                    // Procura na planilha se existe uma linha que contenha o código OU o nome E o mês correspondente
+                    const registroEncontrado = dadosAuditoria.find(item => {
+                        let t = item.textoNormalizado;
+                        let temPosto = t.includes(codigoNorm) || (nomeCurto.length > 3 && t.includes(nomeCurto));
+                        let temMes = t.includes(mesNorm);
                         return temPosto && temMes;
                     });
 
@@ -209,8 +216,8 @@
                         codigo: posto.codigo,
                         nome: posto.nome,
                         mes: mes,
-                        data: achou ? "Registrado" : "-",
-                        status: achou ? "Avaliado" : "Pendente"
+                        data: registroEncontrado ? "Registrado no Mês" : "-",
+                        status: registroEncontrado ? "Avaliado" : "Pendente"
                     });
                 });
             });
@@ -248,7 +255,6 @@
             document.getElementById('contadorExibidos').innerText = dadosFiltrados.length;
         }
 
-        // Iniciar carregamento automático ao abrir
         window.onload = carregarDadosDrive;
     </script>
 </body>
