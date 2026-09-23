@@ -2,48 +2,90 @@
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
-    <title>Painel Completo - Coordenação de Confiabilidade (5S)</title>
+    <title>Portal de Indicadores - Confiabilidade & Gestão de Ativos</title>
     <style>
-        body { font-family: 'Segoe UI', Arial, sans-serif; background-color: #f4f6f9; color: #333; margin: 0; padding: 20px; }
-        .container { max-width: 1200px; margin: 0 auto; background: white; padding: 30px; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.08); }
-        .header-flex { display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #e0e0e0; padding-bottom: 15px; margin-bottom: 20px; }
-        h1 { color: #1f4e79; font-size: 22px; margin: 0; }
-        
-        /* Barra de Filtros */
-        .filters-bar { background: #e9ecef; padding: 15px; border-radius: 6px; margin-bottom: 25px; display: flex; gap: 20px; align-items: center; flex-wrap: wrap; }
-        .filters-bar div { display: flex; flex-direction: column; }
-        .filters-bar label { font-weight: bold; font-size: 13px; color: #495057; margin-bottom: 5px; }
-        .filters-bar select { padding: 8px 12px; border-radius: 4px; border: 1px solid #ced4da; font-size: 13px; background: white; }
+        :root {
+            --primary-color: #1f4e79;
+            --sidebar-bg: #2c3e50;
+            --bg-color: #f4f6f9;
+            --card-bg: #ffffff;
+            --text-color: #333333;
+            --border-color: #d1d8e0;
+        }
 
-        /* Caixinha de Indicador */
-        .indicator-card { background: #fff; border: 1px solid #d1d8e0; border-top: 5px solid #1f4e79; border-radius: 6px; padding: 20px; margin-bottom: 30px; box-shadow: 0 2px 5px rgba(0,0,0,0.03); }
-        .indicator-card h2 { margin-top: 0; font-size: 18px; color: #1f4e79; border-bottom: 1px solid #eee; padding-bottom: 10px; display: flex; justify-content: space-between; align-items: center; }
+        body { font-family: 'Segoe UI', Arial, sans-serif; background-color: var(--bg-color); color: var(--text-color); margin: 0; display: flex; height: 100vh; overflow: hidden; }
+
+        /* MENU LATERAL */
+        .sidebar { width: 260px; background-color: var(--sidebar-bg); color: white; display: flex; flex-direction: column; box-shadow: 2px 0 5px rgba(0,0,0,0.1); }
+        .sidebar-header { padding: 20px; background-color: #1a252f; border-bottom: 1px solid #34495e; }
+        .sidebar-header h2 { font-size: 16px; margin: 0; color: #ecf0f1; }
+        .sidebar-header p { font-size: 11px; margin: 5px 0 0 0; color: #bdc3c7; }
+        
+        .menu-list { list-style: none; padding: 0; margin: 0; flex-grow: 1; }
+        .menu-item { padding: 15px 20px; font-size: 14px; cursor: pointer; border-bottom: 1px solid #34495e; transition: background 0.2s; display: flex; align-items: center; gap: 10px; }
+        .menu-item:hover, .menu-item.active { background-color: var(--primary-color); color: white; }
+
+        /* CONTEÚDO PRINCIPAL */
+        .main-content { flex-grow: 1; display: flex; flex-direction: column; overflow-y: auto; padding: 30px; }
+        .header-top { display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid var(--border-color); padding-bottom: 15px; margin-bottom: 25px; }
+        .header-top h1 { color: var(--primary-color); font-size: 24px; margin: 0; }
+        .user-info { font-size: 13px; color: #666; text-align: right; }
+
+        /* BARRA DE FILTROS */
+        .filters-bar { background: white; padding: 15px 20px; border-radius: 8px; margin-bottom: 25px; display: flex; gap: 20px; align-items: center; box-shadow: 0 2px 5px rgba(0,0,0,0.03); border: 1px solid var(--border-color); }
+        .filters-bar div { display: flex; flex-direction: column; }
+        .filters-bar label { font-weight: bold; font-size: 12px; color: #555; margin-bottom: 5px; }
+        .filters-bar select { padding: 8px 12px; border-radius: 4px; border: 1px solid var(--border-color); font-size: 13px; background: #fafafa; }
+
+        /* CAIXINHA DE INDICADOR */
+        .indicator-card { background: var(--card-bg); border: 1px solid var(--border-color); border-top: 5px solid var(--primary-color); border-radius: 8px; padding: 25px; margin-bottom: 30px; box-shadow: 0 2px 6px rgba(0,0,0,0.04); }
+        .indicator-card h2 { margin-top: 0; font-size: 18px; color: var(--primary-color); border-bottom: 1px solid #eee; padding-bottom: 12px; display: flex; justify-content: space-between; align-items: center; }
         
         .cards-resumo { display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px; margin-bottom: 20px; }
-        .mini-card { background: #f8f9fa; border-left: 4px solid #1f4e79; padding: 12px; border-radius: 4px; }
-        .mini-card h3 { margin: 0; font-size: 11px; color: #555; text-transform: uppercase; }
-        .mini-card .value { font-size: 20px; font-weight: bold; color: #1f4e79; margin-top: 5px; }
+        .mini-card { background: #f8f9fa; border-left: 4px solid var(--primary-color); padding: 15px; border-radius: 4px; border: 1px solid #e9ecef; }
+        .mini-card h3 { margin: 0; font-size: 11px; color: #666; text-transform: uppercase; }
+        .mini-card .value { font-size: 22px; font-weight: bold; color: var(--primary-color); margin-top: 5px; }
 
-        .table-container { max-height: 450px; overflow-y: auto; border: 1px solid #e0e0e0; border-radius: 4px; }
+        .table-container { max-height: 400px; overflow-y: auto; border: 1px solid var(--border-color); border-radius: 6px; }
         table { width: 100%; border-collapse: collapse; }
-        th, td { padding: 10px 12px; text-align: left; border-bottom: 1px solid #e0e0e0; font-size: 13px; }
-        th { background-color: #f1f3f5; color: #333; position: sticky; top: 0; z-index: 10; }
+        th, td { padding: 12px 15px; text-align: left; border-bottom: 1px solid var(--border-color); font-size: 13px; }
+        th { background-color: #f1f3f5; color: #333; position: sticky; top: 0; z-index: 10; font-weight: 600; }
         tr:hover { background-color: #f8f9fa; }
-        .badge { padding: 4px 8px; border-radius: 10px; font-size: 11px; font-weight: bold; }
+        .badge { padding: 5px 10px; border-radius: 12px; font-size: 11px; font-weight: bold; }
         .badge-ok { background: #d4edda; color: #155724; }
         .badge-danger { background: #f8d7da; color: #721c24; }
+
+        /* CONTROLE DE ABAS */
+        .tab-pane { display: none; }
+        .tab-pane.active { display: block; }
     </style>
 </head>
 <body>
-    <div class="container">
-        <div class="header-flex">
-            <div>
-                <h1>Portal de Confiabilidade - Gestão de Ativos</h1>
-                <p style="margin: 5px 0 0 0; color: #666; font-size: 13px;">Coordenação: Bianca Medeiros | Responsável: Mariana Pereira Cruz</p>
+
+    <!-- MENU LATERAL DE INDICADORES -->
+    <div class="sidebar">
+        <div class="sidebar-header">
+            <h2>Portal Vale</h2>
+            <p>Confiabilidade & Ativos</p>
+        </div>
+        <ul class="menu-list">
+            <li class="menu-item active" onclick="mudarTab(event, 'tab-5s')">📊 Indicador 5S</li>
+            <li class="menu-item" onclick="mudarTab(event, 'tab-estoque')">📦 Indicador de Estoque</li>
+            <li class="menu-item" onclick="mudarTab(event, 'tab-disponibilidade')">⚙️ Disponibilidade (MTBF)</li>
+        </ul>
+    </div>
+
+    <!-- CONTEÚDO PRINCIPAL -->
+    <div class="main-content">
+        <div class="header-top">
+            <h1>Painel de Indicadores Operacionais</h1>
+            <div class="user-info">
+                <strong>Coordenação:</strong> Bianca Medeiros<br>
+                <strong>Responsável:</strong> Mariana Pereira Cruz
             </div>
         </div>
         
-        <!-- Barra de Filtros Globais -->
+        <!-- BARRA DE FILTROS GLOBAIS -->
         <div class="filters-bar">
             <div>
                 <label for="filtroMes">Mês de Referência:</label>
@@ -58,168 +100,192 @@
             <div>
                 <label for="filtroStatus">Status da Inspeção:</label>
                 <select id="filtroStatus" onchange="filtrarTabela()">
-                    <option value="todos" selected>Todos os Status</option>
-                    <option value="ok">Apenas Avaliados (Encerrado)</option>
-                    <option value="pendente">Apenas Pendentes</option>
+                    <option value="todos" selected>Todos os Status (Concluído e Pendente)</option>
+                    <option value="ok">Apenas Concluído</option>
+                    <option value="pendente">Apenas Pendente</option>
                 </select>
             </div>
         </div>
 
-        <!-- CAIXINHA: 5S & MATURIDADE DE TODOS OS POSTOS -->
-        <div class="indicator-card">
-            <h2>
-                <span>📊 Indicador: Acompanhamento Geral de Postos (5S)</span>
-                <span style="font-size: 12px; font-weight: normal; color: #666;">Base Completa (Junho a Setembro 2026)</span>
-            </h2>
+        <!-- ABA 1: INDICADOR 5S (DEFAULT) -->
+        <div id="tab-5s" class="tab-pane active">
+            <div class="indicator-card">
+                <h2>
+                    <span>Maturidade do Programa 5S por Posto</span>
+                    <span style="font-size: 12px; font-weight: normal; color: #666;">Formulário Padrão: DISTM_MATURIDADE_5S_RV1</span>
+                </h2>
 
-            <div class="cards-resumo">
-                <div class="mini-card">
-                    <h3>Total de Registros</h3>
-                    <div class="value">780 Linhas</div>
+                <div class="cards-resumo">
+                    <div class="mini-card">
+                        <h3>Total de Registros</h3>
+                        <div class="value" id="lblTotal">12</div>
+                    </div>
+                    <div class="mini-card">
+                        <h3>Concluídos</h3>
+                        <div class="value" id="lblOk" style="color: #28a745;">8</div>
+                    </div>
+                    <div class="mini-card">
+                        <h3>Pendentes</h3>
+                        <div class="value" id="lblPendente" style="color: #dc3545;">4</div>
+                    </div>
+                    <div class="mini-card">
+                        <h3>Período Analisado</h3>
+                        <div class="value" style="font-size: 14px; margin-top: 8px;">Jun - Set / 2026</div>
+                    </div>
                 </div>
-                <div class="mini-card">
-                    <h3>Postos Avaliados</h3>
-                    <div class="value" style="color: #28a745;">Conformes</div>
-                </div>
-                <div class="mini-card">
-                    <h3>Postos Pendentes</h3>
-                    <div class="value" style="color: #dc3545;">A Atuar</div>
-                </div>
-                <div class="mini-card">
-                    <h3>Período Analisado</h3>
-                    <div class="value" style="font-size: 14px;">Jun - Set / 2026</div>
+
+                <div class="table-container">
+                    <table id="tabelaDados">
+                        <thead>
+                            <tr>
+                                <th>Posto / Localização</th>
+                                <th>Mês / Registro</th>
+                                <th>Inspetor / Responsável</th>
+                                <th>% Conformidade</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <!-- Junho -->
+                            <tr data-mes="junho" data-status="ok">
+                                <td><strong>POST-000475 Subestação 01</strong></td>
+                                <td>Junho/2026</td>
+                                <td>Mariana Pereira Cruz</td>
+                                <td>100%</td>
+                                <td><span class="badge badge-ok">Concluído</span></td>
+                            </tr>
+                            <tr data-mes="junho" data-status="ok">
+                                <td><strong>POST-000482 Oficinas Centrais</strong></td>
+                                <td>Junho/2026</td>
+                                <td>Mariana Pereira Cruz</td>
+                                <td>88.5%</td>
+                                <td><span class="badge badge-ok">Concluído</span></td>
+                            </tr>
+                            <tr data-mes="junho" data-status="pendente">
+                                <td><strong>POST-000490 Pátio de Correias</strong></td>
+                                <td>Junho/2026</td>
+                                <td>Mariana Pereira Cruz</td>
+                                <td>--</td>
+                                <td><span class="badge badge-danger">Pendente</span></td>
+                            </tr>
+
+                            <!-- Julho -->
+                            <tr data-mes="julho" data-status="ok">
+                                <td><strong>POST-000475 Subestação 01</strong></td>
+                                <td>Julho/2026</td>
+                                <td>Mariana Pereira Cruz</td>
+                                <td>95.0%</td>
+                                <td><span class="badge badge-ok">Concluído</span></td>
+                            </tr>
+                            <tr data-mes="julho" data-status="pendente">
+                                <td><strong>POST-000482 Oficinas Centrais</strong></td>
+                                <td>Julho/2026</td>
+                                <td>Mariana Pereira Cruz</td>
+                                <td>--</td>
+                                <td><span class="badge badge-danger">Pendente</span></td>
+                            </tr>
+                            <tr data-mes="julho" data-status="ok">
+                                <td><strong>POST-000510 Casa de Bombas Principal</strong></td>
+                                <td>Julho/2026</td>
+                                <td>Mariana Pereira Cruz</td>
+                                <td>90.0%</td>
+                                <td><span class="badge badge-ok">Concluído</span></td>
+                            </tr>
+
+                            <!-- Agosto -->
+                            <tr data-mes="agosto" data-status="ok">
+                                <td><strong>POST-000475 Subestação 01</strong></td>
+                                <td>Agosto/2026</td>
+                                <td>Mariana Pereira Cruz</td>
+                                <td>96.0%</td>
+                                <td><span class="badge badge-ok">Concluído</span></td>
+                            </tr>
+                            <tr data-mes="agosto" data-status="ok">
+                                <td><strong>POST-000482 Oficinas Centrais</strong></td>
+                                <td>Agosto/2026</td>
+                                <td>Mariana Pereira Cruz</td>
+                                <td>92.0%</td>
+                                <td><span class="badge badge-ok">Concluído</span></td>
+                            </tr>
+                            <tr data-mes="agosto" data-status="pendente">
+                                <td><strong>POST-000520 Britagem Secundária</strong></td>
+                                <td>Agosto/2026</td>
+                                <td>Mariana Pereira Cruz</td>
+                                <td>--</td>
+                                <td><span class="badge badge-danger">Pendente</span></td>
+                            </tr>
+
+                            <!-- Setembro -->
+                            <tr data-mes="setembro" data-status="ok">
+                                <td><strong>POST-000475 Subestação 01</strong></td>
+                                <td>Setembro/2026</td>
+                                <td>Mariana Pereira Cruz</td>
+                                <td>98.0%</td>
+                                <td><span class="badge badge-ok">Concluído</span></td>
+                            </tr>
+                            <tr data-mes="setembro" data-status="pendente">
+                                <td><strong>POST-000490 Pátio de Correias</strong></td>
+                                <td>Setembro/2026</td>
+                                <td>Mariana Pereira Cruz</td>
+                                <td>--</td>
+                                <td><span class="badge badge-danger">Pendente</span></td>
+                            </tr>
+                            <tr data-mes="setembro" data-status="pendente">
+                                <td><strong>POST-000510 Casa de Bombas Principal</strong></td>
+                                <td>Setembro/2026</td>
+                                <td>Mariana Pereira Cruz</td>
+                                <td>--</td>
+                                <td><span class="badge badge-danger">Pendente</span></td>
+                            </tr>
+                        </tbody>
+                    </table>
                 </div>
             </div>
+        </div>
 
-            <div class="table-container">
-                <table id="tabelaDados">
-                    <thead>
-                        <tr>
-                            <th>Posto / Localização</th>
-                            <th>Título da Inspeção</th>
-                            <th>Mês / Registro</th>
-                            <th>Inspetor / Responsável</th>
-                            <th>% Conformidade</th>
-                            <th>Status</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <!-- Junho -->
-                        <tr data-mes="junho" data-status="ok">
-                            <td><strong>POST-000475 Subestação 01</strong></td>
-                            <td>Inspeção de 5S - Área Subestação 01</td>
-                            <td>Junho/2026</td>
-                            <td>Mariana Pereira Cruz</td>
-                            <td>100%</td>
-                            <td><span class="badge badge-ok">Encerrado</span></td>
-                        </tr>
-                        <tr data-mes="junho" data-status="ok">
-                            <td><strong>POST-000482 Oficinas Centrais</strong></td>
-                            <td>Inspeção de 5S - Oficinas de Manutenção</td>
-                            <td>Junho/2026</td>
-                            <td>Mariana Pereira Cruz</td>
-                            <td>88.5%</td>
-                            <td><span class="badge badge-ok">Encerrado</span></td>
-                        </tr>
-                        <tr data-mes="junho" data-status="pendente">
-                            <td><strong>POST-000490 Pátio de Correias</strong></td>
-                            <td>Inspeção de 5S - Área de Correias</td>
-                            <td>Junho/2026</td>
-                            <td>Mariana Pereira Cruz</td>
-                            <td>--</td>
-                            <td><span class="badge badge-danger">Pendente</span></td>
-                        </tr>
+        <!-- ABA 2: ESTOQUE (RESERVADA PARA O PRÓXIMO) -->
+        <div id="tab-estoque" class="tab-pane">
+            <div class="indicator-card">
+                <h2>Indicador de Estoque & Sobressalentes Críticos</h2>
+                <p style="color: #666; font-size: 14px;">Módulo em estruturação. Aqui aparecerão os dados de giro de estoque, materiais críticos e sobressalentes da confiabilidade.</p>
+            </div>
+        </div>
 
-                        <!-- Julho -->
-                        <tr data-mes="julho" data-status="ok">
-                            <td><strong>POST-000475 Subestação 01</strong></td>
-                            <td>Inspeção de 5S - Subestação 01 (Retorno)</td>
-                            <td>Julho/2026</td>
-                            <td>Mariana Pereira Cruz</td>
-                            <td>95.0%</td>
-                            <td><span class="badge badge-ok">Encerrado</span></td>
-                        </tr>
-                        <tr data-mes="julho" data-status="pendente">
-                            <td><strong>POST-000482 Oficinas Centrais</strong></td>
-                            <td>Inspeção de 5S - Oficinas</td>
-                            <td>Julho/2026</td>
-                            <td>Mariana Pereira Cruz</td>
-                            <td>--</td>
-                            <td><span class="badge badge-danger">Pendente</span></td>
-                        </tr>
-                        <tr data-mes="julho" data-status="ok">
-                            <td><strong>POST-000510 Casa de Bombas Principal</strong></td>
-                            <td>Inspeção de 5S - Casa de Bombas</td>
-                            <td>Julho/2026</td>
-                            <td>Mariana Pereira Cruz</td>
-                            <td>90.0%</td>
-                            <td><span class="badge badge-ok">Encerrado</span></td>
-                        </tr>
-
-                        <!-- Agosto -->
-                        <tr data-mes="agosto" data-status="ok">
-                            <td><strong>POST-000475 Subestação 01</strong></td>
-                            <td>Inspeção de 5S - Subestação 01</td>
-                            <td>Agosto/2026</td>
-                            <td>Mariana Pereira Cruz</td>
-                            <td>96.0%</td>
-                            <td><span class="badge badge-ok">Encerrado</span></td>
-                        </tr>
-                        <tr data-mes="agosto" data-status="ok">
-                            <td><strong>POST-000482 Oficinas Centrais</strong></td>
-                            <td>Inspeção de 5S - Oficinas</td>
-                            <td>Agosto/2026</td>
-                            <td>Mariana Pereira Cruz</td>
-                            <td>92.0%</td>
-                            <td><span class="badge badge-ok">Encerrado</span></td>
-                        </tr>
-                        <tr data-mes="agosto" data-status="pendente">
-                            <td><strong>POST-000520 Britagem Secundária</strong></td>
-                            <td>Inspeção de 5S - Britagem</td>
-                            <td>Agosto/2026</td>
-                            <td>Mariana Pereira Cruz</td>
-                            <td>--</td>
-                            <td><span class="badge badge-danger">Pendente</span></td>
-                        </tr>
-
-                        <!-- Setembro -->
-                        <tr data-mes="setembro" data-status="ok">
-                            <td><strong>POST-000475 Subestação 01</strong></td>
-                            <td>Inspeção de 5S - Subestação 01</td>
-                            <td>Setembro/2026</td>
-                            <td>Mariana Pereira Cruz</td>
-                            <td>98.0%</td>
-                            <td><span class="badge badge-ok">Encerrado</span></td>
-                        </tr>
-                        <tr data-mes="setembro" data-status="pendente">
-                            <td><strong>POST-000490 Pátio de Correias</strong></td>
-                            <td>Inspeção de 5S - Pátio</td>
-                            <td>Setembro/2026</td>
-                            <td>Mariana Pereira Cruz</td>
-                            <td>--</td>
-                            <td><span class="badge badge-danger">Pendente</span></td>
-                        </tr>
-                        <tr data-mes="setembro" data-status="pendente">
-                            <td><strong>POST-000510 Casa de Bombas Principal</strong></td>
-                            <td>Inspeção de 5S - Bombas</td>
-                            <td>Setembro/2026</td>
-                            <td>Mariana Pereira Cruz</td>
-                            <td>--</td>
-                            <td><span class="badge badge-danger">Pendente</span></td>
-                        </tr>
-                    </tbody>
-                </table>
+        <!-- ABA 3: DISPONIBILIDADE -->
+        <div id="tab-disponibilidade" class="tab-pane">
+            <div class="indicator-card">
+                <h2>Disponibilidade Operacional e Confiabilidade (MTBF / MTTR)</h2>
+                <p style="color: #666; font-size: 14px;">Módulo reservado para o acompanhamento dos indicadores de quebra e tempo médio entre falhas dos ativos críticos.</p>
             </div>
         </div>
 
     </div>
 
     <script>
+        // Função para trocar de aba no menu lateral
+        function mudarTab(evt, tabId) {
+            var panes = document.getElementsByClassName("tab-pane");
+            for (var i = 0; i < panes.length; i++) {
+                panes[i].classList.remove("active");
+            }
+            var items = document.getElementsByClassName("menu-item");
+            for (var i = 0; i < items.length; i++) {
+                items.classList.remove("active");
+            }
+            document.getElementById(tabId).classList.add("active");
+            evt.currentTarget.classList.add("active");
+        }
+
+        // Função de filtro da tabela e atualização dos contadores totais
         function filtrarTabela() {
             var mesSel = document.getElementById("filtroMes").value;
             var statusSel = document.getElementById("filtroStatus").value;
             var tabela = document.getElementById("tabelaDados");
             var linhas = tabela.getElementsByTagName("tbody")[0].getElementsByTagName("tr");
+
+            var totalVisiveis = 0;
+            var totalOk = 0;
+            var totalPendente = 0;
 
             for (var i = 0; i < linhas.length; i++) {
                 var mesLinha = linhas[i].getAttribute("data-mes");
@@ -230,10 +296,18 @@
 
                 if (matchMes && matchStatus) {
                     linhas[i].style.display = "";
+                    totalVisiveis++;
+                    if (statusLinha === "ok") totalOk++;
+                    if (statusLinha === "pendente") totalPendente++;
                 } else {
                     linhas[i].style.display = "none";
                 }
             }
+
+            // Atualiza os contadores do mini-card dinamicamente com base no filtro atual
+            document.getElementById("lblTotal").innerText = totalVisiveis;
+            document.getElementById("lblOk").innerText = totalOk;
+            document.getElementById("lblPendente").innerText = totalPendente;
         }
     </script>
 </body>
