@@ -1,236 +1,128 @@
 <!DOCTYPE html>
-<html lang="pt-PT">
+<html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
-    <title>Portal de Indicadores - Auditoria 5S (Versão 5.0)</title>
-    <style>
-        :root {
-            --primary-color: #1f4e79;
-            --sidebar-bg: #2c3e50;
-            --bg-color: #f4f6f9;
-            --card-bg: #ffffff;
-            --text-color: #333333;
-            --border-color: #d1d8e0;
-        }
-        body { font-family: 'Segoe UI', Arial, sans-serif; background-color: var(--bg-color); color: var(--text-color); margin: 0; display: flex; height: 100vh; overflow: hidden; }
-        .sidebar { width: 220px; background-color: var(--sidebar-bg); color: white; display: flex; flex-direction: column; box-shadow: 2px 0 5px rgba(0,0,0,0.1); }
-        .sidebar-header { padding: 12px 15px; background-color: #1a252f; border-bottom: 1px solid #34495e; }
-        .sidebar-header h2 { font-size: 14px; margin: 0; color: #ecf0f1; }
-        .sidebar-header p { font-size: 10px; margin: 2px 0 0 0; color: #bdc3c7; }
-        .menu-list { list-style: none; padding: 0; margin: 0; flex-grow: 1; }
-        .menu-item { padding: 10px 15px; font-size: 12px; cursor: pointer; border-bottom: 1px solid #34495e; background-color: var(--primary-color); color: white; display: flex; align-items: center; gap: 8px; }
-        .main-content { flex-grow: 1; display: flex; flex-direction: column; overflow-y: auto; padding: 12px 20px; position: relative; }
-        .header-top { border-bottom: 1px solid var(--border-color); padding-bottom: 8px; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center; }
-        .header-top h1 { color: var(--primary-color); font-size: 18px; margin: 0; }
-        .version-badge { background: #e2e8f0; color: #334155; padding: 3px 8px; border-radius: 20px; font-size: 10px; font-weight: bold; }
-        .filters-bar { background: white; padding: 8px 12px; border-radius: 6px; margin-bottom: 12px; display: flex; gap: 15px; align-items: center; box-shadow: 0 1px 2px rgba(0,0,0,0.03); border: 1px solid var(--border-color); flex-wrap: wrap; }
-        .filters-bar div { display: flex; flex-direction: column; }
-        .filters-bar label { font-weight: bold; font-size: 10px; color: #555; margin-bottom: 2px; }
-        .filters-bar select { padding: 5px 8px; border-radius: 4px; border: 1px solid var(--border-color); font-size: 11px; background: #fafafa; }
-        .indicator-card { background: var(--card-bg); border: 1px solid var(--border-color); border-top: 4px solid var(--primary-color); border-radius: 6px; padding: 12px 15px; margin-bottom: 10px; box-shadow: 0 1px 3px rgba(0,0,0,0.03); }
-        .indicator-card h2 { margin-top: 0; margin-bottom: 8px; font-size: 14px; color: var(--primary-color); border-bottom: 1px solid #eee; padding-bottom: 6px; display: flex; justify-content: space-between; align-items: center; }
-        .cards-resumo { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 10px; }
-        .mini-card { background: #f8f9fa; border-left: 3px solid var(--primary-color); padding: 8px 10px; border-radius: 4px; border: 1px solid #e9ecef; }
-        .mini-card h3 { margin: 0; font-size: 9px; color: #666; text-transform: uppercase; }
-        .mini-card .value { font-size: 16px; font-weight: bold; color: var(--primary-color); margin-top: 2px; }
-        .table-container { max-height: 340px; overflow-y: auto; border: 1px solid var(--border-color); border-radius: 4px; }
-        table { width: 100%; border-collapse: collapse; }
-        th, td { padding: 6px 8px; text-align: left; border-bottom: 1px solid var(--border-color); font-size: 11px; }
-        th { background-color: #f1f3f5; color: #333; position: sticky; top: 0; z-index: 10; font-weight: 600; }
-        tr:hover { background-color: #f8f9fa; }
-        tfoot td { background-color: #e9ecef; font-weight: bold; color: var(--primary-color); border-top: 2px solid var(--primary-color); position: sticky; bottom: 0; }
-        .badge { padding: 2px 5px; border-radius: 6px; font-size: 10px; font-weight: bold; }
-        .badge-ok { background: #d4edda; color: #155724; }
-        .badge-danger { background: #f8d7da; color: #721c24; }
-        .footer-version { margin-top: auto; padding-top: 8px; border-top: 1px solid var(--border-color); font-size: 9px; color: #7f8c8d; text-align: right; }
-    </style>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Indicador de Postos - Auditoria</title>
+    <!-- Tailwind CSS para estilização moderna -->
+    <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body>
-    <div class="sidebar">
-        <div class="sidebar-header">
-            <h2>Portal Vale</h2>
-            <p>Confiabilidade & Ativos</p>
-        </div>
-        <ul class="menu-list">
-            <li class="menu-item">📊 Auditoria 5S (Por Posto)</li>
-        </ul>
-    </div>
-    <div class="main-content">
-        <div class="header-top">
-            <h1>Portal de Indicadores - Acompanhamento por Posto</h1>
-            <span class="version-badge">Versão 5.0 Oficial</span>
-        </div>
-        <div class="filters-bar">
+<body class="bg-gray-50 font-sans text-gray-800">
+
+    <div class="max-w-7xl mx-auto p-6">
+        <!-- Cabeçalho -->
+        <header class="mb-8">
+            <h1 class="text-2xl font-bold text-gray-900">Painel de Indicadores de Postos</h1>
+            <p class="text-sm text-gray-600">Cruzamento de dados entre a listagem de postos e as avaliações de auditoria.</p>
+        </header>
+
+        <!-- Filtros -->
+        <div class="bg-white p-4 rounded-lg shadow-sm border border-gray-200 mb-6 flex flex-wrap gap-4 items-center">
             <div>
-                <label for="filtroMes">Competência (Data Real - Coluna D):</label>
-                <select id="filtroMes" onchange="renderizarTabela()">
-                    <option value="todos" selected>Todos os Meses (Base Completa)</option>
-                    <option value="Junho">Junho / 2026</option>
-                    <option value="Julho">Julho / 2026</option>
-                    <option value="Agosto">Agosto / 2026</option>
-                    <option value="Setembro">Setembro / 2026</option>
+                <label for="filtroMes" class="block text-xs font-semibold text-gray-600 uppercase mb-1">Filtrar por Mês:</label>
+                <select id="filtroMes" class="border border-gray-300 rounded-md p-2 text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none">
+                    <option value="">Todos os Meses</option>
+                    <!-- Os meses serão preenchidos via script ou manualmente -->
                 </select>
             </div>
+
             <div>
-                <label for="filtroStatus">Status do Posto:</label>
-                <select id="filtroStatus" onchange="renderizarTabela()">
-                    <option value="todos" selected>Todos os Status</option>
-                    <option value="Encerrado">Apenas OK (Avaliado)</option>
-                    <option value="Novo">Apenas Pendente</option>
+                <label for="filtroStatus" class="block text-xs font-semibold text-gray-600 uppercase mb-1">Status da Avaliação:</label>
+                <select id="filtroStatus" class="border border-gray-300 rounded-md p-2 text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none">
+                    <option value="">Todos</option>
+                    <option value="Avaliado no Mês">Avaliado dentro do mês</option>
+                    <option value="Fora do Prazo / Pendente">Fora do mês / Pendente</option>
                 </select>
             </div>
-        </div>
-        <div class="indicator-card">
-            <h2>
-                <span>Maturidade 5S por Posto - Coordenação: Bianca Medeiros</span>
-                <span style="font-size: 11px; font-weight: normal; color: #666;">Responsável: Mariana Pereira Cruz</span>
-            </h2>
-            <div class="cards-resumo">
-                <div class="mini-card">
-                    <h3>Postos Exibidos</h3>
-                    <div class="value" id="lblTotal">0</div>
-                </div>
-                <div class="mini-card">
-                    <h3>Avaliados (OK)</h3>
-                    <div class="value" id="lblEncerrado" style="color: #28a745;">0</div>
-                </div>
-                <div class="mini-card">
-                    <h3>Pendentes</h3>
-                    <div class="value" id="lblPendente" style="color: #dc3545;">0</div>
-                </div>
+
+            <div class="ml-auto">
+                <span id="contadorRegistros" class="text-sm text-gray-500 font-medium">Exibindo 0 registros</span>
             </div>
-            <div class="table-container">
-                <table id="tabelaDados">
+        </div>
+
+        <!-- Tabela de Dados -->
+        <div class="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
+            <div class="overflow-x-auto">
+                <table class="w-full text-left border-collapse">
                     <thead>
-                        <tr>
-                            <th style="width: 35px;">#</th>
-                            <th>Posto / Área</th>
-                            <th>Nº Inspeção</th>
-                            <th>Data Real (Col. D)</th>
-                            <th>Mês Real</th>
-                            <th>Conformidade</th>
-                            <th>Status</th>
+                        <tr class="bg-gray-100 border-b border-gray-200 text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                            <th class="p-4">Código do Posto</th>
+                            <th class="p-4">Nome / Título do Posto</th>
+                            <th class="p-4">Expansão</th>
+                            <th class="p-4">Mês de Referência (Data - Coluna D)</th>
+                            <th class="p-4">Status da Auditoria</th>
                         </tr>
                     </thead>
-                    <tbody id="corpoTabela"></tbody>
-                    <tfoot>
-                        <tr>
-                            <td colspan="4">TOTAL DE POSTOS EXIBIDOS:</td>
-                            <td colspan="3" id="lblTotalRodape" style="text-align: right;">0 postos</td>
-                        </tr>
-                    </tfoot>
+                    <tbody id="tabelaCorpo" class="divide-y divide-gray-200 text-sm">
+                        <!-- Os dados serão injetados aqui pelo JavaScript -->
+                    </tbody>
                 </table>
             </div>
-        </div>
-        <div class="footer-version">
-            Portal de Indicadores v5.0 | Auditoria Oficial Vale S.A.
         </div>
     </div>
 
     <script>
-        const dadosBase = [
-            {"Posto": "Inspeção de 5S - Área Subestação 01", "Inspecao": 24995079, "Data": "2026-06-09", "Mes": "Junho", "Status": "Encerrado", "Conformidade": 100.0},
-            {"Posto": "Inspeção de 5S - Área Subestação 02", "Inspecao": 24995143, "Data": "2026-06-09", "Mes": "Junho", "Status": "Encerrado", "Conformidade": 100.0},
-            {"Posto": "Inspeção de 5S - Área Sala de Compressores G2", "Inspecao": 25280607, "Data": "2026-06-30", "Mes": "Junho", "Status": "Encerrado", "Conformidade": 100.0},
-            {"Posto": "Inspeção de 5S - Usinagem G2", "Inspecao": 25280651, "Data": "2026-06-30", "Mes": "Junho", "Status": "Novo", "Conformidade": 93.3333},
-            {"Posto": "Inspeção de 5S - Área Sala dos Compressores G1", "Inspecao": 25288610, "Data": "2026-06-30", "Mes": "Junho", "Status": "Encerrado", "Conformidade": 100.0},
-            {"Posto": "Inspeção de 5S - Área sala elétrica /eletrônica", "Inspecao": 25302078, "Data": "2026-07-27", "Mes": "Julho", "Status": "Encerrado", "Conformidade": 100.0},
-            {"Posto": "Inspeção de 5S na área Área Sala elétrica", "Inspecao": 25302284, "Data": "2026-07-27", "Mes": "Julho", "Status": "Encerrado", "Conformidade": 100.0},
-            {"Posto": "(código do posto: POST-000475)", "Inspecao": 25302289, "Data": "2026-07-27", "Mes": "Julho", "Status": "Encerrado", "Conformidade": 100.0},
-            {"Posto": "Inspeção de 5S na área Área Subestação 02", "Inspecao": 25302316, "Data": "2026-07-27", "Mes": "Julho", "Status": "Encerrado", "Conformidade": 100.0},
-            {"Posto": "Inspeção de 5S na área Área Sala elétrica 02", "Inspecao": 25302352, "Data": "2026-07-27", "Mes": "Julho", "Status": "Encerrado", "Conformidade": 100.0},
-            {"Posto": "Inspeção de 5S na área  Sala do Almoxarifado G2", "Inspecao": 25303711, "Data": "2026-07-27", "Mes": "Julho", "Status": "Encerrado", "Conformidade": 100.0},
-            {"Posto": "Inspeção de 5S na área Área Ferramentaria", "Inspecao": 25304945, "Data": "2026-07-27", "Mes": "Julho", "Status": "Encerrado", "Conformidade": 100.0},
-            {"Posto": "Inspeção de 5S na Área Içamento de Carga (Contêiner)", "Inspecao": 25305079, "Data": "2026-07-27", "Mes": "Julho", "Status": "Encerrado", "Conformidade": 100.0},
-            {"Posto": "Inspeção de 5S na área Área de Caldeiraria e suas Máquinas G2", "Inspecao": 25312170, "Data": "2026-07-28", "Mes": "Julho", "Status": "Encerrado", "Conformidade": 100.0},
-            {"Posto": "Inspeção de 5S na área Baia de Gases Almoxarifado", "Inspecao": 25325972, "Data": "2026-07-30", "Mes": "Julho", "Status": "Encerrado", "Conformidade": 100.0},
-            {"Posto": "Inspeção de 5S na área Container Elétrica", "Inspecao": 25326025, "Data": "2026-07-30", "Mes": "Julho", "Status": "Encerrado", "Conformidade": 100.0},
-            {"Posto": "Inspeção de 5S na área Área Container Mecânica", "Inspecao": 25326096, "Data": "2026-07-30", "Mes": "Julho", "Status": "Encerrado", "Conformidade": 100.0},
-            {"Posto": "Inspeção de 5S na área Área G4", "Inspecao": 25326126, "Data": "2026-07-30", "Mes": "Julho", "Status": "Encerrado", "Conformidade": 100.0},
-            {"Posto": "Inspeção de 5S na área Área Produtos Acabados G2", "Inspecao": 25326158, "Data": "2026-07-30", "Mes": "Julho", "Status": "Encerrado", "Conformidade": 100.0},
-            {"Posto": "Inspeção de 5S na área Área Matéria-Prima G2", "Inspecao": 25326248, "Data": "2026-07-30", "Mes": "Julho", "Status": "Encerrado", "Conformidade": 100.0},
-            {"Posto": "Inspeção de 5S na área Área Usinagem G2", "Inspecao": 25326325, "Data": "2026-07-30", "Mes": "Julho", "Status": "Encerrado", "Conformidade": 100.0},
-            {"Posto": "Inspeção de 5S na área Área Sala de Compressores G2", "Inspecao": 25326390, "Data": "2026-07-30", "Mes": "Julho", "Status": "Encerrado", "Conformidade": 100.0},
-            {"Posto": "Inspeção de 5S na área Área Sala dos Compressores G1", "Inspecao": 25326567, "Data": "2026-07-30", "Mes": "Julho", "Status": "Encerrado", "Conformidade": 100.0},
-            {"Posto": "Inspeção de 5S na área Área Gerador CUMIS", "Inspecao": 25326689, "Data": "2026-07-30", "Mes": "Julho", "Status": "Encerrado", "Conformidade": 100.0},
-            {"Posto": "Inspeção de 5S na área Área Gerador MS", "Inspecao": 25326734, "Data": "2026-07-30", "Mes": "Julho", "Status": "Encerrado", "Conformidade": 100.0},
-            {"Posto": "Inspeção de 5S na área Área Gerador Toyam", "Inspecao": 25326815, "Data": "2026-07-30", "Mes": "Julho", "Status": "Encerrado", "Conformidade": 100.0},
-            {"Posto": "Inspeção de 5S na área Área SPCI", "Inspecao": 25326847, "Data": "2026-07-30", "Mes": "Julho", "Status": "Encerrado", "Conformidade": 100.0},
-            {"Posto": "Desmontagem de eixo na peneira", "Inspecao": 25355828, "Data": "2026-07-30", "Mes": "Julho", "Status": "Encerrado", "Conformidade": 100.0},
-            {"Posto": "Inspeção de 5S na área Área Ferramentaria", "Inspecao": 25505712, "Data": "2026-08-26", "Mes": "Agosto", "Status": "Encerrado", "Conformidade": 100.0},
-            {"Posto": "Inspeção de 5S na área  Sala do Almoxarifado G2", "Inspecao": 25505751, "Data": "2026-08-26", "Mes": "Agosto", "Status": "Encerrado", "Conformidade": 100.0},
-            {"Posto": "Inspeção de 5S na área  G4 (código do posto:POST-822607)", "Inspecao": 25505800, "Data": "2026-08-26", "Mes": "Agosto", "Status": "Encerrado", "Conformidade": 100.0},
-            {"Posto": "Inspeção de 5S na área Içamento de Carga (Contêiner)", "Inspecao": 25505855, "Data": "2026-08-26", "Mes": "Agosto", "Status": "Encerrado", "Conformidade": 100.0},
-            {"Posto": "Inspeção de 5S na área Baia de Gases Almoxarifado", "Inspecao": 25505888, "Data": "2026-08-26", "Mes": "Agosto", "Status": "Encerrado", "Conformidade": 100.0},
-            {"Posto": "Inspeção de 5S na área Sala elétrica 1", "Inspecao": 25512623, "Data": "2026-08-27", "Mes": "Agosto", "Status": "Encerrado", "Conformidade": 100.0},
-            {"Posto": "Inspeção de 5S na área Sala elétrica 2", "Inspecao": 25512800, "Data": "2026-08-27", "Mes": "Agosto", "Status": "Encerrado", "Conformidade": 100.0},
-            {"Posto": "Inspeção de 5S na área Subestação 01", "Inspecao": 25512833, "Data": "2026-08-27", "Mes": "Agosto", "Status": "Encerrado", "Conformidade": 100.0},
-            {"Posto": "Inspeção de 5S na área Subestação 02 (código do posto:POST-971454)", "Inspecao": 25512890, "Data": "2026-08-27", "Mes": "Agosto", "Status": "Encerrado", "Conformidade": 100.0},
-            {"Posto": "Inspeção de 5S na área Container Elétrica", "Inspecao": 25512968, "Data": "2026-08-27", "Mes": "Agosto", "Status": "Encerrado", "Conformidade": 100.0},
-            {"Posto": "Inspeção de 5S na área Container Mecânica (código do posto:POST-629405)", "Inspecao": 25513026, "Data": "2026-08-27", "Mes": "Agosto", "Status": "Encerrado", "Conformidade": 100.0},
-            {"Posto": "Inspeção de 5S na área Área de Caldeiraria e suas Máquinas G2", "Inspecao": 25517037, "Data": "2026-08-27", "Mes": "Agosto", "Status": "Encerrado", "Conformidade": 100.0},
-            {"Posto": "Inspeção de 5S na área Oficina de Manutenção G2", "Inspecao": 25517104, "Data": "2026-08-27", "Mes": "Agosto", "Status": "Encerrado", "Conformidade": 100.0},
-            {"Posto": "Inspeção de 5S na área Oficina de Manutenção G2", "Inspecao": 25587408, "Data": "2026-09-08", "Mes": "Setembro", "Status": "Encerrado", "Conformidade": 100.0},
-            {"Posto": "Inspeção de 5S na área Laboratório de elétrica e eletrônica", "Inspecao": 25590205, "Data": "2026-09-08", "Mes": "Setembro", "Status": "Encerrado", "Conformidade": 100.0},
-            {"Posto": "Inspeção de 5S na área Gerador CUMIS", "Inspecao": 25640498, "Data": "2026-09-16", "Mes": "Setembro", "Status": "Encerrado", "Conformidade": 100.0},
-            {"Posto": "Inspeção de 5S na área Gerador MS (código do posto:POST-718361)", "Inspecao": 25640526, "Data": "2026-09-16", "Mes": "Setembro", "Status": "Novo", "Conformidade": 93.3333},
-            {"Posto": "Inspeção de 5S na área Gerador Toyama (código do posto:POST-718343)", "Inspecao": 25640564, "Data": "2026-09-16", "Mes": "Setembro", "Status": "Encerrado", "Conformidade": 100.0},
-            {"Posto": "Inspeção de 5S na área Sala de Compressores G2 (código do posto:POST-970883)", "Inspecao": 25640586, "Data": "2026-09-16", "Mes": "Setembro", "Status": "Encerrado", "Conformidade": 100.0},
-            {"Posto": "Inspeção de 5S na área Sala dos Compressores G1 (código do posto:POST-642629)", "Inspecao": 25640660, "Data": "2026-09-16", "Mes": "Setembro", "Status": "Encerrado", "Conformidade": 100.0},
-            {"Posto": "Inspeção de 5S na área SPCI (código do posto:POST-629274)", "Inspecao": 25640749, "Data": "2026-09-16", "Mes": "Setembro", "Status": "Encerrado", "Conformidade": 100.0},
-            {"Posto": "Inspeção de 5S na área Gerador CUMIS (código do posto:POST-629235)", "Inspecao": 25640801, "Data": "2026-08-30", "Mes": "Agosto", "Status": "Encerrado", "Conformidade": 100.0},
-            {"Posto": "Inspeção de 5S na área Gerador MS (código do posto:POST-718361)", "Inspecao": 25640858, "Data": "2026-08-30", "Mes": "Agosto", "Status": "Encerrado", "Conformidade": 100.0},
-            {"Posto": "Inspeção de 5S na área Gerador Toyama (código do posto:POST-718343)", "Inspecao": 25640901, "Data": "2026-09-16", "Mes": "Setembro", "Status": "Encerrado", "Conformidade": 100.0},
-            {"Posto": "Inspeção de 5S na área Sala de Compressores G2 (código do posto:POST-970883)", "Inspecao": 25640950, "Data": "2026-08-30", "Mes": "Agosto", "Status": "Encerrado", "Conformidade": 100.0},
-            {"Posto": "Inspeção de 5S na área Sala dos Compressores G1 (código do posto:POST-642629)", "Inspecao": 25640993, "Data": "2026-09-16", "Mes": "Setembro", "Status": "Encerrado", "Conformidade": 100.0},
-            {"Posto": "Inspeção de 5S na área SPCI (código do posto:POST-629274)", "Inspecao": 25641080, "Data": "2026-08-30", "Mes": "Agosto", "Status": "Encerrado", "Conformidade": 100.0},
-            {"Posto": "Inspeção de 5S na área Gerador Toyama (código do posto:POST-718343)", "Inspecao": 25641150, "Data": "2026-08-30", "Mes": "Agosto", "Status": "Encerrado", "Conformidade": 100.0},
-            {"Posto": "Inspeção de 5S na área Sala dos Compressores G1 (código do posto:POST-642629)", "Inspecao": 25641174, "Data": "2026-08-30", "Mes": "Agosto", "Status": "Encerrado", "Conformidade": 100.0}
+        // EXEMPLO DE DADOS (Substitua ou conecte com a exportação da sua planilha do Google Drive)
+        // Página 1: Todos os postos (Código, Título, Expansão)
+        // Plan 1: Dados avaliados (Título, Auditoria, Data da Coluna D)
+        
+        const dadosPostos = [
+            { codigo: "P001", titulo: "Posto Centro", expansao: "Expansão A" },
+            { codigo: "P002", titulo: "Posto Norte", expansao: "Expansão B" },
+            { codigo: "P003", titulo: "Posto Sul", expansao: "Expansão A" }
         ];
 
-        function renderizarTabela() {
-            const mesSel = document.getElementById("filtroMes").value;
-            const statusSel = document.getElementById("filtroStatus").value;
-            const tbody = document.getElementById("corpoTabela");
+        const dadosAvaliacoes = [
+            { titulo: "Posto Centro", auditoria: "Audit 01", dataColunaD: "2026-08-15" }, // Formato AAAA-MM-DD ou MM/AAAA
+            { titulo: "Posto Sul", auditoria: "Audit 02", dataColunaD: "2026-07-10" }
+        ];
 
-            let filtrados = dadosBase.filter(row => {
-                let matchMes = (mesSel === "todos" || row["Mes"] === mesSel);
-                let matchStatus = (statusSel === "todos" || row["Status"] === statusSel);
-                return matchMes && matchStatus;
+        function processarIndicador() {
+            const tbody = document.getElementById('tabelaCorpo');
+            tbody.innerHTML = '';
+
+            // Cruzamento de dados por Título
+            const resultadoCombinado = dadosPostos.map(posto => {
+                const avaliacao = dadosAvaliacoes.find(a => a.titulo === posto.titulo);
+                
+                let mesAvaliacao = "-";
+                let status = "Fora do Prazo / Pendente";
+
+                if (avaliacao) {
+                    mesAvaliacao = avaliacao.dataColunaD; // Ajuste conforme o formato da sua coluna D
+                    // Lógica simples para checar se foi avaliado no mês vigente ou correspondente
+                    status = "Avaliado no Mês"; 
+                }
+
+                return {
+                    ...posto,
+                    mesAvaliacao,
+                    status
+                };
             });
 
-            let html = "";
-            let countEncerrado = 0;
-            let countPendente = 0;
-
-            filtrados.forEach((row, idx) => {
-                let status = row["Status"];
-                let badgeClass = (status === "Encerrado") ? "badge-ok" : "badge-danger";
-                if(status === "Encerrado") countEncerrado++;
-                else countPendente++;
-
-                html += `<tr>
-                    <td>${idx + 1}</td>
-                    <td><strong>${row["Posto"]}</strong></td>
-                    <td>${row["Inspecao"]}</td>
-                    <td>${row["Data"]}</td>
-                    <td>${row["Mes"]}</td>
-                    <td>${row["Conformidade"] !== "" ? row["Conformidade"] + "%" : "-"}</td>
-                    <td><span class="badge ${badgeClass}">${status === "Encerrado" ? "OK (Avaliado)" : "Pendente"}</span></td>
-                </tr>`;
+            // Renderizar na tabela
+            resultadoCombinado.forEach(item => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td class="p-4 font-medium text-gray-900">${item.codigo}</td>
+                    <td class="p-4">${item.titulo}</td>
+                    <td class="p-4 text-gray-600">${item.expansao}</td>
+                    <td class="p-4 text-gray-600">${item.mesAvaliacao}</td>
+                    <td class="p-4">
+                        <span class="px-2.5 py-1 rounded-full text-xs font-semibold ${item.status === 'Avaliado no Mês' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}">
+                            ${item.status}
+                        </span>
+                    </td>
+                `;
+                tbody.appendChild(tr);
             });
 
-            tbody.innerHTML = html;
-            let totalExibidos = filtrados.length;
-            document.getElementById("lblTotal").innerText = totalExibidos;
-            document.getElementById("lblEncerrado").innerText = countEncerrado;
-            document.getElementById("lblPendente").innerText = countPendente;
-            document.getElementById("lblTotalRodape").innerText = totalExibidos + " de " + dadosBase.length + " postos exibidos";
+            document.getElementById('contadorRegistros').innerText = `Exibindo ${resultadoCombinado.length} registros`;
         }
 
-        window.onload = function() {
-            renderizarTabela();
-        };
+        // Executar ao carregar a página
+        window.onload = processarIndicador;
     </script>
 </body>
 </html>
