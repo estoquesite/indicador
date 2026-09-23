@@ -12,56 +12,36 @@
 
     <!-- CAPA DO INDICADOR (TEMA VERDE) -->
     <header class="bg-gradient-to-r from-emerald-900 via-green-900 to-teal-900 text-white shadow-lg">
-        <div class="max-w-7xl mx-auto px-6 py-12 flex flex-col md:flex-row justify-between items-center">
-            <div class="mb-6 md:mb-0">
+        <div class="max-w-7xl mx-auto px-6 py-10 flex flex-col md:flex-row justify-between items-center">
+            <div>
                 <span class="bg-emerald-600 text-emerald-100 text-xs font-semibold px-3 py-1 rounded-full uppercase tracking-wider">Painel Corporativo</span>
-                <h1 class="text-3xl md:text-4xl font-extrabold mt-2 tracking-tight">Indicador de Avaliação de Postos</h1>
-                <p class="text-emerald-200 mt-2 text-sm max-w-xl">Painel com busca rápida e cruzamento sincronizado com o Google Drive.</p>
+                <h1 class="text-3xl font-extrabold mt-2 tracking-tight">Indicador de Avaliação de Postos</h1>
+                <p class="text-emerald-200 mt-1 text-sm">Acompanhamento mensal sincronizado com o Google Drive.</p>
             </div>
-            <div class="bg-white/10 backdrop-blur-md border border-white/20 p-4 rounded-xl text-center min-w-[200px]">
-                <span class="block text-xs text-emerald-200 uppercase font-medium">Postos Monitorados</span>
-                <span id="totalPostosBadge" class="text-2xl font-bold text-white">25 Postos</span>
+            <div class="mt-4 md:mt-0 bg-white/10 backdrop-blur-md border border-white/20 px-6 py-3 rounded-xl text-center">
+                <span class="block text-xs text-emerald-200 uppercase font-medium">Postos no Mês</span>
+                <span id="totalPostosBadge" class="text-2xl font-bold text-white">25</span>
             </div>
         </div>
     </header>
 
     <!-- CONTEÚDO PRINCIPAL -->
-    <main class="max-w-7xl mx-auto px-6 -mt-6 mb-16 flex-grow w-full">
+    <main class="max-w-7xl mx-auto px-6 -mt-4 mb-16 flex-grow w-full">
         
-        <!-- PAINEL DE FILTROS E MÉTRICAS -->
-        <div class="bg-white rounded-xl shadow-md p-6 mb-8 border border-emerald-100">
-            
-            <!-- BARRA DE FILTRO RÁPIDO (DESTAQUE EM VERDE) -->
-            <div class="bg-emerald-800 p-4 rounded-lg mb-6 shadow-inner flex flex-col md:flex-row items-center gap-4">
-                <div class="text-white font-bold text-sm flex items-center whitespace-nowrap">
-                    <i class="fa-solid fa-magnifying-glass mr-2"></i> Filtro Rápido:
-                </div>
-                <input type="text" id="filtroTexto" placeholder="Digite o nome do posto, código ou nº da auditoria..." 
-                    class="w-full bg-white text-slate-800 rounded-lg px-4 py-2 text-sm font-medium focus:ring-2 focus:ring-emerald-400 focus:outline-none placeholder-slate-400 shadow-sm"
-                    oninput="renderizarTabela()">
-            </div>
-
-            <div class="grid grid-cols-1 md:grid-cols-4 gap-6 items-center">
-                
-                <!-- Filtro por Ano -->
+        <!-- BARRA DE FILTROS PRINCIPAIS (ANO, MÊS, STATUS) -->
+        <div class="bg-white rounded-xl shadow-md p-5 mb-6 border border-emerald-100 flex flex-wrap gap-4 items-center justify-between">
+            <div class="flex flex-wrap gap-4 items-center">
                 <div>
-                    <label for="filtroAno" class="block text-xs font-bold text-slate-600 uppercase mb-2">
-                        <i class="fa-solid fa-flag mr-1 text-emerald-600"></i> Ano:
-                    </label>
-                    <select id="filtroAno" class="w-full bg-slate-50 border border-slate-300 rounded-lg p-2.5 text-sm font-medium focus:ring-2 focus:ring-emerald-600 focus:outline-none" onchange="renderizarTabela()">
-                        <option value="">Todos os Anos</option>
+                    <label for="filtroAno" class="block text-[10px] font-bold text-slate-500 uppercase mb-1">Ano:</label>
+                    <select id="filtroAno" class="bg-slate-50 border border-slate-300 rounded-lg p-2 text-sm font-medium focus:ring-2 focus:ring-emerald-600 focus:outline-none" onchange="renderizarTabela()">
                         <option value="2026" selected>2026</option>
                         <option value="2027">2027</option>
                     </select>
                 </div>
 
-                <!-- Filtro por Mês -->
                 <div>
-                    <label for="filtroMes" class="block text-xs font-bold text-slate-600 uppercase mb-2">
-                        <i class="fa-regular fa-calendar mr-1 text-emerald-600"></i> Mês:
-                    </label>
-                    <select id="filtroMes" class="w-full bg-slate-50 border border-slate-300 rounded-lg p-2.5 text-sm font-medium focus:ring-2 focus:ring-emerald-600 focus:outline-none" onchange="renderizarTabela()">
-                        <option value="">Todos os Meses</option>
+                    <label for="filtroMes" class="block text-[10px] font-bold text-slate-500 uppercase mb-1">Mês de Referência:</label>
+                    <select id="filtroMes" class="bg-slate-50 border border-slate-300 rounded-lg p-2 text-sm font-medium focus:ring-2 focus:ring-emerald-600 focus:outline-none" onchange="renderizarTabela()">
                         <option value="Janeiro">Janeiro</option>
                         <option value="Fevereiro">Fevereiro</option>
                         <option value="Março">Março</option>
@@ -77,65 +57,28 @@
                     </select>
                 </div>
 
-                <!-- Filtro por Status -->
                 <div>
-                    <label for="filtroStatus" class="block text-xs font-bold text-slate-600 uppercase mb-2">
-                        <i class="fa-solid fa-filter mr-1 text-emerald-600"></i> Status:
-                    </label>
-                    <select id="filtroStatus" class="w-full bg-slate-50 border border-slate-300 rounded-lg p-2.5 text-sm font-medium focus:ring-2 focus:ring-emerald-600 focus:outline-none" onchange="renderizarTabela()">
+                    <label for="filtroStatusGeral" class="block text-[10px] font-bold text-slate-500 uppercase mb-1">Status:</label>
+                    <select id="filtroStatusGeral" class="bg-slate-50 border border-slate-300 rounded-lg p-2 text-sm font-medium focus:ring-2 focus:ring-emerald-600 focus:outline-none" onchange="renderizarTabela()">
                         <option value="">Todos</option>
-                        <option value="Avaliado">Avaliado no Mês</option>
-                        <option value="Pendente">Pendente de Avaliação</option>
+                        <option value="Avaliado">Avaliados</option>
+                        <option value="Pendente">Pendentes</option>
                     </select>
                 </div>
+            </div>
 
-                <!-- Resumo Quantitativo -->
-                <div class="text-right pt-4 md:pt-0">
-                    <span id="contadorExibidos" class="block text-xl font-bold text-slate-900">0</span>
-                    <span class="text-xs text-slate-500 font-medium uppercase">Registros Exibidos</span>
-                </div>
-
+            <div class="text-right">
+                <span id="contadorExibidos" class="text-xl font-bold text-slate-900">25</span>
+                <span class="block text-[10px] text-slate-500 uppercase font-medium">Exibindo no Mês</span>
             </div>
         </div>
 
-        <!-- GRÁFICO VISUAL DE INDICADORES -->
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-            <div class="bg-white p-6 rounded-xl shadow-md border border-emerald-100 flex items-center justify-between">
-                <div>
-                    <span class="text-xs font-bold text-slate-400 uppercase tracking-wider">Total Monitorado</span>
-                    <h3 id="graficoTotal" class="text-3xl font-extrabold text-slate-900 mt-1">0</h3>
-                </div>
-                <div class="w-12 h-12 bg-slate-100 text-slate-700 rounded-full flex items-center justify-center text-xl">
-                    <i class="fa-solid fa-layer-group"></i>
-                </div>
-            </div>
-
-            <div class="bg-white p-6 rounded-xl shadow-md border border-emerald-100 flex items-center justify-between">
-                <div>
-                    <span class="text-xs font-bold text-emerald-600 uppercase tracking-wider">Avaliados</span>
-                    <h3 id="graficoAvaliados" class="text-3xl font-extrabold text-emerald-700 mt-1">0</h3>
-                </div>
-                <div class="w-12 h-12 bg-emerald-100 text-emerald-700 rounded-full flex items-center justify-center text-xl">
-                    <i class="fa-solid fa-circle-check"></i>
-                </div>
-            </div>
-
-            <div class="bg-white p-6 rounded-xl shadow-md border border-emerald-100 flex items-center justify-between">
-                <div>
-                    <span class="text-xs font-bold text-amber-600 uppercase tracking-wider">Pendentes</span>
-                    <h3 id="graficoPendentes" class="text-3xl font-extrabold text-amber-600 mt-1">0</h3>
-                </div>
-                <div class="w-12 h-12 bg-amber-100 text-amber-600 rounded-full flex items-center justify-center text-xl">
-                    <i class="fa-solid fa-clock-rotate-left"></i>
-                </div>
-            </div>
-        </div>
-
-        <!-- TABELA DE INDICADORES -->
+        <!-- TABELA DE INDICADORES COM FILTROS NA LINHA VERDE -->
         <div class="bg-white rounded-xl shadow-md border border-emerald-100 overflow-hidden">
             <div class="overflow-x-auto">
                 <table class="w-full text-left border-collapse">
                     <thead>
+                        <!-- LINHA PRINCIPAL DA CABEÇA VERDE -->
                         <tr class="bg-emerald-900 text-white text-xs font-bold uppercase tracking-wider">
                             <th class="p-4">Código do Posto</th>
                             <th class="p-4">Nome do Posto / Título</th>
@@ -143,10 +86,24 @@
                             <th class="p-4">Mês de Referência</th>
                             <th class="p-4">Status</th>
                         </tr>
+                        <!-- LINHA DE FILTROS DIRETO NA COLUNA VERDE -->
+                        <tr class="bg-emerald-800 text-white text-xs">
+                            <th class="p-2"><input type="text" id="filtroCod" placeholder="Filtrar código..." class="w-full bg-emerald-950/60 border border-emerald-700 rounded px-2 py-1 text-white text-xs placeholder-emerald-300 focus:outline-none" oninput="renderizarTabela()"></th>
+                            <th class="p-2"><input type="text" id="filtroNome" placeholder="Filtrar nome..." class="w-full bg-emerald-950/60 border border-emerald-700 rounded px-2 py-1 text-white text-xs placeholder-emerald-300 focus:outline-none" oninput="renderizarTabela()"></th>
+                            <th class="p-2"><input type="text" id="filtroAud" placeholder="Filtrar auditoria..." class="w-full bg-emerald-950/60 border border-emerald-700 rounded px-2 py-1 text-white text-xs placeholder-emerald-300 focus:outline-none" oninput="renderizarTabela()"></th>
+                            <th class="p-2 text-emerald-200 font-semibold">-</th>
+                            <th class="p-2">
+                                <select id="filtroStatusColuna" class="w-full bg-emerald-950/60 border border-emerald-700 rounded px-2 py-1 text-white text-xs focus:outline-none" onchange="renderizarTabela()">
+                                    <option value="" class="bg-emerald-900 text-white">Todos</option>
+                                    <option value="Avaliado" class="bg-emerald-900 text-white">Avaliado</option>
+                                    <option value="Pendente" class="bg-emerald-900 text-white">Pendente</option>
+                                </select>
+                            </th>
+                        </tr>
                     </thead>
                     <tbody id="tabelaCorpo" class="divide-y divide-slate-200 text-sm">
                         <tr>
-                            <td colspan="5" class="p-8 text-center text-slate-400">Lendo dados detalhados do Google Drive...</td>
+                            <td colspan="5" class="p-8 text-center text-slate-400">Lendo dados do Google Drive...</td>
                         </tr>
                     </tbody>
                 </table>
@@ -157,7 +114,7 @@
 
     <!-- RODAPÉ COM A VERSÃO -->
     <footer class="w-full text-center py-4 text-slate-400 text-[10px] border-t border-slate-200 bg-white">
-        Indicador de Postos &bull; Versão 15
+        Indicador de Postos &bull; Versão 16
     </footer>
 
     <!-- SCRIPT DE PROCESSAMENTO -->
@@ -190,11 +147,6 @@
             { codigo: "POST-000475", nome: "Subestação 01" },
             { codigo: "POST-971454", nome: "Subestação 02" },
             { codigo: "POST-971617", nome: "Usinagem G2" }
-        ];
-
-        const mesesDoAno = [
-            "Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho", 
-            "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"
         ];
 
         let dadosAuditoriaDetalhados = [];
@@ -255,68 +207,63 @@
         }
 
         function renderizarTabela() {
-            const filtroTexto = normalizar(document.getElementById('filtroTexto').value);
-            const filtroAno = document.getElementById('filtroAno').value;
-            const filtroMes = document.getElementById('filtroMes').value;
-            const filtroStatus = document.getElementById('filtroStatus').value;
+            const anoSelecionado = document.getElementById('filtroAno').value;
+            const mesSelecionado = document.getElementById('filtroMes').value;
+            const statusGeral = document.getElementById('filtroStatusGeral').value;
+
+            const fCod = normalizar(document.getElementById('filtroCod').value);
+            const fNome = normalizar(document.getElementById('filtroNome').value);
+            const fAud = normalizar(document.getElementById('filtroAud').value);
+            const fStatusCol = document.getElementById('filtroStatusColuna').value;
+
             const tbody = document.getElementById('tabelaCorpo');
-            
             tbody.innerHTML = '';
-            let listaCompleta = [];
 
+            let listaMes = [];
+
+            // Avalia apenas os 25 postos para o MÊS e ANO selecionados
             basePostos.forEach(posto => {
-                mesesDoAno.forEach(mes => {
-                    const codigoNorm = normalizar(posto.codigo);
-                    let nomeCurto = normalizar(posto.nome)
-                        .replace("area de", "")
-                        .replace("sala de", "")
-                        .replace("sala dos", "")
-                        .replace("gerador", "")
-                        .replace("container", "")
-                        .trim();
+                const codigoNorm = normalizar(posto.codigo);
+                let nomeCurto = normalizar(posto.nome)
+                    .replace("area de", "")
+                    .replace("sala de", "")
+                    .replace("sala dos", "")
+                    .replace("gerador", "")
+                    .replace("container", "")
+                    .trim();
 
-                    const mesNorm = normalizar(mes);
+                const mesNorm = normalizar(mesSelecionado);
 
-                    const achou = dadosAuditoriaDetalhados.find(item => {
-                        let t = item.textoNormalizado;
-                        let temPosto = t.includes(codigoNorm) || (nomeCurto.length > 3 && t.includes(nomeCurto));
-                        let temMes = t.includes(mesNorm) || item.mesDetectado.toLowerCase() === mes.toLowerCase();
-                        let temAno = filtroAno === "" || item.anoDetectado === filtroAno;
-                        return temPosto && temMes && temAno;
-                    });
+                const achou = dadosAuditoriaDetalhados.find(item => {
+                    let t = item.textoNormalizado;
+                    let temPosto = t.includes(codigoNorm) || (nomeCurto.length > 3 && t.includes(nomeCurto));
+                    let temMes = t.includes(mesNorm) || item.mesDetectado.toLowerCase() === mesSelecionado.toLowerCase();
+                    let temAno = item.anoDetectado === anoSelecionado;
+                    return temPosto && temMes && temAno;
+                });
 
-                    listaCompleta.push({
-                        codigo: posto.codigo,
-                        nome: posto.nome,
-                        mes: mes,
-                        numAuditoria: achou ? `#${achou.numAuditoria}` : "-",
-                        status: achou ? "Avaliado" : "Pendente"
-                    });
+                listaMes.push({
+                    codigo: posto.codigo,
+                    nome: posto.nome,
+                    mes: mesSelecionado,
+                    numAuditoria: achou ? `#${achou.numAuditoria}` : "-",
+                    status: achou ? "Avaliado" : "Pendente"
                 });
             });
 
-            let totalGeral = listaCompleta.length;
-            let totalAvaliados = listaCompleta.filter(i => i.status === "Avaliado").length;
-            let totalPendentes = listaCompleta.filter(i => i.status === "Pendente").length;
+            // Aplicar filtros da linha verde e do status geral
+            let dadosFiltrados = listaMes.filter(item => {
+                let mCod = normalizar(item.codigo).includes(fCod);
+                let mNome = normalizar(item.nome).includes(fNome);
+                let mAud = normalizar(item.numAuditoria).includes(fAud);
+                let mStatCol = fStatusCol === "" || item.status === fStatusCol;
+                let mStatGer = statusGeral === "" || item.status === statusGeral;
 
-            document.getElementById('graficoTotal').innerText = totalGeral;
-            document.getElementById('graficoAvaliados').innerText = totalAvaliados;
-            document.getElementById('graficoPendentes').innerText = totalPendentes;
-
-            let dadosFiltrados = listaCompleta.filter(item => {
-                let matchTexto = filtroTexto === "" || 
-                    normalizar(item.codigo).includes(filtroTexto) || 
-                    normalizar(item.nome).includes(filtroTexto) || 
-                    normalizar(item.numAuditoria).includes(filtroTexto);
-
-                let matchMes = filtroMes === "" || item.mes === filtroMes;
-                let matchStatus = filtroStatus === "" || item.status === filtroStatus;
-                
-                return matchTexto && matchMes && matchStatus;
+                return mCod && mNome && mAud && mStatCol && mStatGer;
             });
 
             if (dadosFiltrados.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="5" class="p-8 text-center text-slate-400">Nenhum registro encontrado para os filtros selecionados.</td></tr>`;
+                tbody.innerHTML = `<tr><td colspan="5" class="p-8 text-center text-slate-400">Nenhum posto encontrado para este filtro.</td></tr>`;
                 document.getElementById('contadorExibidos').innerText = 0;
                 return;
             }
@@ -344,6 +291,7 @@
             });
 
             document.getElementById('contadorExibidos').innerText = dadosFiltrados.length;
+            document.getElementById('totalPostosBadge').innerText = listaMes.length;
         }
 
         window.onload = carregarDadosDrive;
