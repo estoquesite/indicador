@@ -31,7 +31,7 @@
             </button>
         </nav>
         <div class="p-4 border-t border-emerald-900 text-[10px] text-emerald-400 text-center">
-            Indicador Corporativo &bull; Versão 21
+            Indicador Corporativo &bull; Versão 22
         </div>
     </aside>
 
@@ -185,13 +185,13 @@
             </div>
         </section>
 
-        <!-- ABA 3: INDICADOR DE ESTOQUE (COM INDICADORES GERENCIAIS E SCROLL OTIMIZADO) -->
+        <!-- ABA 3: INDICADOR DE ESTOQUE (COM INDICADORES E LINHAS COMPACTAS) -->
         <section id="aba-estoque" class="view-aba hidden p-8 bg-emerald-50/40 min-h-full">
             <div class="max-w-7xl mx-auto">
                 <div class="flex justify-between items-center mb-6">
                     <div>
                         <h2 class="text-2xl font-extrabold text-slate-900">Indicador de Inventário e Estoque</h2>
-                        <p class="text-sm text-slate-500">Análise gerencial por galpão, baia, solicitante e itens em tempo real.</p>
+                        <p class="text-sm text-slate-500">Análise estratégica de galpões, baias, solicitantes e rotatividade.</p>
                     </div>
                     <div class="bg-emerald-900 text-white px-5 py-2.5 rounded-xl shadow-sm text-center">
                         <span class="block text-[10px] text-emerald-300 uppercase font-bold">Total de Itens</span>
@@ -199,47 +199,47 @@
                     </div>
                 </div>
 
-                <!-- CARTÕES DE INDICADORES GERENCIAIS DE ESTOQUE -->
+                <!-- CARTÕES DE INDICADORES GERENCIAIS (LOCALIZAÇÕES E TIPOS) -->
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
                     <div class="bg-white p-5 rounded-xl shadow-md border border-emerald-100 flex items-center justify-between">
                         <div>
-                            <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Total de Registros</span>
-                            <h3 id="cardTotalRegistros" class="text-3xl font-extrabold text-slate-900 mt-1">0</h3>
-                        </div>
-                        <div class="w-12 h-12 bg-emerald-100 text-emerald-700 rounded-full flex items-center justify-center text-xl"><i class="fa-solid fa-boxes-stacked"></i></div>
-                    </div>
-                    <div class="bg-white p-5 rounded-xl shadow-md border border-emerald-100 flex items-center justify-between">
-                        <div>
-                            <span class="text-[10px] font-bold text-emerald-600 uppercase tracking-wider">Galpões / Áreas</span>
-                            <h3 id="cardTotalGalpoes" class="text-3xl font-extrabold text-emerald-700 mt-1">0</h3>
+                            <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Galpões / Áreas (G3 / G4)</span>
+                            <h3 id="cardGalpoesQtd" class="text-3xl font-extrabold text-slate-900 mt-1">0</h3>
                         </div>
                         <div class="w-12 h-12 bg-emerald-100 text-emerald-700 rounded-full flex items-center justify-center text-xl"><i class="fa-solid fa-warehouse"></i></div>
                     </div>
                     <div class="bg-white p-5 rounded-xl shadow-md border border-emerald-100 flex items-center justify-between">
                         <div>
-                            <span class="text-[10px] font-bold text-teal-600 uppercase tracking-wider">Solicitantes / Pedidos</span>
-                            <h3 id="cardTotalSolicitantes" class="text-3xl font-extrabold text-teal-700 mt-1">0</h3>
+                            <span class="text-[10px] font-bold text-emerald-600 uppercase tracking-wider">Tipos de Materiais</span>
+                            <h3 id="cardTiposQtd" class="text-3xl font-extrabold text-emerald-700 mt-1">0</h3>
+                        </div>
+                        <div class="w-12 h-12 bg-emerald-100 text-emerald-700 rounded-full flex items-center justify-center text-xl"><i class="fa-solid fa-tags"></i></div>
+                    </div>
+                    <div class="bg-white p-5 rounded-xl shadow-md border border-emerald-100 flex items-center justify-between">
+                        <div>
+                            <span class="text-[10px] font-bold text-teal-600 uppercase tracking-wider">Solicitantes Ativos</span>
+                            <h3 id="cardSolicitantesQtd" class="text-3xl font-extrabold text-teal-700 mt-1">0</h3>
                         </div>
                         <div class="w-12 h-12 bg-teal-100 text-teal-700 rounded-full flex items-center justify-center text-xl"><i class="fa-solid fa-users"></i></div>
                     </div>
                 </div>
 
-                <!-- TABELA DE ESTOQUE COM SCROLL FIXO E LIMPEZA DE VAZIOS -->
+                <!-- TABELA DE ESTOQUE COMPACTA COM SCROLL FIXO -->
                 <div class="bg-white rounded-xl shadow-md border border-emerald-100 overflow-hidden">
                     <div class="p-4 bg-emerald-900 text-white font-bold text-xs uppercase tracking-wider flex justify-between items-center">
-                        <span>Base Completa de Inventário (Google Drive)</span>
+                        <span>Base de Inventário Consolidada (Google Drive)</span>
                         <span class="text-[10px] bg-emerald-800 px-3 py-1 rounded">Sincronizado</span>
                     </div>
-                    <!-- Container com rolagem lateral e altura fixa para não precisar ir até o final da página -->
-                    <div class="overflow-x-auto max-h-[600px] overflow-y-auto">
-                        <table class="w-full text-left border-collapse text-sm">
+                    <!-- Container com rolagem e altura compacta -->
+                    <div class="overflow-x-auto max-h-[550px] overflow-y-auto">
+                        <table class="w-full text-left border-collapse text-xs">
                             <thead class="sticky top-0 bg-slate-100 z-10">
-                                <tr id="estoqueCabecalho" class="border-b border-slate-200 text-xs font-bold text-slate-600 uppercase">
+                                <tr id="estoqueCabecalho" class="border-b border-slate-200 font-bold text-slate-700 uppercase">
                                     <!-- Cabeçalhos dinâmicos -->
                                 </tr>
                             </thead>
-                            <tbody id="tabelaCorpoEstoque" class="divide-y divide-slate-200">
-                                <tr><td colspan="5" class="p-8 text-center text-slate-400">Carregando dados do estoque do Google Drive...</td></tr>
+                            <tbody id="tabelaCorpoEstoque" class="divide-y divide-slate-100">
+                                <tr><td colspan="5" class="p-6 text-center text-slate-400">Carregando dados do estoque do Google Drive...</td></tr>
                             </tbody>
                         </table>
                     </div>
@@ -352,7 +352,7 @@
             }
         }
 
-        // Carregar estoque com limpeza de linhas em branco e extração de indicadores gerenciais
+        // Carregar estoque com linhas super compactas e extração inteligente de indicadores
         async function carregarDadosEstoque() {
             try {
                 const response = await fetch(CSV_URL_ESTOQUE);
@@ -364,28 +364,27 @@
                 thead.innerHTML = '';
                 tbody.innerHTML = '';
 
-                // Filtra apenas linhas que possuem conteúdo real (remove vazias)
                 const linhasValidas = linhas.filter(l => l.trim() !== "" && l.replace(/,/g, "").trim() !== "");
 
                 if (linhasValidas.length === 0) {
-                    tbody.innerHTML = `<tr><td colspan="5" class="p-8 text-center text-slate-400">Nenhum dado encontrado no estoque.</td></tr>`;
+                    tbody.innerHTML = `<tr><td colspan="5" class="p-6 text-center text-slate-400">Nenhum dado encontrado no estoque.</td></tr>`;
                     return;
                 }
 
-                // Cabeçalho
+                // Cabeçalho compacto
                 const cabecalhos = linhasValidas[0].split(',');
                 cabecalhos.forEach(col => {
                     const th = document.createElement('th');
-                    th.className = "p-4 text-xs font-bold text-slate-700 uppercase tracking-wider";
+                    th.className = "p-2.5 text-xs font-bold text-slate-700 uppercase tracking-wider whitespace-nowrap";
                     th.innerText = col.replace(/"/g, '').trim();
                     thead.appendChild(th);
                 });
 
                 let totalItens = 0;
                 let galpoesSet = new Set();
+                let tiposSet = new Set();
                 let solicitantesSet = new Set();
 
-                // Linhas de dados (ignorando a primeira que é o cabeçalho)
                 for (let i = 1; i < linhasValidas.length; i++) {
                     const linha = linhasValidas[i];
                     const colunas = linha.split(',');
@@ -395,29 +394,29 @@
 
                     colunas.forEach((val, idx) => {
                         const td = document.createElement('td');
-                        td.className = "p-4 text-slate-700 whitespace-nowrap";
+                        td.className = "p-2.5 text-slate-700 whitespace-nowrap text-xs";
                         const textoLimpo = val.replace(/"/g, '').trim();
                         td.innerText = textoLimpo;
                         tr.appendChild(td);
 
-                        // Exemplo heurístico: tenta mapear colunas para os indicadores se existirem
+                        // Mapeamento heurístico para os cartões gerenciais
                         if (idx === 0 && textoLimpo) galpoesSet.add(textoLimpo);
-                        if (idx === 1 && textoLimpo) solicitantesSet.add(textoLimpo);
+                        if (idx === 2 && textoLimpo) tiposSet.add(textoLimpo);
+                        if (idx === 3 && textoLimpo) solicitantesSet.add(textoLimpo);
                     });
 
                     tbody.appendChild(tr);
                     totalItens++;
                 }
 
-                // Atualiza os cartões gerenciais no topo do estoque
                 document.getElementById('totalEstoqueBadge').innerText = totalItens;
-                document.getElementById('cardTotalRegistros').innerText = totalItens;
-                document.getElementById('cardTotalGalpoes').innerText = galpoesSet.size > 0 ? galpoesSet.size : "-";
-                document.getElementById('cardTotalSolicitantes').innerText = solicitantesSet.size > 0 ? solicitantesSet.size : "-";
+                document.getElementById('cardGalpoesQtd').innerText = galpoesSet.size > 0 ? galpoesSet.size : "-";
+                document.getElementById('cardTiposQtd').innerText = tiposSet.size > 0 ? tiposSet.size : "-";
+                document.getElementById('cardSolicitantesQtd').innerText = solicitantesSet.size > 0 ? solicitantesSet.size : "-";
 
             } catch (erro) {
                 console.error("Erro ao ler CSV Estoque:", erro);
-                document.getElementById('tabelaCorpoEstoque').innerHTML = `<tr><td colspan="5" class="p-8 text-center text-rose-500">Erro ao carregar dados do estoque. Verifique a publicação CSV.</td></tr>`;
+                document.getElementById('tabelaCorpoEstoque').innerHTML = `<tr><td colspan="5" class="p-6 text-center text-rose-500">Erro ao carregar dados do estoque.</td></tr>`;
             }
         }
 
