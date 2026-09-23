@@ -2,30 +2,33 @@
 <html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
-    <title>Painel de Confiabilidade & 5S - Com Filtros</title>
+    <title>Painel de Indicadores - Coordenação de Confiabilidade (5S)</title>
     <style>
         body { font-family: 'Segoe UI', Arial, sans-serif; background-color: #f4f6f9; color: #333; margin: 0; padding: 20px; }
-        .container { max-width: 1100px; margin: 0 auto; background: white; padding: 30px; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.08); }
+        .container { max-width: 1150px; margin: 0 auto; background: white; padding: 30px; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.08); }
         .header-flex { display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid #e0e0e0; padding-bottom: 15px; margin-bottom: 20px; }
         h1 { color: #1f4e79; font-size: 22px; margin: 0; }
         
-        /* Área de Filtros */
+        /* Barra de Filtros */
         .filters-bar { background: #e9ecef; padding: 15px; border-radius: 6px; margin-bottom: 25px; display: flex; gap: 20px; align-items: center; }
         .filters-bar label { font-weight: bold; font-size: 13px; color: #495057; }
         .filters-bar select { padding: 8px 12px; border-radius: 4px; border: 1px solid #ced4da; font-size: 13px; background: white; }
 
-        .cards { display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px; margin-bottom: 30px; }
-        .card { background: #f8f9fa; border-left: 5px solid #1f4e79; padding: 15px; border-radius: 4px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
-        .card h3 { margin: 0; font-size: 12px; color: #555; text-transform: uppercase; }
-        .card .value { font-size: 24px; font-weight: bold; color: #1f4e79; margin-top: 8px; }
+        /* Caixinha de Indicador */
+        .indicator-card { background: #fff; border: 1px solid #d1d8e0; border-top: 5px solid #1f4e79; border-radius: 6px; padding: 20px; margin-bottom: 30px; box-shadow: 0 2px 5px rgba(0,0,0,0.03); }
+        .indicator-card h2 { margin-top: 0; font-size: 18px; color: #1f4e79; border-bottom: 1px solid #eee; padding-bottom: 10px; display: flex; justify-content: space-between; align-items: center; }
         
-        table { width: 100%; border-collapse: collapse; margin-top: 15px; }
-        th, td { padding: 12px 15px; text-align: left; border-bottom: 1px solid #e0e0e0; font-size: 13px; }
-        th { background-color: #1f4e79; color: white; }
-        tr:hover { background-color: #f1f3f5; }
-        .badge { padding: 5px 10px; border-radius: 12px; font-size: 11px; font-weight: bold; }
+        .cards-resumo { display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px; margin-bottom: 20px; }
+        .mini-card { background: #f8f9fa; border-left: 4px solid #1f4e79; padding: 12px; border-radius: 4px; }
+        .mini-card h3 { margin: 0; font-size: 11px; color: #555; text-transform: uppercase; }
+        .mini-card .value { font-size: 20px; font-weight: bold; color: #1f4e79; margin-top: 5px; }
+
+        table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+        th, td { padding: 10px 12px; text-align: left; border-bottom: 1px solid #e0e0e0; font-size: 13px; }
+        th { background-color: #f1f3f5; color: #333; }
+        tr:hover { background-color: #f8f9fa; }
+        .badge { padding: 4px 8px; border-radius: 10px; font-size: 11px; font-weight: bold; }
         .badge-ok { background: #d4edda; color: #155724; }
-        .badge-warning { background: #fff3cd; color: #856404; }
         .badge-danger { background: #f8d7da; color: #721c24; }
     </style>
 </head>
@@ -33,106 +36,117 @@
     <div class="container">
         <div class="header-flex">
             <div>
-                <h1>Painel de Confiabilidade & Maturidade 5S</h1>
-                <p style="margin: 5px 0 0 0; color: #666; font-size: 13px;">Controle Operacional de Postos e Pendências</p>
+                <h1>Portal de Confiabilidade - Gestão de Ativos</h1>
+                <p style="margin: 5px 0 0 0; color: #666; font-size: 13px;">Coordenação: Bianca Medeiros | Responsável: Mariana Pereira Cruz</p>
             </div>
         </div>
         
-        <!-- Barra de Filtros Interativos -->
+        <!-- Barra de Filtros Globais -->
         <div class="filters-bar">
             <div>
                 <label for="filtroMes">Mês de Referência:</label><br>
                 <select id="filtroMes" onchange="filtrarTabela()">
                     <option value="todos">Todos os Meses</option>
-                    <option value="setembro" selected>Setembro / 2026 (Atual)</option>
-                    <option value="agosto">Agosto / 2026 (Anterior)</option>
+                    <option value="junho" selected>Junho / 2026</option>
+                    <option value="julho">Julho / 2026</option>
                 </select>
             </div>
             <div>
-                <label for="filtroStatus">Status da Avaliação:</label><br>
+                <label for="filtroStatus">Filtrar por Status:</label><br>
                 <select id="filtroStatus" onchange="filtrarTabela()">
-                    <option value="todos">Todos os Status</option>
-                    <option value="ok">Apenas Avaliados</option>
-                    <option value="pendente">Apenas Pendentes / Atrasados</option>
+                    <option value="todos" selected>Todos os Status (Avaliados e Pendentes)</option>
+                    <option value="ok">Apenas Avaliados (Encerrado)</option>
+                    <option value="pendente">Apenas Pendentes</option>
                 </select>
             </div>
         </div>
 
-        <div class="cards">
-            <div class="card">
-                <h3>Postos Avaliados</h3>
-                <div class="value">3 / 5</div>
+        <!-- PRIMEIRA CAIXINHA: 5S & MATURIDADE DOS POSTOS -->
+        <div class="indicator-card">
+            <h2>
+                <span>📊 Indicador 1: Maturidade 5S por Posto de Trabalho</span>
+                <span style="font-size: 12px; font-weight: normal; color: #666;">Formulário: DISTM_MATURIDADE_5S_RV1</span>
+            </h2>
+
+            <div class="cards-resumo">
+                <div class="mini-card">
+                    <h3>Total de Postos</h3>
+                    <div class="value">4 Postos</div>
+                </div>
+                <div class="mini-card">
+                    <h3>Avaliados</h3>
+                    <div class="value" style="color: #28a745;">3 Postos</div>
+                </div>
+                <div class="mini-card">
+                    <h3>Pendentes</h3>
+                    <div class="value" style="color: #dc3545;">1 Posto</div>
+                </div>
+                <div class="mini-card">
+                    <h3>Conformidade Média</h3>
+                    <div class="value">91.2%</div>
+                </div>
             </div>
-            <div class="card">
-                <h3>Postos Pendentes</h3>
-                <div class="value" style="color: #c00000;">2 Setores</div>
-            </div>
-            <div class="card">
-                <h3>Maturidade Média</h3>
-                <div class="value">Nível 3.2</div>
-            </div>
-            <div class="card">
-                <h3>Conformidade Global</h3>
-                <div class="value">84.5%</div>
-            </div>
+
+            <table id="tabelaDados">
+                <thead>
+                    <tr>
+                        <th>Posto / Localização</th>
+                        <th>Título da Inspeção</th>
+                        <th>Mês</th>
+                        <th>% Conformidade</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr data-mes="junho" data-status="ok">
+                        <td><strong>POST-000475 Subestação 01</strong></td>
+                        <td>Inspeção de 5S - Área Subestação 01</td>
+                        <td>Junho/2026</td>
+                        <td>100%</td>
+                        <td><span class="badge badge-ok">Encerrado</span></td>
+                    </tr>
+                    <tr data-mes="junho" data-status="ok">
+                        <td><strong>POST-000482 Oficinas Centrais</strong></td>
+                        <td>Inspeção de 5S - Oficinas de Manutenção</td>
+                        <td>Junho/2026</td>
+                        <td>88.5%</td>
+                        <td><span class="badge badge-ok">Encerrado</span></td>
+                    </tr>
+                    <tr data-mes="junho" data-status="ok">
+                        <td><strong>POST-000490 Pátio de Correias</strong></td>
+                        <td>Inspeção de 5S - Área de Correias</td>
+                        <td>Junho/2026</td>
+                        <td>85.0%</td>
+                        <td><span class="badge badge-ok">Encerrado</span></td>
+                    </tr>
+                    <tr data-mes="junho" data-status="pendente">
+                        <td><strong>POST-000510 Casa de Bombas Principal</strong></td>
+                        <td>Inspeção de 5S - Hidráulica</td>
+                        <td>Junho/2026</td>
+                        <td>--</td>
+                        <td><span class="badge badge-danger">Pendente</span></td>
+                    </tr>
+                </tbody>
+            </table>
         </div>
 
-        <h2>Status Detalhado por Posto / Área</h2>
-        <table id="tabelaDados">
-            <thead>
-                <tr>
-                    <th>Posto / Área</th>
-                    <th>Mês</th>
-                    <th>Nível de Maturidade</th>
-                    <th>Nota 5S (Col. W)</th>
-                    <th>Status da Avaliação</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr data-mes="setembro" data-status="ok">
-                    <td><strong>Oficina Mecânica Principal</strong></td>
-                    <td>Setembro/2026</td>
-                    <td>Nível 4 (Avançado)</td>
-                    <td>92.5%</td>
-                    <td><span class="badge badge-ok">Avaliado</span></td>
-                </tr>
-                <tr data-mes="setembro" data-status="ok">
-                    <td><strong>Almoxarifado de Sobressalentes</strong></td>
-                    <td>Setembro/2026</td>
-                    <td>Nível 3 (Em Gestão)</td>
-                    <td>85.0%</td>
-                    <td><span class="badge badge-ok">Avaliado</span></td>
-                </tr>
-                <tr data-mes="setembro" data-status="ok">
-                    <td><strong>Pátio de Ativos Móveis</strong></td>
-                    <td>Setembro/2026</td>
-                    <td>Nível 4 (Avançado)</td>
-                    <td>90.2%</td>
-                    <td><span class="badge badge-ok">Avaliado</span></td>
-                </tr>
-                <tr data-mes="setembro" data-status="pendente">
-                    <td><strong>Linha de Britagem Primária</strong></td>
-                    <td>Setembro/2026</td>
-                    <td>Nível 2 (Básico)</td>
-                    <td>74.0%</td>
-                    <td><span class="badge badge-danger">Pendente (Atrasado)</span></td>
-                </tr>
-                <tr data-mes="agosto" data-status="pendente">
-                    <td><strong>Casa de Bombas / Hidráulica</strong></td>
-                    <td>Agosto/2026</td>
-                    <td>Nível 3 (Em Gestão)</td>
-                    <td>82.8%</td>
-                    <td><span class="badge badge-warning">Pendente (Mês Anterior)</span></td>
-                </tr>
-            </tbody>
-        </table>
+        <!-- PRÓXIMA CAIXINHA: ESTOQUE E SOBRESSALENTES -->
+        <div class="indicator-card" style="border-top-color: #6c757d; opacity: 0.8;">
+            <h2>
+                <span>📦 Indicador 2: Controle de Estoque & Sobressalentes</span>
+                <span style="font-size: 12px; font-weight: normal; color: #666;">Próximo Módulo</span>
+            </h2>
+            <p style="color: #666; font-size: 13px; margin: 10px 0 0 0;">(Módulo reservado para os indicadores de materiais e estoque crítico da confiabilidade.)</p>
+        </div>
+
     </div>
 
     <script>
         function filtrarTabela() {
             var mesSel = document.getElementById("filtroMes").value;
             var statusSel = document.getElementById("filtroStatus").value;
-            var linhas = document.getElementById("tabelaDados").getElementsByTagName("tbody")[0].getElementsByTagName("tr");
+            var tabela = document.getElementById("tabelaDados");
+            var linhas = tabela.getElementsByTagName("tbody")[0].getElementsByTagName("tr");
 
             for (var i = 0; i < linhas.length; i++) {
                 var mesLinha = linhas[i].getAttribute("data-mes");
@@ -142,9 +156,9 @@
                 var matchStatus = (statusSel === "todos" || statusLinha === statusSel);
 
                 if (matchMes && matchStatus) {
-                    linhas.style.display = "";
+                    linhas[i].style.display = "";
                 } else {
-                    linhas.style.display = "none";
+                    linhas[i].style.display = "none";
                 }
             }
         }
