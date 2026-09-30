@@ -29,9 +29,9 @@
                 <i class="fa-solid fa-boxes-stacked w-5"></i>
                 <span>Indicador de Estoque</span>
             </button>
-            <button onclick="mudarAba('calibracao')" id="btn-calibracao" class="w-full flex items-center space-x-3 px-4 py-3 rounded-lg text-sm font-medium transition-colors text-emerald-300 hover:bg-emerald-900/60 hover:text-white">
+            <button onclick="mudarAba('usuarios')" id="btn-usuarios" class="w-full flex items-center space-x-3 px-4 py-3 rounded-lg text-sm font-medium transition-colors text-emerald-300 hover:bg-emerald-900/60 hover:text-white">
                 <i class="fa-solid fa-screwdriver-wrench w-5"></i>
-                <span>Usuários & Calibração</span>
+                <span>Usuários</span>
             </button>
         </nav>
         <div class="p-4 border-t border-emerald-900 text-[10px] text-emerald-400 text-center">
@@ -57,8 +57,8 @@
                         <span>Acessar Estoque</span>
                         <i class="fa-solid fa-arrow-right"></i>
                     </button>
-                    <button onclick="mudarAba('calibracao')" class="bg-emerald-600/40 hover:bg-emerald-600/60 border border-emerald-400/40 text-white font-bold px-6 py-3 rounded-xl shadow-lg transition-all flex items-center space-x-2">
-                        <span>Acessar Usuários & Calibração</span>
+                    <button onclick="mudarAba('usuarios')" class="bg-emerald-600/40 hover:bg-emerald-600/60 border border-emerald-400/40 text-white font-bold px-6 py-3 rounded-xl shadow-lg transition-all flex items-center space-x-2">
+                        <span>Acessar Usuários</span>
                         <i class="fa-solid fa-arrow-right"></i>
                     </button>
                 </div>
@@ -253,7 +253,7 @@
         </section>
 
         <!-- ABA 4: INDICADOR DE USUÁRIOS E CALIBRAÇÃO (CARREGA O PAINEL SEPARADO) -->
-        <section id="aba-calibracao" class="view-aba hidden p-4 flex-grow flex flex-col h-full bg-slate-100">
+        <section id="aba-usuarios" class="view-aba hidden p-4 flex-grow flex flex-col h-full bg-slate-100">
             <div class="flex justify-between items-center mb-3 px-2">
                 <div class="flex items-center gap-2">
                     <span class="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse"></span>
@@ -312,7 +312,7 @@
             const alvo = document.getElementById(`aba-${aba}`);
             if (alvo) alvo.classList.remove('hidden');
 
-            ['capa', '5s', 'estoque', 'calibracao'].forEach(id => {
+            ['capa', '5s', 'estoque', 'usuarios'].forEach(id => {
                 const btn = document.getElementById(`btn-${id}`);
                 if (btn) {
                     if (id === aba) {
