@@ -13,8 +13,10 @@
     <!-- MENU LATERAL CLARO E SUAVE -->
     <aside class="w-64 bg-white border-r border-slate-200 text-slate-700 flex flex-col shadow-sm z-20 shrink-0">
         <div class="p-6 border-b border-slate-100">
-            <span class="bg-slate-100 text-slate-600 text-[10px] font-semibold px-2.5 py-1 rounded-md uppercase tracking-wider">Gestão de Ativos</span>
-            <h2 class="text-xl font-extrabold mt-1 text-slate-900 tracking-tight">Painel Vale</h2>
+            <h2 class="text-base font-bold text-slate-800 tracking-tight flex items-center gap-2.5">
+                <i class="fa-solid fa-chart-pie text-slate-400 text-base"></i>
+                <span>Painel de Indicadores</span>
+            </h2>
         </div>
         <nav class="flex-grow p-4 space-y-2 overflow-y-auto">
             <button onclick="mudarAba('capa')" id="btn-capa" class="w-full flex items-center space-x-3 px-4 py-3 rounded-lg text-sm font-semibold transition-all bg-slate-100 text-slate-900 shadow-sm border border-slate-200">
@@ -42,24 +44,43 @@
     <!-- CONTEÚDO DINÂMICO PRINCIPAL -->
     <div class="flex-grow flex flex-col h-screen overflow-y-auto bg-slate-50">
         
-        <!-- ABA 1: CAPA / INÍCIO (CLARA E HARMONIOSA) -->
+        <!-- ABA 1: CAPA / INÍCIO -->
         <section id="aba-capa" class="view-aba flex-grow flex flex-col justify-center items-center p-12 bg-white text-center">
-            <div class="max-w-4xl">
-                <span class="bg-blue-50 text-blue-600 text-xs font-bold px-4 py-1.5 rounded-full uppercase tracking-wider border border-blue-100">Módulo de Gestão Industrial</span>
-                <h1 class="text-3xl md:text-4xl font-extrabold mt-5 tracking-tight text-slate-900">Central de Indicadores e Inventário</h1>
-                <p class="text-slate-500 mt-3 text-base leading-relaxed max-w-2xl mx-auto">Selecione um dos módulos para acompanhar a avaliação de postos 5S, gestão de estoque de materiais ou o controle de ferramentas e calibração.</p>
-                <div class="mt-8 flex flex-wrap justify-center gap-4">
-                    <button onclick="mudarAba('5s')" class="bg-white hover:bg-slate-50 border border-slate-300 text-slate-800 font-semibold px-6 py-3 rounded-xl shadow-sm transition-all flex items-center space-x-2">
-                        <span>Acessar Indicador 5S</span>
-                        <i class="fa-solid fa-arrow-right text-xs text-slate-400"></i>
+            <div class="max-w-3xl">
+                <!-- BADGE DA VERSÃO NO INÍCIO -->
+                <div class="inline-flex items-center gap-2 bg-slate-50 text-slate-600 text-xs font-medium px-4 py-1.5 rounded-full border border-slate-200 mb-2 shadow-2xs">
+                    <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+                    <span>Versão 24 &bull; Atualizada</span>
+                </div>
+                <h1 class="text-3xl md:text-4xl font-bold mt-4 tracking-tight text-slate-800">Painel de Indicadores</h1>
+                <p class="text-slate-500 mt-2.5 text-sm leading-relaxed max-w-xl mx-auto">Selecione abaixo o indicador que deseja consultar:</p>
+                
+                <div class="mt-8 grid grid-cols-1 sm:grid-cols-3 gap-4 max-w-2xl mx-auto text-left">
+                    <!-- Botão 5S -->
+                    <button onclick="mudarAba('5s')" class="p-5 bg-slate-50 hover:bg-white border border-slate-200 hover:border-slate-300 rounded-xl transition-all shadow-2xs hover:shadow-xs group">
+                        <div class="w-10 h-10 rounded-lg bg-white border border-slate-200 flex items-center justify-center text-slate-600 mb-3 group-hover:text-blue-600 transition-colors">
+                            <i class="fa-solid fa-clipboard-check"></i>
+                        </div>
+                        <div class="font-semibold text-sm text-slate-800">Indicador 5S</div>
+                        <div class="text-[11px] text-slate-400 mt-1">Avaliação dos postos</div>
                     </button>
-                    <button onclick="mudarAba('estoque')" class="bg-white hover:bg-slate-50 border border-slate-300 text-slate-800 font-semibold px-6 py-3 rounded-xl shadow-sm transition-all flex items-center space-x-2">
-                        <span>Acessar Estoque</span>
-                        <i class="fa-solid fa-arrow-right text-xs text-slate-400"></i>
+
+                    <!-- Botão Estoque -->
+                    <button onclick="mudarAba('estoque')" class="p-5 bg-slate-50 hover:bg-white border border-slate-200 hover:border-slate-300 rounded-xl transition-all shadow-2xs hover:shadow-xs group">
+                        <div class="w-10 h-10 rounded-lg bg-white border border-slate-200 flex items-center justify-center text-slate-600 mb-3 group-hover:text-blue-600 transition-colors">
+                            <i class="fa-solid fa-boxes-stacked"></i>
+                        </div>
+                        <div class="font-semibold text-sm text-slate-800">Indicador Estoque</div>
+                        <div class="text-[11px] text-slate-400 mt-1">Materiais e galpões</div>
                     </button>
-                    <button onclick="mudarAba('usuarios')" class="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-6 py-3 rounded-xl shadow-sm transition-all flex items-center space-x-2">
-                        <span>Acessar Usuários</span>
-                        <i class="fa-solid fa-arrow-right text-xs"></i>
+
+                    <!-- Botão Usuários -->
+                    <button onclick="mudarAba('usuarios')" class="p-5 bg-slate-50 hover:bg-white border border-slate-200 hover:border-slate-300 rounded-xl transition-all shadow-2xs hover:shadow-xs group">
+                        <div class="w-10 h-10 rounded-lg bg-white border border-slate-200 flex items-center justify-center text-slate-600 mb-3 group-hover:text-blue-600 transition-colors">
+                            <i class="fa-solid fa-screwdriver-wrench"></i>
+                        </div>
+                        <div class="font-semibold text-sm text-slate-800">Usuários</div>
+                        <div class="text-[11px] text-slate-400 mt-1">Débitos e calibração</div>
                     </button>
                 </div>
             </div>
