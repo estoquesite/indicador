@@ -11,12 +11,12 @@
 <body class="bg-slate-100 font-sans text-slate-800 antialiased flex h-screen overflow-hidden">
 
     <!-- MENU LATERAL -->
-    <aside class="w-64 bg-emerald-950 text-white flex flex-col shadow-xl z-20">
+    <aside class="w-64 bg-emerald-950 text-white flex flex-col shadow-xl z-20 shrink-0">
         <div class="p-6 border-b border-emerald-900">
             <span class="bg-emerald-600 text-emerald-100 text-[10px] font-semibold px-2.5 py-0.5 rounded uppercase tracking-wider">Gestão de Ativos</span>
             <h2 class="text-xl font-extrabold mt-1 text-white tracking-tight">Painel Vale</h2>
         </div>
-        <nav class="flex-grow p-4 space-y-2">
+        <nav class="flex-grow p-4 space-y-2 overflow-y-auto">
             <button onclick="mudarAba('capa')" id="btn-capa" class="w-full flex items-center space-x-3 px-4 py-3 rounded-lg text-sm font-medium transition-colors bg-emerald-900 text-white shadow-sm">
                 <i class="fa-solid fa-house w-5"></i>
                 <span>Início / Capa</span>
@@ -29,9 +29,13 @@
                 <i class="fa-solid fa-boxes-stacked w-5"></i>
                 <span>Indicador de Estoque</span>
             </button>
+            <button onclick="mudarAba('calibracao')" id="btn-calibracao" class="w-full flex items-center space-x-3 px-4 py-3 rounded-lg text-sm font-medium transition-colors text-emerald-300 hover:bg-emerald-900/60 hover:text-white">
+                <i class="fa-solid fa-screwdriver-wrench w-5"></i>
+                <span>Usuários & Calibração</span>
+            </button>
         </nav>
         <div class="p-4 border-t border-emerald-900 text-[10px] text-emerald-400 text-center">
-            Indicador Corporativo &bull; Versão 22
+            Indicador Corporativo &bull; Versão 23
         </div>
     </aside>
 
@@ -40,17 +44,21 @@
         
         <!-- ABA 1: CAPA / INÍCIO -->
         <section id="aba-capa" class="view-aba flex-grow flex flex-col justify-center items-center p-12 bg-gradient-to-br from-emerald-900 via-green-900 to-teal-950 text-white text-center">
-            <div class="max-w-3xl">
+            <div class="max-w-4xl">
                 <span class="bg-emerald-600 text-emerald-100 text-xs font-bold px-4 py-1.5 rounded-full uppercase tracking-widest shadow-sm">Módulo de Gestão Industrial</span>
                 <h1 class="text-4xl md:text-5xl font-extrabold mt-6 tracking-tight">Central de Indicadores e Inventário</h1>
-                <p class="text-emerald-200 mt-4 text-base leading-relaxed max-w-2xl mx-auto">Bem-vinda ao painel unificado. Utilize o menu lateral para alternar entre o monitoramento de maturidade 5S dos postos e o controle estratégico de estoque.</p>
-                <div class="mt-8 flex justify-center gap-4">
+                <p class="text-emerald-200 mt-4 text-base leading-relaxed max-w-2xl mx-auto">Bem-vinda ao painel unificado. Utilize o menu lateral para alternar entre o monitoramento de maturidade 5S dos postos, o controle estratégico de estoque e a gestão de calibração e devoluções.</p>
+                <div class="mt-8 flex flex-wrap justify-center gap-4">
                     <button onclick="mudarAba('5s')" class="bg-emerald-500 hover:bg-emerald-600 text-white font-bold px-6 py-3 rounded-xl shadow-lg transition-all flex items-center space-x-2">
                         <span>Acessar Indicador 5S</span>
                         <i class="fa-solid fa-arrow-right"></i>
                     </button>
                     <button onclick="mudarAba('estoque')" class="bg-white/10 hover:bg-white/20 border border-white/20 text-white font-bold px-6 py-3 rounded-xl shadow-lg transition-all flex items-center space-x-2">
                         <span>Acessar Estoque</span>
+                        <i class="fa-solid fa-arrow-right"></i>
+                    </button>
+                    <button onclick="mudarAba('calibracao')" class="bg-emerald-600/40 hover:bg-emerald-600/60 border border-emerald-400/40 text-white font-bold px-6 py-3 rounded-xl shadow-lg transition-all flex items-center space-x-2">
+                        <span>Acessar Usuários & Calibração</span>
                         <i class="fa-solid fa-arrow-right"></i>
                     </button>
                 </div>
@@ -185,7 +193,7 @@
             </div>
         </section>
 
-        <!-- ABA 3: INDICADOR DE ESTOQUE (COM INDICADORES E LINHAS COMPACTAS) -->
+        <!-- ABA 3: INDICADOR DE ESTOQUE -->
         <section id="aba-estoque" class="view-aba hidden p-8 bg-emerald-50/40 min-h-full">
             <div class="max-w-7xl mx-auto">
                 <div class="flex justify-between items-center mb-6">
@@ -199,7 +207,7 @@
                     </div>
                 </div>
 
-                <!-- CARTÕES DE INDICADORES GERENCIAIS (LOCALIZAÇÕES E TIPOS) -->
+                <!-- CARTÕES DE INDICADORES GERENCIAIS -->
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
                     <div class="bg-white p-5 rounded-xl shadow-md border border-emerald-100 flex items-center justify-between">
                         <div>
@@ -230,13 +238,10 @@
                         <span>Base de Inventário Consolidada (Google Drive)</span>
                         <span class="text-[10px] bg-emerald-800 px-3 py-1 rounded">Sincronizado</span>
                     </div>
-                    <!-- Container com rolagem e altura compacta -->
                     <div class="overflow-x-auto max-h-[550px] overflow-y-auto">
                         <table class="w-full text-left border-collapse text-xs">
                             <thead class="sticky top-0 bg-slate-100 z-10">
-                                <tr id="estoqueCabecalho" class="border-b border-slate-200 font-bold text-slate-700 uppercase">
-                                    <!-- Cabeçalhos dinâmicos -->
-                                </tr>
+                                <tr id="estoqueCabecalho" class="border-b border-slate-200 font-bold text-slate-700 uppercase"></tr>
                             </thead>
                             <tbody id="tabelaCorpoEstoque" class="divide-y divide-slate-100">
                                 <tr><td colspan="5" class="p-6 text-center text-slate-400">Carregando dados do estoque do Google Drive...</td></tr>
@@ -247,7 +252,25 @@
             </div>
         </section>
 
-    </main>
+        <!-- ABA 4: INDICADOR DE USUÁRIOS E CALIBRAÇÃO (CARREGA O PAINEL SEPARADO) -->
+        <section id="aba-calibracao" class="view-aba hidden p-4 flex-grow flex flex-col h-full bg-slate-100">
+            <div class="flex justify-between items-center mb-3 px-2">
+                <div class="flex items-center gap-2">
+                    <span class="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse"></span>
+                    <h3 class="text-sm font-bold text-slate-800 uppercase tracking-wider">Painel Integrado: Usuários com Débito & Calibração a Vencer</h3>
+                </div>
+                <a href="dashboard_indicadores.html" target="_blank" class="bg-emerald-900 hover:bg-emerald-800 text-white text-xs font-semibold px-4 py-2 rounded-lg shadow-sm transition-colors flex items-center gap-2">
+                    <span>Abrir em Tela Inteira</span>
+                    <i class="fa-solid fa-arrow-up-right-from-square text-[11px]"></i>
+                </a>
+            </div>
+            <!-- Carrega o arquivo HTML independente sem misturar os códigos -->
+            <div class="flex-grow w-full bg-white rounded-xl shadow-md border border-slate-200 overflow-hidden">
+                <iframe src="dashboard_indicadores.html" class="w-full h-full border-0" title="Indicador de Usuários e Calibração"></iframe>
+            </div>
+        </section>
+
+    </div>
 
     <!-- SCRIPT DE PROCESSAMENTO -->
     <script>
@@ -286,28 +309,32 @@
 
         function mudarAba(aba) {
             document.querySelectorAll('.view-aba').forEach(el => el.classList.add('hidden'));
-            document.getElementById(`aba-${aba}`).classList.remove('hidden');
+            const alvo = document.getElementById(`aba-${aba}`);
+            if (alvo) alvo.classList.remove('hidden');
 
-            ['capa', '5s', 'estoque'].forEach(id => {
+            ['capa', '5s', 'estoque', 'calibracao'].forEach(id => {
                 const btn = document.getElementById(`btn-${id}`);
-                if (id === aba) {
-                    btn.className = "w-full flex items-center space-x-3 px-4 py-3 rounded-lg text-sm font-medium transition-colors bg-emerald-900 text-white shadow-sm";
-                } else {
-                    btn.className = "w-full flex items-center space-x-3 px-4 py-3 rounded-lg text-sm font-medium transition-colors text-emerald-300 hover:bg-emerald-900/60 hover:text-white";
+                if (btn) {
+                    if (id === aba) {
+                        btn.className = "w-full flex items-center space-x-3 px-4 py-3 rounded-lg text-sm font-medium transition-colors bg-emerald-900 text-white shadow-sm";
+                    } else {
+                        btn.className = "w-full flex items-center space-x-3 px-4 py-3 rounded-lg text-sm font-medium transition-colors text-emerald-300 hover:bg-emerald-900/60 hover:text-white";
+                    }
                 }
             });
         }
 
         function normalizar(texto) {
             if (!texto) return "";
-            return texto.toString().normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().trim();
+            return texto.toString().normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase().trim();
         }
 
         async function carregarDados5S() {
             try {
                 const response = await fetch(CSV_URL_5S);
                 const textoCsv = await response.text();
-                const linhas = textoCsv.split('\n');
+                const linhas = textoCsv.split('
+');
                 
                 dadosAuditoriaDetalhados = [];
 
@@ -352,12 +379,12 @@
             }
         }
 
-        // Carregar estoque com linhas super compactas e extração inteligente de indicadores
         async function carregarDadosEstoque() {
             try {
                 const response = await fetch(CSV_URL_ESTOQUE);
                 const textoCsv = await response.text();
-                const linhas = textoCsv.split('\n');
+                const linhas = textoCsv.split('
+');
                 
                 const thead = document.getElementById('estoqueCabecalho');
                 const tbody = document.getElementById('tabelaCorpoEstoque');
@@ -371,7 +398,6 @@
                     return;
                 }
 
-                // Cabeçalho compacto
                 const cabecalhos = linhasValidas[0].split(',');
                 cabecalhos.forEach(col => {
                     const th = document.createElement('th');
@@ -399,7 +425,6 @@
                         td.innerText = textoLimpo;
                         tr.appendChild(td);
 
-                        // Mapeamento heurístico para os cartões gerenciais
                         if (idx === 0 && textoLimpo) galpoesSet.add(textoLimpo);
                         if (idx === 2 && textoLimpo) tiposSet.add(textoLimpo);
                         if (idx === 3 && textoLimpo) solicitantesSet.add(textoLimpo);
