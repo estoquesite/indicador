@@ -330,8 +330,7 @@
             try {
                 const response = await fetch(CSV_URL_5S);
                 const textoCsv = await response.text();
-                const linhas = textoCsv.split('
-');
+                const linhas = textoCsv.split(/\r?\n/);
                 
                 dadosAuditoriaDetalhados = [];
 
@@ -380,8 +379,7 @@
             try {
                 const response = await fetch(CSV_URL_ESTOQUE);
                 const textoCsv = await response.text();
-                const linhas = textoCsv.split('
-');
+                const linhas = textoCsv.split(/\r?\n/);
                 
                 const thead = document.getElementById('estoqueCabecalho');
                 const tbody = document.getElementById('tabelaCorpoEstoque');
