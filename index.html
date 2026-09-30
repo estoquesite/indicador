@@ -1,3 +1,1362 @@
+ark
+Beta
+Nova conversa
+Pesquisar conversas
+Estudantes
+Imagens
+Vídeos
+Biblioteca
+Novo notebook
+Apresentação Novo Calçado Bracol: Manobreiro
+Conversa com o Gemini
+Chatea compartir só o link
+
+Mesmo compartilhando apenas o link, eu não consigo abrir links do OneDrive.
+
+Os links da Microsoft/OneDrive (especialmente corporativos) bloqueiam robôs e exigem autenticação ou abrem uma interface interativa da web que ferramentas de IA não conseguem carregar nem baixar. Se você mandar o link, eu vou tentar abrir e vai dar erro de acesso negado ou página bloqueada.
+
+Para resolver isso de forma super rápida, você só precisa fazer o seguinte:
+
+Abra a planilha aí na sua tela.
+
+Vá em Arquivo > Salvar como > Baixar uma Cópia (ou exportar como Excel/CSV).
+
+Arraste o arquivo baixado aqui para a nossa conversa (ou clique no botão de anexo/clipe).
+
+Assim que você subir o arquivo aqui, eu já consigo ler tudo e começo a programar o seu HTML imediatamente!
+
+O seu ficheiro HTML está pronto
+
+Ícone do app HTML
+dashboard_indicadores
+ HTML 
+Funcionalidades do Dashboard Desenvolvido
+O ficheiro dashboard_indicadores.html foi construído para reproduzir fielmente a interface visual do Power BI apresentada na fotografia, funcionando de forma 100% autónoma e interativa diretamente no seu navegador de internet (sem depender de servidores, ligações à base de dados ou licenças do Power BI):   
+JPG
+
+1. Listagem de Utilizadores com Débito de Devolução (Painel Superior)
+Cartão KPI: Mostra em destaque o total de itens com devolução pendente (26 itens no total da base de dados).   
+JPG
+
+Filtros Dinâmicos: Filtre rapidamente por Apelido Principal da Ferramenta, Ano e Mês.   
+JPG
+
+Matriz Cruzada por Mês com Expansão (+ / −): Apresenta cada utilizador e a quantidade devida em cada mês (janeiro, abril, maio, junho, julho, outubro e Total). Clicar no botão + abre os detalhes da ferramenta, protocolo e dias de atraso.   
+JPG
+
+Gráfico de Barras Laterais: Ranking decrescente dos colaboradores com maior número de ferramentas pendentes (Bruno Gomes Fidelis, Wanderson Teixeira, Robson de Souza, etc.).   
+JPG
+
+2. Listagem de Manutenção / Calibração a Vencer (Painel Inferior)
+Cartão KPI: Contagem total de equipamentos filtrados a vencer.   
+JPG
+
+Filtros Temporais e de Busca: Filtre por Ano (ex.: 2026, 2027), Mês de vencimento ou pesquise diretamente pelo nome do equipamento na barra de texto.   
+JPG
+
+Tabela Detalhada: Agrupamento por apelido de ferramenta, contagem, ano, mês e estado operacional.   
+JPG
+
+Como Utilizar:
+Descarregue o ficheiro gerado acima.
+
+Dê um duplo clique no ficheiro dashboard_indicadores.html para o abrir no Google Chrome, Microsoft Edge ou outro navegador da sua preferência.
+
+Se no futuro atualizar as folhas de cálculo com novos dados, basta enviar os novos relatórios para gerarmos uma nova versão do painel.
+
+Gente, vou te mandar aí o link do principal, né, do índice para você colocar aí que é a caixinha dele lá. Esse é o indicador de calibração e usuário. O usuário
+
+Pode enviar!
+
+Diga-me também exatamente o que pretende que seja feito:
+
+Quer que esse link seja colocado num botão/caixa (card) na parte superior do painel HTML para navegação direta?
+
+Pretende adicionar um menu ou cabeçalho estilo índice para alternar entre diferentes visões?
+
+Pode mandar o link e o nome/rótulo exato que gostaria de ver na caixinha!
+
+<!DOCTYPE html>
+
+<html lang="pt-BR">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Painel de Indicadores - Corporativo</title>
+
+    <!-- Tailwind CSS -->
+
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+
+</head>
+
+<body class="bg-slate-100 font-sans text-slate-800 antialiased flex h-screen overflow-hidden">
+
+
+
+    <!-- MENU LATERAL -->
+
+    <aside class="w-64 bg-emerald-950 text-white flex flex-col shadow-xl z-20">
+
+        <div class="p-6 border-b border-emerald-900">
+
+            <span class="bg-emerald-600 text-emerald-100 text-[10px] font-semibold px-2.5 py-0.5 rounded uppercase tracking-wider">Gestão de Ativos</span>
+
+            <h2 class="text-xl font-extrabold mt-1 text-white tracking-tight">Painel Vale</h2>
+
+        </div>
+
+        <nav class="flex-grow p-4 space-y-2">
+
+            <button onclick="mudarAba('capa')" id="btn-capa" class="w-full flex items-center space-x-3 px-4 py-3 rounded-lg text-sm font-medium transition-colors bg-emerald-900 text-white shadow-sm">
+
+                <i class="fa-solid fa-house w-5"></i>
+
+                <span>Início / Capa</span>
+
+            </button>
+
+            <button onclick="mudarAba('5s')" id="btn-5s" class="w-full flex items-center space-x-3 px-4 py-3 rounded-lg text-sm font-medium transition-colors text-emerald-300 hover:bg-emerald-900/60 hover:text-white">
+
+                <i class="fa-solid fa-clipboard-check w-5"></i>
+
+                <span>Indicador de 5S</span>
+
+            </button>
+
+            <button onclick="mudarAba('estoque')" id="btn-estoque" class="w-full flex items-center space-x-3 px-4 py-3 rounded-lg text-sm font-medium transition-colors text-emerald-300 hover:bg-emerald-900/60 hover:text-white">
+
+                <i class="fa-solid fa-boxes-stacked w-5"></i>
+
+                <span>Indicador de Estoque</span>
+
+            </button>
+
+        </nav>
+
+        <div class="p-4 border-t border-emerald-900 text-[10px] text-emerald-400 text-center">
+
+            Indicador Corporativo &bull; Versão 22
+
+        </div>
+
+    </aside>
+
+
+
+    <!-- CONTEÚDO DINÂMICO PRINCIPAL -->
+
+    <div class="flex-grow flex flex-col h-screen overflow-y-auto">
+
+        
+
+        <!-- ABA 1: CAPA / INÍCIO -->
+
+        <section id="aba-capa" class="view-aba flex-grow flex flex-col justify-center items-center p-12 bg-gradient-to-br from-emerald-900 via-green-900 to-teal-950 text-white text-center">
+
+            <div class="max-w-3xl">
+
+                <span class="bg-emerald-600 text-emerald-100 text-xs font-bold px-4 py-1.5 rounded-full uppercase tracking-widest shadow-sm">Módulo de Gestão Industrial</span>
+
+                <h1 class="text-4xl md:text-5xl font-extrabold mt-6 tracking-tight">Central de Indicadores e Inventário</h1>
+
+                <p class="text-emerald-200 mt-4 text-base leading-relaxed max-w-2xl mx-auto">Bem-vinda ao painel unificado. Utilize o menu lateral para alternar entre o monitoramento de maturidade 5S dos postos e o controle estratégico de estoque.</p>
+
+                <div class="mt-8 flex justify-center gap-4">
+
+                    <button onclick="mudarAba('5s')" class="bg-emerald-500 hover:bg-emerald-600 text-white font-bold px-6 py-3 rounded-xl shadow-lg transition-all flex items-center space-x-2">
+
+                        <span>Acessar Indicador 5S</span>
+
+                        <i class="fa-solid fa-arrow-right"></i>
+
+                    </button>
+
+                    <button onclick="mudarAba('estoque')" class="bg-white/10 hover:bg-white/20 border border-white/20 text-white font-bold px-6 py-3 rounded-xl shadow-lg transition-all flex items-center space-x-2">
+
+                        <span>Acessar Estoque</span>
+
+                        <i class="fa-solid fa-arrow-right"></i>
+
+                    </button>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- ABA 2: INDICADOR DE 5S (POSTOS) -->
+
+        <section id="aba-5s" class="view-aba hidden p-8 bg-emerald-50/40 min-h-full">
+
+            <div class="max-w-7xl mx-auto">
+
+                <div class="flex justify-between items-center mb-6">
+
+                    <div>
+
+                        <h2 class="text-2xl font-extrabold text-slate-900">Indicador de Avaliação de Postos (5S)</h2>
+
+                        <p class="text-sm text-slate-500">Acompanhamento mensal cruzando a base de postos com os registros de auditoria.</p>
+
+                    </div>
+
+                    <div class="bg-emerald-900 text-white px-5 py-2.5 rounded-xl shadow-sm text-center">
+
+                        <span class="block text-[10px] text-emerald-300 uppercase font-bold">Postos Monitorados</span>
+
+                        <span id="totalPostosBadge" class="text-xl font-extrabold">25</span>
+
+                    </div>
+
+                </div>
+
+
+
+                <!-- BARRA DE FILTROS PRINCIPAIS -->
+
+                <div class="bg-white rounded-xl shadow-md p-5 mb-6 border border-emerald-100 flex flex-wrap gap-4 items-center justify-between">
+
+                    <div class="flex flex-wrap gap-4 items-center">
+
+                        <div>
+
+                            <label class="block text-[10px] font-bold text-slate-500 uppercase mb-1">Ano:</label>
+
+                            <select id="filtroAno" class="bg-slate-50 border border-slate-300 rounded-lg p-2 text-sm font-medium focus:ring-2 focus:ring-emerald-600 focus:outline-none" onchange="renderizarTabela5S()">
+
+                                <option value="2026" selected>2026</option>
+
+                                <option value="2027">2027</option>
+
+                            </select>
+
+                        </div>
+
+                        <div>
+
+                            <label class="block text-[10px] font-bold text-slate-500 uppercase mb-1">Mês de Referência:</label>
+
+                            <select id="filtroMes" class="bg-slate-50 border border-slate-300 rounded-lg p-2 text-sm font-medium focus:ring-2 focus:ring-emerald-600 focus:outline-none" onchange="renderizarTabela5S()">
+
+                                <option value="Janeiro">Janeiro</option>
+
+                                <option value="Fevereiro">Fevereiro</option>
+
+                                <option value="Março">Março</option>
+
+                                <option value="Abril">Abril</option>
+
+                                <option value="Maio">Maio</option>
+
+                                <option value="Junho">Junho</option>
+
+                                <option value="Julho">Julho</option>
+
+                                <option value="Agosto">Agosto</option>
+
+                                <option value="Setembro" selected>Setembro</option>
+
+                                <option value="Outubro">Outubro</option>
+
+                                <option value="Novembro">Novembro</option>
+
+                                <option value="Dezembro">Dezembro</option>
+
+                            </select>
+
+                        </div>
+
+                        <div>
+
+                            <label class="block text-[10px] font-bold text-slate-500 uppercase mb-1">Status:</label>
+
+                            <select id="filtroStatusGeral" class="bg-slate-50 border border-slate-300 rounded-lg p-2 text-sm font-medium focus:ring-2 focus:ring-emerald-600 focus:outline-none" onchange="renderizarTabela5S()">
+
+                                <option value="">Todos</option>
+
+                                <option value="Avaliado">Avaliados</option>
+
+                                <option value="Pendente">Pendentes</option>
+
+                            </select>
+
+                        </div>
+
+                    </div>
+
+                    <div class="text-right">
+
+                        <span id="contadorExibidos" class="text-xl font-bold text-slate-900">25</span>
+
+                        <span class="block text-[10px] text-slate-500 uppercase font-medium">Exibindo no Mês</span>
+
+                    </div>
+
+                </div>
+
+
+
+                <!-- CARTÕES / GRÁFICO VISUAL -->
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+
+                    <div class="bg-white p-5 rounded-xl shadow-md border border-emerald-100 flex items-center justify-between">
+
+                        <div>
+
+                            <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Total de Postos</span>
+
+                            <h3 id="indTotal" class="text-3xl font-extrabold text-slate-900 mt-1">25</h3>
+
+                        </div>
+
+                        <div class="w-12 h-12 bg-slate-100 text-slate-700 rounded-full flex items-center justify-center text-xl"><i class="fa-solid fa-building-shield"></i></div>
+
+                    </div>
+
+                    <div class="bg-white p-5 rounded-xl shadow-md border border-emerald-100">
+
+                        <div class="flex items-center justify-between mb-2">
+
+                            <div>
+
+                                <span class="text-[10px] font-bold text-emerald-600 uppercase tracking-wider">Postos Avaliados</span>
+
+                                <h3 id="indAvaliados" class="text-3xl font-extrabold text-emerald-700 mt-1">0</h3>
+
+                            </div>
+
+                            <div class="w-12 h-12 bg-emerald-100 text-emerald-700 rounded-full flex items-center justify-center text-xl"><i class="fa-solid fa-circle-check"></i></div>
+
+                        </div>
+
+                        <div class="w-full bg-slate-100 rounded-full h-2.5 mt-2 overflow-hidden">
+
+                            <div id="barraAvaliados" class="bg-emerald-600 h-2.5 rounded-full transition-all duration-500" style="width: 0%"></div>
+
+                        </div>
+
+                        <span id="porcentagemAvaliados" class="text-[10px] text-emerald-700 font-bold mt-1 block text-right">0% Concluído</span>
+
+                    </div>
+
+                    <div class="bg-white p-5 rounded-xl shadow-md border border-emerald-100">
+
+                        <div class="flex items-center justify-between mb-2">
+
+                            <div>
+
+                                <span class="text-[10px] font-bold text-amber-600 uppercase tracking-wider">Postos Pendentes</span>
+
+                                <h3 id="indPendentes" class="text-3xl font-extrabold text-amber-600 mt-1">0</h3>
+
+                            </div>
+
+                            <div class="w-12 h-12 bg-amber-100 text-amber-600 rounded-full flex items-center justify-center text-xl"><i class="fa-solid fa-clock-rotate-left"></i></div>
+
+                        </div>
+
+                        <div class="w-full bg-slate-100 rounded-full h-2.5 mt-2 overflow-hidden">
+
+                            <div id="barraPendentes" class="bg-amber-500 h-2.5 rounded-full transition-all duration-500" style="width: 0%"></div>
+
+                        </div>
+
+                        <span id="porcentagemPendentes" class="text-[10px] text-amber-600 font-bold mt-1 block text-right">0% Pendente</span>
+
+                    </div>
+
+                </div>
+
+
+
+                <!-- TABELA COM FILTROS NA LINHA VERDE -->
+
+                <div class="bg-white rounded-xl shadow-md border border-emerald-100 overflow-hidden">
+
+                    <div class="overflow-x-auto">
+
+                        <table class="w-full text-left border-collapse">
+
+                            <thead>
+
+                                <tr class="bg-emerald-900 text-white text-xs font-bold uppercase tracking-wider">
+
+                                    <th class="p-4">Código do Posto</th>
+
+                                    <th class="p-4">Nome do Posto / Título</th>
+
+                                    <th class="p-4">Nº da Auditoria</th>
+
+                                    <th class="p-4">Mês de Referência</th>
+
+                                    <th class="p-4">Status</th>
+
+                                </tr>
+
+                                <tr class="bg-emerald-800 text-white text-xs">
+
+                                    <th class="p-2"><input type="text" id="filtroCod" placeholder="Filtrar código..." class="w-full bg-emerald-950/60 border border-emerald-700 rounded px-2 py-1 text-white text-xs placeholder-emerald-300 focus:outline-none" oninput="renderizarTabela5S()"></th>
+
+                                    <th class="p-2"><input type="text" id="filtroNome" placeholder="Filtrar nome..." class="w-full bg-emerald-950/60 border border-emerald-700 rounded px-2 py-1 text-white text-xs placeholder-emerald-300 focus:outline-none" oninput="renderizarTabela5S()"></th>
+
+                                    <th class="p-2"><input type="text" id="filtroAud" placeholder="Filtrar auditoria..." class="w-full bg-emerald-950/60 border border-emerald-700 rounded px-2 py-1 text-white text-xs placeholder-emerald-300 focus:outline-none" oninput="renderizarTabela5S()"></th>
+
+                                    <th class="p-2 text-emerald-200 font-semibold">-</th>
+
+                                    <th class="p-2">
+
+                                        <select id="filtroStatusColuna" class="w-full bg-emerald-950/60 border border-emerald-700 rounded px-2 py-1 text-white text-xs focus:outline-none" onchange="renderizarTabela5S()">
+
+                                            <option value="" class="bg-emerald-900 text-white">Todos</option>
+
+                                            <option value="Avaliado" class="bg-emerald-900 text-white">Avaliado</option>
+
+                                            <option value="Pendente" class="bg-emerald-900 text-white">Pendente</option>
+
+                                        </select>
+
+                                    </th>
+
+                                </tr>
+
+                            </thead>
+
+                            <tbody id="tabelaCorpo5S" class="divide-y divide-slate-200 text-sm">
+
+                                <tr><td colspan="5" class="p-8 text-center text-slate-400">Carregando dados...</td></tr>
+
+                            </tbody>
+
+                        </table>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- ABA 3: INDICADOR DE ESTOQUE (COM INDICADORES E LINHAS COMPACTAS) -->
+
+        <section id="aba-estoque" class="view-aba hidden p-8 bg-emerald-50/40 min-h-full">
+
+            <div class="max-w-7xl mx-auto">
+
+                <div class="flex justify-between items-center mb-6">
+
+                    <div>
+
+                        <h2 class="text-2xl font-extrabold text-slate-900">Indicador de Inventário e Estoque</h2>
+
+                        <p class="text-sm text-slate-500">Análise estratégica de galpões, baias, solicitantes e rotatividade.</p>
+
+                    </div>
+
+                    <div class="bg-emerald-900 text-white px-5 py-2.5 rounded-xl shadow-sm text-center">
+
+                        <span class="block text-[10px] text-emerald-300 uppercase font-bold">Total de Itens</span>
+
+                        <span id="totalEstoqueBadge" class="text-xl font-extrabold">0</span>
+
+                    </div>
+
+                </div>
+
+
+
+                <!-- CARTÕES DE INDICADORES GERENCIAIS (LOCALIZAÇÕES E TIPOS) -->
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+
+                    <div class="bg-white p-5 rounded-xl shadow-md border border-emerald-100 flex items-center justify-between">
+
+                        <div>
+
+                            <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Galpões / Áreas (G3 / G4)</span>
+
+                            <h3 id="cardGalpoesQtd" class="text-3xl font-extrabold text-slate-900 mt-1">0</h3>
+
+                        </div>
+
+                        <div class="w-12 h-12 bg-emerald-100 text-emerald-700 rounded-full flex items-center justify-center text-xl"><i class="fa-solid fa-warehouse"></i></div>
+
+                    </div>
+
+                    <div class="bg-white p-5 rounded-xl shadow-md border border-emerald-100 flex items-center justify-between">
+
+                        <div>
+
+                            <span class="text-[10px] font-bold text-emerald-600 uppercase tracking-wider">Tipos de Materiais</span>
+
+                            <h3 id="cardTiposQtd" class="text-3xl font-extrabold text-emerald-700 mt-1">0</h3>
+
+                        </div>
+
+                        <div class="w-12 h-12 bg-emerald-100 text-emerald-700 rounded-full flex items-center justify-center text-xl"><i class="fa-solid fa-tags"></i></div>
+
+                    </div>
+
+                    <div class="bg-white p-5 rounded-xl shadow-md border border-emerald-100 flex items-center justify-between">
+
+                        <div>
+
+                            <span class="text-[10px] font-bold text-teal-600 uppercase tracking-wider">Solicitantes Ativos</span>
+
+                            <h3 id="cardSolicitantesQtd" class="text-3xl font-extrabold text-teal-700 mt-1">0</h3>
+
+                        </div>
+
+                        <div class="w-12 h-12 bg-teal-100 text-teal-700 rounded-full flex items-center justify-center text-xl"><i class="fa-solid fa-users"></i></div>
+
+                    </div>
+
+                </div>
+
+
+
+                <!-- TABELA DE ESTOQUE COMPACTA COM SCROLL FIXO -->
+
+                <div class="bg-white rounded-xl shadow-md border border-emerald-100 overflow-hidden">
+
+                    <div class="p-4 bg-emerald-900 text-white font-bold text-xs uppercase tracking-wider flex justify-between items-center">
+
+                        <span>Base de Inventário Consolidada (Google Drive)</span>
+
+                        <span class="text-[10px] bg-emerald-800 px-3 py-1 rounded">Sincronizado</span>
+
+                    </div>
+
+                    <!-- Container com rolagem e altura compacta -->
+
+                    <div class="overflow-x-auto max-h-[550px] overflow-y-auto">
+
+                        <table class="w-full text-left border-collapse text-xs">
+
+                            <thead class="sticky top-0 bg-slate-100 z-10">
+
+                                <tr id="estoqueCabecalho" class="border-b border-slate-200 font-bold text-slate-700 uppercase">
+
+                                    <!-- Cabeçalhos dinâmicos -->
+
+                                </tr>
+
+                            </thead>
+
+                            <tbody id="tabelaCorpoEstoque" class="divide-y divide-slate-100">
+
+                                <tr><td colspan="5" class="p-6 text-center text-slate-400">Carregando dados do estoque do Google Drive...</td></tr>
+
+                            </tbody>
+
+                        </table>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+
+    </main>
+
+
+
+    <!-- SCRIPT DE PROCESSAMENTO -->
+
+    <script>
+
+        const CSV_URL_5S = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQUoRnkIRo0UhP2r1_IbUfJ2abD3UyvsFBGR8c8tUKYtsUQqQvyfdVC2tDRIymeEA/pub?gid=786393118&single=true&output=csv";
+
+        const CSV_URL_ESTOQUE = "https://docs.google.com/spreadsheets/d/e/2PACX-1vT2pE8TgaukBivJ2UreoGzDFpQ7qy11dMRkkL9G5vAQYcCdsTRL0eGQLNgsPudJow/pub?gid=1381486713&single=true&output=csv";
+
+
+
+        const basePostos = [
+
+            { codigo: "POST-971536", nome: "Área de Caldeiraria e suas Máquinas G2" },
+
+            { codigo: "POST-970384", nome: "Área de Resíduos G2" },
+
+            { codigo: "POST-696691", nome: "Baia de Gases Almoxarifado" },
+
+            { codigo: "POST-629350", nome: "Container Elétrica" },
+
+            { codigo: "POST-629405", nome: "Container Mecânica" },
+
+            { codigo: "POST-000327", nome: "Ferramentaria" },
+
+            { codigo: "POST-822607", nome: "G4" },
+
+            { codigo: "POST-629235", nome: "Gerador CUMIS" },
+
+            { codigo: "POST-718361", nome: "Gerador MS" },
+
+            { codigo: "POST-718343", nome: "Gerador Toyama" },
+
+            { codigo: "POST-630280", nome: "Içamento de Carga (Contêiner)" },
+
+            { codigo: "POST-387083", nome: "Laboratório de elétrica e eletrônica" },
+
+            { codigo: "POST-971718", nome: "Matéria-Prima G2" },
+
+            { codigo: "POST-971666", nome: "Oficina de Manutenção G2" },
+
+            { codigo: "POST-971742", nome: "Produtos Acabados G2" },
+
+            { codigo: "POST-971746", nome: "Produtos Químicos G2" },
+
+            { codigo: "POST-970883", nome: "Sala de Compressores G2" },
+
+            { codigo: "POST-935635", nome: "Sala do Almoxarifado G2" },
+
+            { codigo: "POST-642629", nome: "Sala dos Compressores G1" },
+
+            { codigo: "POST-199278", nome: "Sala elétrica 1" },
+
+            { codigo: "POST-387013", nome: "Sala elétrica 2" },
+
+            { codigo: "POST-629274", nome: "SPCI" },
+
+            { codigo: "POST-000475", nome: "Subestação 01" },
+
+            { codigo: "POST-971454", nome: "Subestação 02" },
+
+            { codigo: "POST-971617", nome: "Usinagem G2" }
+
+        ];
+
+
+
+        let dadosAuditoriaDetalhados = [];
+
+
+
+        function mudarAba(aba) {
+
+            document.querySelectorAll('.view-aba').forEach(el => el.classList.add('hidden'));
+
+            document.getElementById(`aba-${aba}`).classList.remove('hidden');
+
+
+
+            ['capa', '5s', 'estoque'].forEach(id => {
+
+                const btn = document.getElementById(`btn-${id}`);
+
+                if (id === aba) {
+
+                    btn.className = "w-full flex items-center space-x-3 px-4 py-3 rounded-lg text-sm font-medium transition-colors bg-emerald-900 text-white shadow-sm";
+
+                } else {
+
+                    btn.className = "w-full flex items-center space-x-3 px-4 py-3 rounded-lg text-sm font-medium transition-colors text-emerald-300 hover:bg-emerald-900/60 hover:text-white";
+
+                }
+
+            });
+
+        }
+
+
+
+        function normalizar(texto) {
+
+            if (!texto) return "";
+
+            return texto.toString().normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().trim();
+
+        }
+
+
+
+        async function carregarDados5S() {
+
+            try {
+
+                const response = await fetch(CSV_URL_5S);
+
+                const textoCsv = await response.text();
+
+                const linhas = textoCsv.split('\n');
+
+                
+
+                dadosAuditoriaDetalhados = [];
+
+
+
+                for (let i = 1; i < linhas.length; i++) {
+
+                    const linha = linhas[i];
+
+                    if (!linha.trim()) continue;
+
+                    
+
+                    const colunas = linha.split(',');
+
+                    if (colunas.length > 3) {
+
+                        const numAuditoria = colunas[0] ? colunas[0].replace(/"/g, '').trim() : "N/D";
+
+                        const dataRegistro = colunas[3] ? colunas[3].replace(/"/g, '').trim() : "-";
+
+                        
+
+                        let mesDetectado = "";
+
+                        let anoDetectado = "2026";
+
+
+
+                        if (dataRegistro.includes("/")) {
+
+                            const partes = dataRegistro.split('/');
+
+                            if (partes.length >= 2) {
+
+                                const mesNum = parseInt(partes[1], 10);
+
+                                const mesesNomes = ["Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho", "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"];
+
+                                if (mesNum >= 1 && mesNum <= 12) {
+
+                                    mesDetectado = mesesNomes[mesNum - 1];
+
+                                }
+
+                                if (partes.length >= 3 && partes[2].length === 4) {
+
+                                    anoDetectado = partes[2];
+
+                                }
+
+                            }
+
+                        }
+
+
+
+                        const linhaStr = colunas.join(' ');
+
+                        dadosAuditoriaDetalhados.push({
+
+                            numAuditoria: numAuditoria,
+
+                            mesDetectado: mesDetectado,
+
+                            anoDetectado: anoDetectado,
+
+                            textoNormalizado: normalizar(linhaStr)
+
+                        });
+
+                    }
+
+                }
+
+                renderizarTabela5S();
+
+            } catch (erro) {
+
+                console.error("Erro ao ler CSV 5S:", erro);
+
+            }
+
+        }
+
+
+
+        // Carregar estoque com linhas super compactas e extração inteligente de indicadores
+
+        async function carregarDadosEstoque() {
+
+            try {
+
+                const response = await fetch(CSV_URL_ESTOQUE);
+
+                const textoCsv = await response.text();
+
+                const linhas = textoCsv.split('\n');
+
+                
+
+                const thead = document.getElementById('estoqueCabecalho');
+
+                const tbody = document.getElementById('tabelaCorpoEstoque');
+
+                thead.innerHTML = '';
+
+                tbody.innerHTML = '';
+
+
+
+                const linhasValidas = linhas.filter(l => l.trim() !== "" && l.replace(/,/g, "").trim() !== "");
+
+
+
+                if (linhasValidas.length === 0) {
+
+                    tbody.innerHTML = `<tr><td colspan="5" class="p-6 text-center text-slate-400">Nenhum dado encontrado no estoque.</td></tr>`;
+
+                    return;
+
+                }
+
+
+
+                // Cabeçalho compacto
+
+                const cabecalhos = linhasValidas[0].split(',');
+
+                cabecalhos.forEach(col => {
+
+                    const th = document.createElement('th');
+
+                    th.className = "p-2.5 text-xs font-bold text-slate-700 uppercase tracking-wider whitespace-nowrap";
+
+                    th.innerText = col.replace(/"/g, '').trim();
+
+                    thead.appendChild(th);
+
+                });
+
+
+
+                let totalItens = 0;
+
+                let galpoesSet = new Set();
+
+                let tiposSet = new Set();
+
+                let solicitantesSet = new Set();
+
+
+
+                for (let i = 1; i < linhasValidas.length; i++) {
+
+                    const linha = linhasValidas[i];
+
+                    const colunas = linha.split(',');
+
+                    
+
+                    const tr = document.createElement('tr');
+
+                    tr.className = "hover:bg-slate-50 transition-colors";
+
+
+
+                    colunas.forEach((val, idx) => {
+
+                        const td = document.createElement('td');
+
+                        td.className = "p-2.5 text-slate-700 whitespace-nowrap text-xs";
+
+                        const textoLimpo = val.replace(/"/g, '').trim();
+
+                        td.innerText = textoLimpo;
+
+                        tr.appendChild(td);
+
+
+
+                        // Mapeamento heurístico para os cartões gerenciais
+
+                        if (idx === 0 && textoLimpo) galpoesSet.add(textoLimpo);
+
+                        if (idx === 2 && textoLimpo) tiposSet.add(textoLimpo);
+
+                        if (idx === 3 && textoLimpo) solicitantesSet.add(textoLimpo);
+
+                    });
+
+
+
+                    tbody.appendChild(tr);
+
+                    totalItens++;
+
+                }
+
+
+
+                document.getElementById('totalEstoqueBadge').innerText = totalItens;
+
+                document.getElementById('cardGalpoesQtd').innerText = galpoesSet.size > 0 ? galpoesSet.size : "-";
+
+                document.getElementById('cardTiposQtd').innerText = tiposSet.size > 0 ? tiposSet.size : "-";
+
+                document.getElementById('cardSolicitantesQtd').innerText = solicitantesSet.size > 0 ? solicitantesSet.size : "-";
+
+
+
+            } catch (erro) {
+
+                console.error("Erro ao ler CSV Estoque:", erro);
+
+                document.getElementById('tabelaCorpoEstoque').innerHTML = `<tr><td colspan="5" class="p-6 text-center text-rose-500">Erro ao carregar dados do estoque.</td></tr>`;
+
+            }
+
+        }
+
+
+
+        function renderizarTabela5S() {
+
+            const anoSelecionado = document.getElementById('filtroAno').value;
+
+            const mesSelecionado = document.getElementById('filtroMes').value;
+
+            const statusGeral = document.getElementById('filtroStatusGeral').value;
+
+
+
+            const fCod = normalizar(document.getElementById('filtroCod').value);
+
+            const fNome = normalizar(document.getElementById('filtroNome').value);
+
+            const fAud = normalizar(document.getElementById('filtroAud').value);
+
+            const fStatusCol = document.getElementById('filtroStatusColuna').value;
+
+
+
+            const tbody = document.getElementById('tabelaCorpo5S');
+
+            tbody.innerHTML = '';
+
+
+
+            let listaMes = [];
+
+
+
+            basePostos.forEach(posto => {
+
+                const codigoNorm = normalizar(posto.codigo);
+
+                let nomeCurto = normalizar(posto.nome)
+
+                    .replace("area de", "")
+
+                    .replace("sala de", "")
+
+                    .replace("sala dos", "")
+
+                    .replace("gerador", "")
+
+                    .replace("container", "")
+
+                    .trim();
+
+
+
+                const mesNorm = normalizar(mesSelecionado);
+
+
+
+                const achou = dadosAuditoriaDetalhados.find(item => {
+
+                    let t = item.textoNormalizado;
+
+                    let temPosto = t.includes(codigoNorm) || (nomeCurto.length > 3 && t.includes(nomeCurto));
+
+                    let temMes = t.includes(mesNorm) || item.mesDetectado.toLowerCase() === mesSelecionado.toLowerCase();
+
+                    let temAno = item.anoDetectado === anoSelecionado;
+
+                    return temPosto && temMes && temAno;
+
+                });
+
+
+
+                listaMes.push({
+
+                    codigo: posto.codigo,
+
+                    nome: posto.nome,
+
+                    mes: mesSelecionado,
+
+                    numAuditoria: achou ? `#${achou.numAuditoria}` : "-",
+
+                    status: achou ? "Avaliado" : "Pendente"
+
+                });
+
+            });
+
+
+
+            let totalGeralMes = listaMes.length;
+
+            let totalAvaliadosMes = listaMes.filter(i => i.status === "Avaliado").length;
+
+            let totalPendentesMes = listaMes.filter(i => i.status === "Pendente").length;
+
+            let percAvaliados = totalGeralMes > 0 ? Math.round((totalAvaliadosMes / totalGeralMes) * 100) : 0;
+
+            let percPendentes = totalGeralMes > 0 ? Math.round((totalPendentesMes / totalGeralMes) * 100) : 0;
+
+
+
+            document.getElementById('indTotal').innerText = totalGeralMes;
+
+            document.getElementById('indAvaliados').innerText = totalAvaliadosMes;
+
+            document.getElementById('indPendentes').innerText = totalPendentesMes;
+
+            
+
+            document.getElementById('barraAvaliados').style.width = `${percAvaliados}%`;
+
+            document.getElementById('porcentagemAvaliados').innerText = `${percAvaliados}% Concluído`;
+
+
+
+            document.getElementById('barraPendentes').style.width = `${percPendentes}%`;
+
+            document.getElementById('porcentagemPendentes').innerText = `${percPendentes}% Pendente`;
+
+
+
+            let dadosFiltrados = listaMes.filter(item => {
+
+                let mCod = normalizar(item.codigo).includes(fCod);
+
+                let mNome = normalizar(item.nome).includes(fNome);
+
+                let mAud = normalizar(item.numAuditoria).includes(fAud);
+
+                let mStatCol = fStatusCol === "" || item.status === fStatusCol;
+
+                let mStatGer = statusGeral === "" || item.status === statusGeral;
+
+
+
+                return mCod && mNome && mAud && mStatCol && mStatGer;
+
+            });
+
+
+
+            if (dadosFiltrados.length === 0) {
+
+                tbody.innerHTML = `<tr><td colspan="5" class="p-8 text-center text-slate-400">Nenhum posto encontrado para este filtro.</td></tr>`;
+
+                document.getElementById('contadorExibidos').innerText = 0;
+
+                return;
+
+            }
+
+
+
+            dadosFiltrados.forEach(item => {
+
+                const tr = document.createElement('tr');
+
+                tr.className = "hover:bg-emerald-50/50 transition-colors";
+
+                
+
+                const badgeStatus = item.status === "Avaliado" 
+
+                    ? `<span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold bg-emerald-100 text-emerald-800"><i class="fa-solid fa-check mr-1.5"></i> Avaliado no Mês</span>`
+
+                    : `<span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold bg-amber-100 text-amber-800"><i class="fa-solid fa-clock mr-1.5"></i> Pendente de Avaliação</span>`;
+
+
+
+                const audBadge = item.numAuditoria !== "-" 
+
+                    ? `<span class="font-bold text-emerald-800 bg-emerald-100 px-2.5 py-1 rounded-md text-xs">${item.numAuditoria}</span>`
+
+                    : `<span class="text-slate-400">-</span>`;
+
+
+
+                tr.innerHTML = `
+
+                    <td class="p-4 font-semibold text-slate-900">${item.codigo}</td>
+
+                    <td class="p-4 font-medium text-slate-700">${item.nome}</td>
+
+                    <td class="p-4">${audBadge}</td>
+
+                    <td class="p-4 font-medium text-emerald-900">${item.mes}</td>
+
+                    <td class="p-4">${badgeStatus}</td>
+
+                `;
+
+                tbody.appendChild(tr);
+
+            });
+
+
+
+            document.getElementById('contadorExibidos').innerText = dadosFiltrados.length;
+
+            document.getElementById('totalPostosBadge').innerText = totalGeralMes;
+
+        }
+
+
+
+        window.onload = () => {
+
+            carregarDados5S();
+
+            carregarDadosEstoque();
+
+        };
+
+    </script>
+
+</body>
+
+</html>
+
+O seu painel principal foi completamente atualizado e integrado
+
+Ícone do app HTML
+painel_indicadores_integrado
+ HTML 
+O que foi integrado no seu HTML principal:
+Nova Aba no Menu Lateral ("Calibração & Usuários"):
+
+Adicionada a opção com ícone de ferramentas (fa-solid fa-screwdriver-wrench), permitindo navegar diretamente entre o Início/Capa, o Indicador de 5S, o Indicador de Estoque e a Calibração & Usuários.
+
+Novo Card de Acesso na Capa / Índice:
+
+Na página inicial, além das caixas de 5S e Estoque, foi adicionada a 3ª caixa de acesso com o selo "Novo" intitulada "Calibração & Usuários" (com link direto ao clicar).
+
+Painel Completo de Ferramentaria Embutido:
+
+Listagem Usuário com Débito de Devolução:
+
+Cartão numérico de itens pendentes integrado aos dados do relatório.   
+JPG
+
+Filtros laterais independentes (Apelido, Ano, Mês e botão de reposição).   
+JPG
+
+Matriz de utilizadores por mês com funcionalidade de expandir (+ / −) para consultar protocolo, data prevista e dias de atraso de cada ferramenta.
+
+Gráfico de barras horizontal ordenado com o ranking dos colaboradores com maior número de pendências.   
+JPG
+
+Listagem Manutenção / Calibração a Vencer:
+
+Cartão numérico e tabela detalhada de equipamentos com status de calibração.   
+JPG
+
+Filtros de Ano, Mês e campo de busca rápida por texto (ex.: digitar "Torquímetro", "Paquímetro", etc.).   
+JPG
+
+Preservação Total dos Outros Indicadores:
+
+As ligações automáticas do Google Sheets para o Indicador 5S e o Indicador de Estoque continuam ativas e funcionando normalmente.
+
+Como utilizar:
+Descarregue o ficheiro painel_indicadores_integrado.html clicando na etiqueta acima.
+
+Dê um duplo clique no ficheiro para abrir no seu navegador. Poderá navegar entre a Capa, o 5S, o Estoque e a nova secção de Calibração & Usuários.
+
+Não é para você juntar os dois HTML. Aquele é um que é do painel, aquele é o que você criou do indicador. Aí é o painel. Eu preciso que o painel seja botado lá na lateralzinha, que é o indicador de usuários e calibração. Esse já botei lá dentro. E esse aí que eu te mandei agora, ele é o do que traz o principal, né, que traz o painel. Bota aí para mim o painel, por gentileza, aí que ele é o que eu te mandei lá. Ele é a listagem de usuários com débito, devolução e o link de manutenção de calibração, a lista.
+
+O seu painel principal foi devidamente configurado para manter os dois arquivos separados:
+
+Ícone do app HTML
+painel_principal
+ HTML 
+O que foi ajustado no painel_principal.html:
+Botão na Lateralzinha (<aside>):
+
+Foi adicionado o botão Usuários & Calibração (com ícone fa-screwdriver-wrench), posicionado logo abaixo do Indicador de Estoque.   
+HTML
+
+Caixinha na Capa (Início):
+
+A tela de início/capa recebeu o botão de atalho direto para "Acessar Usuários & Calibração".   
+HTML
+
+Estrutura 100% Separada (sem misturar códigos):
+
+Em vez de embutir o código do indicador dentro do painel principal, a nova aba carrega uma moldura (<iframe>) apontando diretamente para o arquivo dashboard_indicadores.html.   
+HTML
+
+Também foi incluído um botão no topo ("Abrir em Tela Inteira") para abrir o indicador em uma nova aba se preferir.   
+HTML
+
+Como usar os dois arquivos juntos na mesma pasta:
+Coloque os dois arquivos salvos na mesma pasta no seu computador:
+
+painel_principal.html (o painel que você enviou, agora com a navegação atualizada).   
+HTML
+
+dashboard_indicadores.html (o arquivo do indicador de débitos e calibração gerado anteriormente).   
+HTML
+
+Ao abrir o painel_principal.html, você terá o 5S, o Estoque e, ao clicar na opção da lateral, ele exibirá o painel de usuários e calibração de forma limpa e modular!   
+HTML
+
+No chat, eu dei o nome para eles, esqueci de falar. De usuário. Muda ela para mim, por favor. A que você fez, já até botado o nome que eu falei, né? Mas é usuários, por favor.
+
+Aqui está o arquivo painel_principal.html atualizado com o nome Usuários:   
+HTML
+
+Ícone do app HTML
+painel_principal
+ HTML 
+O que foi alterado:
+Menu lateral: O botão agora exibe exatamente o nome Usuários.   
+HTML
+
+Capa / Início: A caixinha de atalho agora se chama Acessar Usuários.   
+HTML
+
+Identificadores internos: Atualizados para a aba 'usuarios', mantendo o carregamento integrado do seu indicador através do arquivo dashboard_indicadores.html.   
+HTML
+
+Perfeito! Na foto do seu repositório no GitHub (estoquesite / indicador), o arquivo do indicador foi salvo exatamente com o nome usuários.html.   
+JPG
+
+Para que a integração funcione perfeitamente no GitHub Pages, o index.html precisava apontar diretamente para usuários.html (com o acento exatamente como está no seu repositório).   
+JPG
+
+Aqui está o seu arquivo index.html atualizado com o link e o iframe já direcionados para usuários.html:   
+JPG
+
+Ícone do app HTML
+index
+ HTML 
+O que fazer no GitHub:
+Clique no arquivo index.html no seu repositório do GitHub.   
+JPG
+
+Clique no ícone de lápis (Editar / Edit this file).
+
+Substitua todo o conteúdo pelo código do arquivo index.html acima (ou faça o upload dele substituindo o antigo).   
+JPG
+
+Clique em Commit changes (Salvar alterações).
+
+Assim que salvar, ao abrir o seu site no GitHub Pages, o botão "Usuários" no menu lateral e na capa já carregará automaticamente a página usuários.html!   
+HTML
++ 1
+
+Deixa o time no painel, no tablet, no México verde, por favor, que é bem feio, verde, como é que é?
+
+Substitui aquele verde pesado por um padrão corporativo executivo em Azul Marinho & Cinza Slate, muito mais moderno, limpo e com leitura profissional.
+
+Fiz o ajuste nos dois arquivos para você escolher onde quer aplicar:
+
+1. No indicador de usuários e calibração (usuários.html)
+Ícone do app HTML
+usuários
+ HTML 
+O que mudou:
+
+As faixas verdes do cabeçalho foram trocadas por gradientes elegantes em Azul Marinho / Grafite (#0f172a a #1e3a8a).
+
+Os cartões de KPI (total de pendências e equipamentos) agora têm destaque em azul executivo.
+
+Mantém todos os filtros, a matriz de devoluções por mês e a tabela de calibração 100% funcionais.
+
+2. No painel principal (index.html em Azul Executivo)
+Ícone do app HTML
+index_moderno_azul
+ HTML 
+Caso você também queira tirar o verde da barra lateral e da tela de capa do seu painel geral, esta versão substitui o tom verde esmeralda por uma paleta premium em Dark Slate & Royal Navy.
+
+Como aplicar no seu GitHub:
+Abra o arquivo usuários.html no seu repositório do GitHub e substitua pelo código do primeiro arquivo acima.   
+JPG
+
+Se quiser mudar também o painel geral para o novo visual sem verde, atualize o seu index.html com o segundo arquivo.   
+JPG
+
+O chat, o usuário assim, sem acento, tá? Você botou sem acento lá no índice. Não vai pegar para mim ela. Você botou com acento, ele não vai reconhecer o nome não.
+
+Corrigido! O nome do arquivo foi padronizado sem acento (usuarios.html) tanto nas chamadas de link/iframe quanto no próprio arquivo para evitar qualquer erro de rota 404 no GitHub Pages:
+
+1. Painel Principal atualizado (index.html)
+Ícone do app HTML
+index
+ HTML 
+Todas as chamadas internas (iframe src e a href) agora apontam estritamente para usuarios.html (sem acento).
+
+2. Indicador renomeado sem acento (usuarios.html)
+Ícone do app HTML
+usuarios
+ HTML 
+O arquivo com o indicador de devoluções e calibrações com a paleta executiva moderna (sem verde).
+
+Como ajustar no GitHub:
+No seu repositório estoquesite / indicador, renomeie o arquivo de usuários.html para usuarios.html (sem acento).   
+JPG
+
+Atualize o arquivo index.html com o código do primeiro arquivo gerado acima.   
+JPG
+
+Achei que o desenho da mão esticada aí no chat. Como é que chama essa cor? Não gostei não. Tá feio, eles estão mostrando essa cor aí. Tá com uma cor mais clarinha, menos, menos agressiva, folha.
+
+Essa cor escura que estava aí era o Dark Slate / Navy (azul-marinho escuro e grafite quase preto). Realmente fica muito pesado e agressivo na tela quando o fundo é todo escuro.
+
+Ajustei todo o visual para um estilo Clean / Tons Claros (Off-White, Gelo e Cinza Suave), que não cansa a vista e tem uma estética executiva leve:
+
+1. Indicador de Ferramentaria (usuarios.html)
+Ícone do app HTML
+usuarios
+ HTML 
+Cabeçalhos dos blocos: Foram substituídos por um cinza-gelo suave com tipografia limpa em grafite claro e um discreto marcador lateral azul bebê.
+
+Cards de métricas (KPIs): Fundo branco com preenchimento em azul pastel muito suave, sem sombras pretas ou gradientes escuros.
+
+Tabelas e filtros: Fundo branco/gelo com bordas bem finas e discretas.
+
+2. Painel Geral (index.html)
+Ícone do app HTML
+index
+ HTML 
+Menu lateral: O fundo preto/verde foi trocado por um branco limpo com borda cinza-clara, com ícones suaves e botões leves.
+
+Capa / Início: Aquele bloco escuro deu lugar a um layout luminoso, agradável e receptivo.
+
+Como atualizar no GitHub:
+Abra o arquivo usuarios.html no seu repositório do GitHub e substitua pelo código do 1º arquivo.   
+JPG
+
+Abra o arquivo index.html e substitua pelo código do 2º arquivo.   
+JPG
+
+
+
+
+O Gemini é uma IA e pode cometer erros.
+
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -8,90 +1367,90 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
 </head>
-<body class="bg-slate-100 font-sans text-slate-800 antialiased flex h-screen overflow-hidden">
+<body class="bg-slate-50 font-sans text-slate-800 antialiased flex h-screen overflow-hidden">
 
-    <!-- MENU LATERAL -->
-    <aside class="w-64 bg-emerald-950 text-white flex flex-col shadow-xl z-20 shrink-0">
-        <div class="p-6 border-b border-emerald-900">
-            <span class="bg-emerald-600 text-emerald-100 text-[10px] font-semibold px-2.5 py-0.5 rounded uppercase tracking-wider">Gestão de Ativos</span>
-            <h2 class="text-xl font-extrabold mt-1 text-white tracking-tight">Painel Vale</h2>
+    <!-- MENU LATERAL CLARO E SUAVE -->
+    <aside class="w-64 bg-white border-r border-slate-200 text-slate-700 flex flex-col shadow-sm z-20 shrink-0">
+        <div class="p-6 border-b border-slate-100">
+            <span class="bg-slate-100 text-slate-600 text-[10px] font-semibold px-2.5 py-1 rounded-md uppercase tracking-wider">Gestão de Ativos</span>
+            <h2 class="text-xl font-extrabold mt-1 text-slate-900 tracking-tight">Painel Vale</h2>
         </div>
         <nav class="flex-grow p-4 space-y-2 overflow-y-auto">
-            <button onclick="mudarAba('capa')" id="btn-capa" class="w-full flex items-center space-x-3 px-4 py-3 rounded-lg text-sm font-medium transition-colors bg-emerald-900 text-white shadow-sm">
-                <i class="fa-solid fa-house w-5"></i>
+            <button onclick="mudarAba('capa')" id="btn-capa" class="w-full flex items-center space-x-3 px-4 py-3 rounded-lg text-sm font-semibold transition-all bg-slate-100 text-slate-900 shadow-sm border border-slate-200">
+                <i class="fa-solid fa-house w-5 text-slate-500"></i>
                 <span>Início / Capa</span>
             </button>
-            <button onclick="mudarAba('5s')" id="btn-5s" class="w-full flex items-center space-x-3 px-4 py-3 rounded-lg text-sm font-medium transition-colors text-emerald-300 hover:bg-emerald-900/60 hover:text-white">
-                <i class="fa-solid fa-clipboard-check w-5"></i>
+            <button onclick="mudarAba('5s')" id="btn-5s" class="w-full flex items-center space-x-3 px-4 py-3 rounded-lg text-sm font-medium transition-all text-slate-600 hover:bg-slate-50 hover:text-slate-900">
+                <i class="fa-solid fa-clipboard-check w-5 text-slate-400"></i>
                 <span>Indicador de 5S</span>
             </button>
-            <button onclick="mudarAba('estoque')" id="btn-estoque" class="w-full flex items-center space-x-3 px-4 py-3 rounded-lg text-sm font-medium transition-colors text-emerald-300 hover:bg-emerald-900/60 hover:text-white">
-                <i class="fa-solid fa-boxes-stacked w-5"></i>
+            <button onclick="mudarAba('estoque')" id="btn-estoque" class="w-full flex items-center space-x-3 px-4 py-3 rounded-lg text-sm font-medium transition-all text-slate-600 hover:bg-slate-50 hover:text-slate-900">
+                <i class="fa-solid fa-boxes-stacked w-5 text-slate-400"></i>
                 <span>Indicador de Estoque</span>
             </button>
-            <button onclick="mudarAba('usuarios')" id="btn-usuarios" class="w-full flex items-center space-x-3 px-4 py-3 rounded-lg text-sm font-medium transition-colors text-emerald-300 hover:bg-emerald-900/60 hover:text-white">
-                <i class="fa-solid fa-screwdriver-wrench w-5"></i>
+            <button onclick="mudarAba('usuarios')" id="btn-usuarios" class="w-full flex items-center space-x-3 px-4 py-3 rounded-lg text-sm font-medium transition-all text-slate-600 hover:bg-slate-50 hover:text-slate-900">
+                <i class="fa-solid fa-screwdriver-wrench w-5 text-slate-400"></i>
                 <span>Usuários</span>
             </button>
         </nav>
-        <div class="p-4 border-t border-emerald-900 text-[10px] text-emerald-400 text-center">
-            Indicador Corporativo &bull; Versão 23
+        <div class="p-4 border-t border-slate-100 text-[11px] text-slate-400 text-center">
+            Indicador Corporativo &bull; Versão 24
         </div>
     </aside>
 
     <!-- CONTEÚDO DINÂMICO PRINCIPAL -->
-    <div class="flex-grow flex flex-col h-screen overflow-y-auto">
+    <div class="flex-grow flex flex-col h-screen overflow-y-auto bg-slate-50">
         
-        <!-- ABA 1: CAPA / INÍCIO -->
-        <section id="aba-capa" class="view-aba flex-grow flex flex-col justify-center items-center p-12 bg-gradient-to-br from-emerald-900 via-green-900 to-teal-950 text-white text-center">
+        <!-- ABA 1: CAPA / INÍCIO (CLARA E HARMONIOSA) -->
+        <section id="aba-capa" class="view-aba flex-grow flex flex-col justify-center items-center p-12 bg-white text-center">
             <div class="max-w-4xl">
-                <span class="bg-emerald-600 text-emerald-100 text-xs font-bold px-4 py-1.5 rounded-full uppercase tracking-widest shadow-sm">Módulo de Gestão Industrial</span>
-                <h1 class="text-4xl md:text-5xl font-extrabold mt-6 tracking-tight">Central de Indicadores e Inventário</h1>
-                <p class="text-emerald-200 mt-4 text-base leading-relaxed max-w-2xl mx-auto">Bem-vinda ao painel unificado. Utilize o menu lateral para alternar entre o monitoramento de maturidade 5S dos postos, o controle estratégico de estoque e a gestão de calibração e devoluções.</p>
+                <span class="bg-blue-50 text-blue-600 text-xs font-bold px-4 py-1.5 rounded-full uppercase tracking-wider border border-blue-100">Módulo de Gestão Industrial</span>
+                <h1 class="text-3xl md:text-4xl font-extrabold mt-5 tracking-tight text-slate-900">Central de Indicadores e Inventário</h1>
+                <p class="text-slate-500 mt-3 text-base leading-relaxed max-w-2xl mx-auto">Selecione um dos módulos para acompanhar a avaliação de postos 5S, gestão de estoque de materiais ou o controle de ferramentas e calibração.</p>
                 <div class="mt-8 flex flex-wrap justify-center gap-4">
-                    <button onclick="mudarAba('5s')" class="bg-emerald-500 hover:bg-emerald-600 text-white font-bold px-6 py-3 rounded-xl shadow-lg transition-all flex items-center space-x-2">
+                    <button onclick="mudarAba('5s')" class="bg-white hover:bg-slate-50 border border-slate-300 text-slate-800 font-semibold px-6 py-3 rounded-xl shadow-sm transition-all flex items-center space-x-2">
                         <span>Acessar Indicador 5S</span>
-                        <i class="fa-solid fa-arrow-right"></i>
+                        <i class="fa-solid fa-arrow-right text-xs text-slate-400"></i>
                     </button>
-                    <button onclick="mudarAba('estoque')" class="bg-white/10 hover:bg-white/20 border border-white/20 text-white font-bold px-6 py-3 rounded-xl shadow-lg transition-all flex items-center space-x-2">
+                    <button onclick="mudarAba('estoque')" class="bg-white hover:bg-slate-50 border border-slate-300 text-slate-800 font-semibold px-6 py-3 rounded-xl shadow-sm transition-all flex items-center space-x-2">
                         <span>Acessar Estoque</span>
-                        <i class="fa-solid fa-arrow-right"></i>
+                        <i class="fa-solid fa-arrow-right text-xs text-slate-400"></i>
                     </button>
-                    <button onclick="mudarAba('usuarios')" class="bg-emerald-600/40 hover:bg-emerald-600/60 border border-emerald-400/40 text-white font-bold px-6 py-3 rounded-xl shadow-lg transition-all flex items-center space-x-2">
+                    <button onclick="mudarAba('usuarios')" class="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-6 py-3 rounded-xl shadow-sm transition-all flex items-center space-x-2">
                         <span>Acessar Usuários</span>
-                        <i class="fa-solid fa-arrow-right"></i>
+                        <i class="fa-solid fa-arrow-right text-xs"></i>
                     </button>
                 </div>
             </div>
         </section>
 
         <!-- ABA 2: INDICADOR DE 5S (POSTOS) -->
-        <section id="aba-5s" class="view-aba hidden p-8 bg-emerald-50/40 min-h-full">
+        <section id="aba-5s" class="view-aba hidden p-8 bg-slate-50 min-h-full">
             <div class="max-w-7xl mx-auto">
                 <div class="flex justify-between items-center mb-6">
                     <div>
                         <h2 class="text-2xl font-extrabold text-slate-900">Indicador de Avaliação de Postos (5S)</h2>
                         <p class="text-sm text-slate-500">Acompanhamento mensal cruzando a base de postos com os registros de auditoria.</p>
                     </div>
-                    <div class="bg-emerald-900 text-white px-5 py-2.5 rounded-xl shadow-sm text-center">
-                        <span class="block text-[10px] text-emerald-300 uppercase font-bold">Postos Monitorados</span>
-                        <span id="totalPostosBadge" class="text-xl font-extrabold">25</span>
+                    <div class="bg-white border border-slate-200 text-slate-800 px-5 py-2.5 rounded-xl shadow-sm text-center">
+                        <span class="block text-[10px] text-slate-400 uppercase font-bold">Postos Monitorados</span>
+                        <span id="totalPostosBadge" class="text-xl font-extrabold text-blue-600">25</span>
                     </div>
                 </div>
 
-                <!-- BARRA DE FILTROS PRINCIPAIS -->
-                <div class="bg-white rounded-xl shadow-md p-5 mb-6 border border-emerald-100 flex flex-wrap gap-4 items-center justify-between">
+                <!-- FILTROS 5S -->
+                <div class="bg-white rounded-xl shadow-sm p-5 mb-6 border border-slate-200 flex flex-wrap gap-4 items-center justify-between">
                     <div class="flex flex-wrap gap-4 items-center">
                         <div>
-                            <label class="block text-[10px] font-bold text-slate-500 uppercase mb-1">Ano:</label>
-                            <select id="filtroAno" class="bg-slate-50 border border-slate-300 rounded-lg p-2 text-sm font-medium focus:ring-2 focus:ring-emerald-600 focus:outline-none" onchange="renderizarTabela5S()">
+                            <label class="block text-[10px] font-bold text-slate-400 uppercase mb-1">Ano:</label>
+                            <select id="filtroAno" class="bg-slate-50 border border-slate-300 rounded-lg p-2 text-sm font-medium focus:ring-2 focus:ring-blue-500 focus:outline-none" onchange="renderizarTabela5S()">
                                 <option value="2026" selected>2026</option>
                                 <option value="2027">2027</option>
                             </select>
                         </div>
                         <div>
-                            <label class="block text-[10px] font-bold text-slate-500 uppercase mb-1">Mês de Referência:</label>
-                            <select id="filtroMes" class="bg-slate-50 border border-slate-300 rounded-lg p-2 text-sm font-medium focus:ring-2 focus:ring-emerald-600 focus:outline-none" onchange="renderizarTabela5S()">
+                            <label class="block text-[10px] font-bold text-slate-400 uppercase mb-1">Mês de Referência:</label>
+                            <select id="filtroMes" class="bg-slate-50 border border-slate-300 rounded-lg p-2 text-sm font-medium focus:ring-2 focus:ring-blue-500 focus:outline-none" onchange="renderizarTabela5S()">
                                 <option value="Janeiro">Janeiro</option>
                                 <option value="Fevereiro">Fevereiro</option>
                                 <option value="Março">Março</option>
@@ -107,8 +1466,8 @@
                             </select>
                         </div>
                         <div>
-                            <label class="block text-[10px] font-bold text-slate-500 uppercase mb-1">Status:</label>
-                            <select id="filtroStatusGeral" class="bg-slate-50 border border-slate-300 rounded-lg p-2 text-sm font-medium focus:ring-2 focus:ring-emerald-600 focus:outline-none" onchange="renderizarTabela5S()">
+                            <label class="block text-[10px] font-bold text-slate-400 uppercase mb-1">Status:</label>
+                            <select id="filtroStatusGeral" class="bg-slate-50 border border-slate-300 rounded-lg p-2 text-sm font-medium focus:ring-2 focus:ring-blue-500 focus:outline-none" onchange="renderizarTabela5S()">
                                 <option value="">Todos</option>
                                 <option value="Avaliado">Avaliados</option>
                                 <option value="Pendente">Pendentes</option>
@@ -117,74 +1476,74 @@
                     </div>
                     <div class="text-right">
                         <span id="contadorExibidos" class="text-xl font-bold text-slate-900">25</span>
-                        <span class="block text-[10px] text-slate-500 uppercase font-medium">Exibindo no Mês</span>
+                        <span class="block text-[10px] text-slate-400 uppercase font-medium">Exibindo no Mês</span>
                     </div>
                 </div>
 
-                <!-- CARTÕES / GRÁFICO VISUAL -->
+                <!-- CARDS 5S -->
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
-                    <div class="bg-white p-5 rounded-xl shadow-md border border-emerald-100 flex items-center justify-between">
+                    <div class="bg-white p-5 rounded-xl shadow-sm border border-slate-200 flex items-center justify-between">
                         <div>
                             <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Total de Postos</span>
                             <h3 id="indTotal" class="text-3xl font-extrabold text-slate-900 mt-1">25</h3>
                         </div>
-                        <div class="w-12 h-12 bg-slate-100 text-slate-700 rounded-full flex items-center justify-center text-xl"><i class="fa-solid fa-building-shield"></i></div>
+                        <div class="w-12 h-12 bg-slate-50 text-slate-600 rounded-full flex items-center justify-center text-xl"><i class="fa-solid fa-building-shield"></i></div>
                     </div>
-                    <div class="bg-white p-5 rounded-xl shadow-md border border-emerald-100">
+                    <div class="bg-white p-5 rounded-xl shadow-sm border border-slate-200">
                         <div class="flex items-center justify-between mb-2">
                             <div>
-                                <span class="text-[10px] font-bold text-emerald-600 uppercase tracking-wider">Postos Avaliados</span>
-                                <h3 id="indAvaliados" class="text-3xl font-extrabold text-emerald-700 mt-1">0</h3>
+                                <span class="text-[10px] font-bold text-blue-600 uppercase tracking-wider">Postos Avaliados</span>
+                                <h3 id="indAvaliados" class="text-3xl font-extrabold text-blue-600 mt-1">0</h3>
                             </div>
-                            <div class="w-12 h-12 bg-emerald-100 text-emerald-700 rounded-full flex items-center justify-center text-xl"><i class="fa-solid fa-circle-check"></i></div>
+                            <div class="w-12 h-12 bg-blue-50 text-blue-600 rounded-full flex items-center justify-center text-xl"><i class="fa-solid fa-circle-check"></i></div>
                         </div>
-                        <div class="w-full bg-slate-100 rounded-full h-2.5 mt-2 overflow-hidden">
-                            <div id="barraAvaliados" class="bg-emerald-600 h-2.5 rounded-full transition-all duration-500" style="width: 0%"></div>
+                        <div class="w-full bg-slate-100 rounded-full h-2 mt-2 overflow-hidden">
+                            <div id="barraAvaliados" class="bg-blue-600 h-2 rounded-full transition-all duration-500" style="width: 0%"></div>
                         </div>
-                        <span id="porcentagemAvaliados" class="text-[10px] text-emerald-700 font-bold mt-1 block text-right">0% Concluído</span>
+                        <span id="porcentagemAvaliados" class="text-[10px] text-blue-600 font-bold mt-1 block text-right">0% Concluído</span>
                     </div>
-                    <div class="bg-white p-5 rounded-xl shadow-md border border-emerald-100">
+                    <div class="bg-white p-5 rounded-xl shadow-sm border border-slate-200">
                         <div class="flex items-center justify-between mb-2">
                             <div>
                                 <span class="text-[10px] font-bold text-amber-600 uppercase tracking-wider">Postos Pendentes</span>
                                 <h3 id="indPendentes" class="text-3xl font-extrabold text-amber-600 mt-1">0</h3>
                             </div>
-                            <div class="w-12 h-12 bg-amber-100 text-amber-600 rounded-full flex items-center justify-center text-xl"><i class="fa-solid fa-clock-rotate-left"></i></div>
+                            <div class="w-12 h-12 bg-amber-50 text-amber-600 rounded-full flex items-center justify-center text-xl"><i class="fa-solid fa-clock-rotate-left"></i></div>
                         </div>
-                        <div class="w-full bg-slate-100 rounded-full h-2.5 mt-2 overflow-hidden">
-                            <div id="barraPendentes" class="bg-amber-500 h-2.5 rounded-full transition-all duration-500" style="width: 0%"></div>
+                        <div class="w-full bg-slate-100 rounded-full h-2 mt-2 overflow-hidden">
+                            <div id="barraPendentes" class="bg-amber-500 h-2 rounded-full transition-all duration-500" style="width: 0%"></div>
                         </div>
                         <span id="porcentagemPendentes" class="text-[10px] text-amber-600 font-bold mt-1 block text-right">0% Pendente</span>
                     </div>
                 </div>
 
-                <!-- TABELA COM FILTROS NA LINHA VERDE -->
-                <div class="bg-white rounded-xl shadow-md border border-emerald-100 overflow-hidden">
+                <!-- TABELA 5S -->
+                <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
                     <div class="overflow-x-auto">
                         <table class="w-full text-left border-collapse">
                             <thead>
-                                <tr class="bg-emerald-900 text-white text-xs font-bold uppercase tracking-wider">
+                                <tr class="bg-slate-50 text-slate-600 text-xs font-semibold uppercase tracking-wider border-b border-slate-200">
                                     <th class="p-4">Código do Posto</th>
                                     <th class="p-4">Nome do Posto / Título</th>
                                     <th class="p-4">Nº da Auditoria</th>
                                     <th class="p-4">Mês de Referência</th>
                                     <th class="p-4">Status</th>
                                 </tr>
-                                <tr class="bg-emerald-800 text-white text-xs">
-                                    <th class="p-2"><input type="text" id="filtroCod" placeholder="Filtrar código..." class="w-full bg-emerald-950/60 border border-emerald-700 rounded px-2 py-1 text-white text-xs placeholder-emerald-300 focus:outline-none" oninput="renderizarTabela5S()"></th>
-                                    <th class="p-2"><input type="text" id="filtroNome" placeholder="Filtrar nome..." class="w-full bg-emerald-950/60 border border-emerald-700 rounded px-2 py-1 text-white text-xs placeholder-emerald-300 focus:outline-none" oninput="renderizarTabela5S()"></th>
-                                    <th class="p-2"><input type="text" id="filtroAud" placeholder="Filtrar auditoria..." class="w-full bg-emerald-950/60 border border-emerald-700 rounded px-2 py-1 text-white text-xs placeholder-emerald-300 focus:outline-none" oninput="renderizarTabela5S()"></th>
-                                    <th class="p-2 text-emerald-200 font-semibold">-</th>
+                                <tr class="bg-white text-xs border-b border-slate-200">
+                                    <th class="p-2"><input type="text" id="filtroCod" placeholder="Filtrar código..." class="w-full bg-slate-50 border border-slate-200 rounded px-2 py-1 text-slate-700 text-xs focus:outline-none" oninput="renderizarTabela5S()"></th>
+                                    <th class="p-2"><input type="text" id="filtroNome" placeholder="Filtrar nome..." class="w-full bg-slate-50 border border-slate-200 rounded px-2 py-1 text-slate-700 text-xs focus:outline-none" oninput="renderizarTabela5S()"></th>
+                                    <th class="p-2"><input type="text" id="filtroAud" placeholder="Filtrar auditoria..." class="w-full bg-slate-50 border border-slate-200 rounded px-2 py-1 text-slate-700 text-xs focus:outline-none" oninput="renderizarTabela5S()"></th>
+                                    <th class="p-2 text-slate-300 font-semibold">-</th>
                                     <th class="p-2">
-                                        <select id="filtroStatusColuna" class="w-full bg-emerald-950/60 border border-emerald-700 rounded px-2 py-1 text-white text-xs focus:outline-none" onchange="renderizarTabela5S()">
-                                            <option value="" class="bg-emerald-900 text-white">Todos</option>
-                                            <option value="Avaliado" class="bg-emerald-900 text-white">Avaliado</option>
-                                            <option value="Pendente" class="bg-emerald-900 text-white">Pendente</option>
+                                        <select id="filtroStatusColuna" class="w-full bg-slate-50 border border-slate-200 rounded px-2 py-1 text-slate-700 text-xs focus:outline-none" onchange="renderizarTabela5S()">
+                                            <option value="">Todos</option>
+                                            <option value="Avaliado">Avaliado</option>
+                                            <option value="Pendente">Pendente</option>
                                         </select>
                                     </th>
                                 </tr>
                             </thead>
-                            <tbody id="tabelaCorpo5S" class="divide-y divide-slate-200 text-sm">
+                            <tbody id="tabelaCorpo5S" class="divide-y divide-slate-100 text-sm">
                                 <tr><td colspan="5" class="p-8 text-center text-slate-400">Carregando dados...</td></tr>
                             </tbody>
                         </table>
@@ -194,57 +1553,55 @@
         </section>
 
         <!-- ABA 3: INDICADOR DE ESTOQUE -->
-        <section id="aba-estoque" class="view-aba hidden p-8 bg-emerald-50/40 min-h-full">
+        <section id="aba-estoque" class="view-aba hidden p-8 bg-slate-50 min-h-full">
             <div class="max-w-7xl mx-auto">
                 <div class="flex justify-between items-center mb-6">
                     <div>
                         <h2 class="text-2xl font-extrabold text-slate-900">Indicador de Inventário e Estoque</h2>
                         <p class="text-sm text-slate-500">Análise estratégica de galpões, baias, solicitantes e rotatividade.</p>
                     </div>
-                    <div class="bg-emerald-900 text-white px-5 py-2.5 rounded-xl shadow-sm text-center">
-                        <span class="block text-[10px] text-emerald-300 uppercase font-bold">Total de Itens</span>
-                        <span id="totalEstoqueBadge" class="text-xl font-extrabold">0</span>
+                    <div class="bg-white border border-slate-200 text-slate-800 px-5 py-2.5 rounded-xl shadow-sm text-center">
+                        <span class="block text-[10px] text-slate-400 uppercase font-bold">Total de Itens</span>
+                        <span id="totalEstoqueBadge" class="text-xl font-extrabold text-blue-600">0</span>
                     </div>
                 </div>
 
-                <!-- CARTÕES DE INDICADORES GERENCIAIS -->
                 <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
-                    <div class="bg-white p-5 rounded-xl shadow-md border border-emerald-100 flex items-center justify-between">
+                    <div class="bg-white p-5 rounded-xl shadow-sm border border-slate-200 flex items-center justify-between">
                         <div>
-                            <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Galpões / Áreas (G3 / G4)</span>
+                            <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Galpões / Áreas</span>
                             <h3 id="cardGalpoesQtd" class="text-3xl font-extrabold text-slate-900 mt-1">0</h3>
                         </div>
-                        <div class="w-12 h-12 bg-emerald-100 text-emerald-700 rounded-full flex items-center justify-center text-xl"><i class="fa-solid fa-warehouse"></i></div>
+                        <div class="w-12 h-12 bg-slate-50 text-slate-600 rounded-full flex items-center justify-center text-xl"><i class="fa-solid fa-warehouse"></i></div>
                     </div>
-                    <div class="bg-white p-5 rounded-xl shadow-md border border-emerald-100 flex items-center justify-between">
+                    <div class="bg-white p-5 rounded-xl shadow-sm border border-slate-200 flex items-center justify-between">
                         <div>
-                            <span class="text-[10px] font-bold text-emerald-600 uppercase tracking-wider">Tipos de Materiais</span>
-                            <h3 id="cardTiposQtd" class="text-3xl font-extrabold text-emerald-700 mt-1">0</h3>
+                            <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Tipos de Materiais</span>
+                            <h3 id="cardTiposQtd" class="text-3xl font-extrabold text-slate-900 mt-1">0</h3>
                         </div>
-                        <div class="w-12 h-12 bg-emerald-100 text-emerald-700 rounded-full flex items-center justify-center text-xl"><i class="fa-solid fa-tags"></i></div>
+                        <div class="w-12 h-12 bg-slate-50 text-slate-600 rounded-full flex items-center justify-center text-xl"><i class="fa-solid fa-tags"></i></div>
                     </div>
-                    <div class="bg-white p-5 rounded-xl shadow-md border border-emerald-100 flex items-center justify-between">
+                    <div class="bg-white p-5 rounded-xl shadow-sm border border-slate-200 flex items-center justify-between">
                         <div>
-                            <span class="text-[10px] font-bold text-teal-600 uppercase tracking-wider">Solicitantes Ativos</span>
-                            <h3 id="cardSolicitantesQtd" class="text-3xl font-extrabold text-teal-700 mt-1">0</h3>
+                            <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Solicitantes Ativos</span>
+                            <h3 id="cardSolicitantesQtd" class="text-3xl font-extrabold text-slate-900 mt-1">0</h3>
                         </div>
-                        <div class="w-12 h-12 bg-teal-100 text-teal-700 rounded-full flex items-center justify-center text-xl"><i class="fa-solid fa-users"></i></div>
+                        <div class="w-12 h-12 bg-slate-50 text-slate-600 rounded-full flex items-center justify-center text-xl"><i class="fa-solid fa-users"></i></div>
                     </div>
                 </div>
 
-                <!-- TABELA DE ESTOQUE COMPACTA COM SCROLL FIXO -->
-                <div class="bg-white rounded-xl shadow-md border border-emerald-100 overflow-hidden">
-                    <div class="p-4 bg-emerald-900 text-white font-bold text-xs uppercase tracking-wider flex justify-between items-center">
-                        <span>Base de Inventário Consolidada (Google Drive)</span>
-                        <span class="text-[10px] bg-emerald-800 px-3 py-1 rounded">Sincronizado</span>
+                <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
+                    <div class="p-4 bg-slate-50 border-b border-slate-200 text-slate-700 font-bold text-xs uppercase tracking-wider flex justify-between items-center">
+                        <span>Base de Inventário Consolidada</span>
+                        <span class="text-[10px] bg-slate-200 text-slate-700 px-3 py-1 rounded">Google Drive</span>
                     </div>
                     <div class="overflow-x-auto max-h-[550px] overflow-y-auto">
                         <table class="w-full text-left border-collapse text-xs">
-                            <thead class="sticky top-0 bg-slate-100 z-10">
-                                <tr id="estoqueCabecalho" class="border-b border-slate-200 font-bold text-slate-700 uppercase"></tr>
+                            <thead class="sticky top-0 bg-slate-50 z-10 border-b border-slate-200">
+                                <tr id="estoqueCabecalho" class="font-bold text-slate-600 uppercase"></tr>
                             </thead>
                             <tbody id="tabelaCorpoEstoque" class="divide-y divide-slate-100">
-                                <tr><td colspan="5" class="p-6 text-center text-slate-400">Carregando dados do estoque do Google Drive...</td></tr>
+                                <tr><td colspan="5" class="p-6 text-center text-slate-400">Carregando dados do estoque...</td></tr>
                             </tbody>
                         </table>
                     </div>
@@ -252,21 +1609,20 @@
             </div>
         </section>
 
-        <!-- ABA 4: INDICADOR DE USUÁRIOS E CALIBRAÇÃO (CARREGA O PAINEL SEPARADO) -->
-        <section id="aba-usuarios" class="view-aba hidden p-4 flex-grow flex flex-col h-full bg-slate-100">
+        <!-- ABA 4: USUÁRIOS -->
+        <section id="aba-usuarios" class="view-aba hidden p-4 flex-grow flex flex-col h-full bg-slate-50">
             <div class="flex justify-between items-center mb-3 px-2">
                 <div class="flex items-center gap-2">
-                    <span class="w-2.5 h-2.5 rounded-full bg-emerald-500 animate-pulse"></span>
-                    <h3 class="text-sm font-bold text-slate-800 uppercase tracking-wider">Painel Integrado: Usuários com Débito & Calibração a Vencer</h3>
+                    <span class="w-2.5 h-2.5 rounded-full bg-blue-500"></span>
+                    <h3 class="text-xs font-bold text-slate-700 uppercase tracking-wider">Usuários com Débito & Calibração a Vencer</h3>
                 </div>
-                <a href="usuários.html" target="_blank" class="bg-emerald-900 hover:bg-emerald-800 text-white text-xs font-semibold px-4 py-2 rounded-lg shadow-sm transition-colors flex items-center gap-2">
-                    <span>Abrir em Tela Inteira</span>
-                    <i class="fa-solid fa-arrow-up-right-from-square text-[11px]"></i>
+                <a href="usuarios.html" target="_blank" class="bg-white hover:bg-slate-50 border border-slate-300 text-slate-700 text-xs font-semibold px-4 py-1.5 rounded-lg shadow-sm transition-all flex items-center gap-2">
+                    <span>Abrir em Tela Cheia</span>
+                    <i class="fa-solid fa-arrow-up-right-from-square text-[10px] text-slate-400"></i>
                 </a>
             </div>
-            <!-- Carrega o arquivo HTML independente sem misturar os códigos -->
-            <div class="flex-grow w-full bg-white rounded-xl shadow-md border border-slate-200 overflow-hidden">
-                <iframe src="usuários.html" class="w-full h-full border-0" title="Indicador de Usuários e Calibração"></iframe>
+            <div class="flex-grow w-full bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
+                <iframe src="usuarios.html" class="w-full h-full border-0" title="Indicador de Usuários e Calibração"></iframe>
             </div>
         </section>
 
@@ -316,9 +1672,9 @@
                 const btn = document.getElementById(`btn-${id}`);
                 if (btn) {
                     if (id === aba) {
-                        btn.className = "w-full flex items-center space-x-3 px-4 py-3 rounded-lg text-sm font-medium transition-colors bg-emerald-900 text-white shadow-sm";
+                        btn.className = "w-full flex items-center space-x-3 px-4 py-3 rounded-lg text-sm font-semibold transition-all bg-slate-100 text-slate-900 shadow-sm border border-slate-200";
                     } else {
-                        btn.className = "w-full flex items-center space-x-3 px-4 py-3 rounded-lg text-sm font-medium transition-colors text-emerald-300 hover:bg-emerald-900/60 hover:text-white";
+                        btn.className = "w-full flex items-center space-x-3 px-4 py-3 rounded-lg text-sm font-medium transition-all text-slate-600 hover:bg-slate-50 hover:text-slate-900";
                     }
                 }
             });
@@ -523,21 +1879,21 @@
 
             dadosFiltrados.forEach(item => {
                 const tr = document.createElement('tr');
-                tr.className = "hover:bg-emerald-50/50 transition-colors";
+                tr.className = "hover:bg-slate-50 transition-colors";
                 
                 const badgeStatus = item.status === "Avaliado" 
-                    ? `<span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold bg-emerald-100 text-emerald-800"><i class="fa-solid fa-check mr-1.5"></i> Avaliado no Mês</span>`
-                    : `<span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-bold bg-amber-100 text-amber-800"><i class="fa-solid fa-clock mr-1.5"></i> Pendente de Avaliação</span>`;
+                    ? `<span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-blue-50 text-blue-700 border border-blue-100"><i class="fa-solid fa-check mr-1.5"></i> Avaliado no Mês</span>`
+                    : `<span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-amber-50 text-amber-700 border border-amber-100"><i class="fa-solid fa-clock mr-1.5"></i> Pendente</span>`;
 
                 const audBadge = item.numAuditoria !== "-" 
-                    ? `<span class="font-bold text-emerald-800 bg-emerald-100 px-2.5 py-1 rounded-md text-xs">${item.numAuditoria}</span>`
+                    ? `<span class="font-bold text-blue-700 bg-blue-50 px-2.5 py-1 rounded-md text-xs border border-blue-100">${item.numAuditoria}</span>`
                     : `<span class="text-slate-400">-</span>`;
 
                 tr.innerHTML = `
-                    <td class="p-4 font-semibold text-slate-900">${item.codigo}</td>
-                    <td class="p-4 font-medium text-slate-700">${item.nome}</td>
+                    <td class="p-4 font-semibold text-slate-800">${item.codigo}</td>
+                    <td class="p-4 font-medium text-slate-600">${item.nome}</td>
                     <td class="p-4">${audBadge}</td>
-                    <td class="p-4 font-medium text-emerald-900">${item.mes}</td>
+                    <td class="p-4 font-medium text-slate-700">${item.mes}</td>
                     <td class="p-4">${badgeStatus}</td>
                 `;
                 tbody.appendChild(tr);
