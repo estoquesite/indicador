@@ -19,8 +19,8 @@ h1{font-size:16px;font-weight:800}
 .top-btns{display:flex;gap:6px}
 .rf,.print-btn{background:rgba(255,255,255,.16);color:#fff;border:0;border-radius:10px;min-width:40px;min-height:40px;font-size:16px;display:flex;align-items:center;justify-content:center;cursor:pointer}
 .rf.spin{animation:sp 1s linear infinite}@keyframes sp{to{transform:rotate(360deg)}}
-.seg{display:grid;grid-template-columns:1fr 1fr;gap:6px;max-width:1000px;margin:10px auto 0}
-.seg button{background:rgba(255,255,255,.12);color:#dbeafe;border:0;border-radius:12px;min-height:44px;font-weight:700;font-size:13px;font-family:inherit;cursor:pointer}
+.seg{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;max-width:1000px;margin:10px auto 0}
+.seg button{background:rgba(255,255,255,.12);color:#dbeafe;border:0;border-radius:10px;min-height:40px;font-weight:700;font-size:12px;font-family:inherit;cursor:pointer;padding:0 4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .seg button.on{background:#fff;color:#1e3a8a}
 main{max-width:1000px;margin:0 auto;padding:12px;display:grid;gap:12px}
 .kpis{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}
@@ -92,11 +92,38 @@ input,select{width:100%;min-height:44px;padding:8px 10px;border:1px solid #cbd5e
    <button class="rf" id="rf" onclick="atualizar(true)" aria-label="Atualizar">↻</button>
   </div>
  </div>
- <div class="seg"><button id="b-dev" class="on" onclick="aba('dev')">Devoluções</button><button id="b-inv" onclick="aba('inv')">Calibração</button></div>
+ <div class="seg">
+  <button id="b-est" class="on" onclick="aba('est')">Inventário</button>
+  <button id="b-dev" onclick="aba('dev')">Devoluções</button>
+  <button id="b-inv" onclick="aba('inv')">Calibração</button>
+ </div>
 </header>
 <main>
- <!-- ABA DEVOLUÇÕES -->
- <section id="s-dev" class="space-y">
+ <!-- ABA INVENTÁRIO (PRIMEIRA) -->
+ <section id="s-est" class="space-y">
+  <div class="kpis" id="k-est"></div>
+  <div style="display:grid;gap:10px;grid-template-columns:1fr;" class="cards">
+    <div class="chart-box">
+      <div class="chart-title">📊 Top Categorias / Tipos no Inventário <span class="sub">Clique para filtrar</span></div>
+      <div class="chart-bars" id="chart-est"></div>
+    </div>
+    <div class="chart-box">
+      <div class="chart-title">🏆 Top 10 Ferramentas em Estoque/Inventário <span class="sub">Clique para ir ao registro</span></div>
+      <div class="top10-list" id="top10-est"></div>
+    </div>
+  </div>
+  <details class="f"><summary><span>🔎 Filtros</span><span id="fe-n" class="sub"></span></summary>
+   <div class="fg">
+    <input class="w" id="e-q" type="search" placeholder="Buscar ferramenta ou descrição" oninput="re()">
+    <select id="e-tp" class="w" onchange="re()"></select>
+    <button class="btn" onclick="limpar('e')">Limpar filtros</button>
+   </div>
+  </details>
+  <div id="l-est" class="cards" style="margin-top:12px"></div>
+ </section>
+
+ <!-- ABA DEVOLUÇÕES (SEGUNDA) -->
+ <section id="s-dev" class="hide">
   <div class="kpis" id="k-dev"></div>
   <div style="display:grid;gap:10px;grid-template-columns:1fr;" class="cards">
     <div class="chart-box">
@@ -115,7 +142,7 @@ input,select{width:100%;min-height:44px;padding:8px 10px;border:1px solid #cbd5e
   <div id="l-dev" class="cards" style="margin-top:12px"></div>
  </section>
 
- <!-- ABA CALIBRAÇÃO -->
+ <!-- ABA CALIBRAÇÃO (TERCEIRA) -->
  <section id="s-inv" class="hide">
   <div class="kpis" id="k-inv"></div>
   <div style="display:grid;gap:10px;grid-template-columns:1fr;" class="cards">
@@ -138,12 +165,15 @@ input,select{width:100%;min-height:44px;padding:8px 10px;border:1px solid #cbd5e
 </main>
 
 <script>
-const URLS=["https://docs.google.com/spreadsheets/d/e/2PACX-1vTo35odWXfxeP9OhQZRJ36txn6dxH6Y_lOi0l7N0OZV0uOAY51YSVrNFLNHBzawBg/pub?output=csv","https://docs.google.com/spreadsheets/d/e/2PACX-1vR4zF860IfKYViF0uSuN_Hd3LT-1uX_5IQPgZLl5FGu7pMF8CI96hrIlVfQmtOlWw/pub?output=csv"];
-const KC="ferramentaria_cache_v5";
+const URLS=[
+ "https://docs.google.com/spreadsheets/d/e/2PACX-1vTo35odWXfxeP9OhQZRJ36txn6dxH6Y_lOi0l7N0OZV0uOAY51YSVrNFLNHBzawBg/pub?output=csv",
+ "https://docs.google.com/spreadsheets/d/e/2PACX-1vR4zF860IfKYViF0uSuN_Hd3LT-1uX_5IQPgZLl5FGu7pMF8CI96hrIlVfQmtOlWw/pub?output=csv"
+];
+const KC="ferramentaria_cache_v6";
 const MES_NOME=['janeiro','fevereiro','março','abril','maio','junho','julho','agosto','setembro','outubro','novembro','dezembro'];
 const $=id=>document.getElementById(id);
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-let DEV=[],INV=[],HOJE=new Date(),aberto=new Set(),stF='todos',ultimo=0;
+let EST=[],DEV=[],INV=[],HOJE=new Date(),aberto=new Set(),stF='todos',ultimo=0;
 
 function csv(t){ 
  const r=[];let row=[],c='',q=false;
@@ -171,9 +201,27 @@ function rolarPara(id){
 function processar(t1,t2){
  HOJE=new Date();HOJE.setHours(0,0,0,0);
  const A=csv(t1),B=csv(t2);
- const ehDev=p=>/solicitante|atraso/i.test(p.h.join(' '));
- const pDev=ehDev(A)?A:B, pInv=pDev===A?B:A;
  
+ let pDev=null,pInv=null,pEst=null;
+ [A,B].forEach(p=>{
+  const txt=p.h.join(' ').toLowerCase();
+  if(/solicitante|atraso/i.test(txt)) pDev=p;
+  else if(/manuten|vencimento|calibra/i.test(txt)) pInv=p;
+  else pEst=p;
+ });
+ if(!pDev) pDev=A;
+ if(!pInv) pInv=B;
+ if(!pEst) pEst=A;
+
+ EST=pEst.rows.map(r=>{
+  const nome=pick(r,'Apelido','Ferramenta','Equipamento','Descrição Ferramenta','Nome').trim();
+  const categoria=pick(r,'Categoria','Tipo','Grupo','Setor')||'Geral';
+  const codigo=pick(r,'Código','Patrimônio','ID','Tombo')||'—';
+  const local=pick(r,'Local','Localização','Almoxarifado')||'—';
+  const status=pick(r,'Status','Situação')||'Ativo';
+  return{nome,categoria,codigo,local,status};
+ }).filter(x=>x.nome);
+
  DEV=pDev.rows.map(r=>{
   const d=pd(pick(r,'Data Devolução')),ap=pick(r,'Apelido Principal Ferramenta','Apelido','Descrição Ferramenta');
   const ano=d?d.getFullYear():'';
@@ -195,16 +243,17 @@ function processar(t1,t2){
   };
  }).filter(x=>x.ap);
 
- preencher();rd();ri();
+ preencher();re();rd();ri();
 }
 
 function preencher(){
  const sel=(id,l,vals,ord)=>{const e=$(id),v=e.value;e.innerHTML=`<option value="">${l}</option>`+vals.map(x=>`<option>${esc(x)}</option>`).join('');if(vals.map(String).includes(v))e.value=v};
  const u=a=>[...new Set(a.filter(Boolean))];
  const meses=a=>u(a).sort((x,y)=>MES_NOME.indexOf(x)-MES_NOME.indexOf(y));
+
+ sel('e-tp','Todas as categorias',u(EST.map(x=>x.categoria)).sort());
  sel('d-ap','Todas as ferramentas',u(DEV.map(x=>x.ap)).sort());
  sel('d-ano','Ano',u(DEV.map(x=>x.ano)).sort());sel('d-mes','Mês',meses(DEV.map(x=>x.mes)));
- 
  sel('i-ap','Todos os equipamentos',u(INV.map(x=>x.ap)).sort());
  sel('i-ano','Ano',u(INV.map(x=>x.ano)).sort());sel('i-mes','Mês',meses(INV.map(x=>x.mes)));
 }
@@ -216,25 +265,77 @@ async function atualizar(manual){
   localStorage.setItem(KC,JSON.stringify({t:Date.now(),a,c}));ultimo=Date.now();
   processar(a,c);$('upd').textContent='Atualizado às '+new Date().toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'});
  }catch(e){
-  $('upd').textContent=DEV.length||INV.length?'⚠️ Sem conexão — mostrando dados salvos':'⚠️ Sem conexão e sem dados salvos';
+  $('upd').textContent=EST.length||DEV.length||INV.length?'⚠️ Sem conexão — dados salvos':'⚠️ Sem conexão e sem dados';
  }
  b.classList.remove('spin');
 }
 
 function aba(t){
- for(const x of['dev','inv']){$('s-'+x).classList.toggle('hide',x!==t);$('b-'+x).classList.toggle('on',x===t)}
+ for(const x of['est','dev','inv']){$('s-'+x).classList.toggle('hide',x!==t);$('b-'+x).classList.toggle('on',x===t)}
  scrollTo(0,0);
 }
 
 function limpar(p){
- (p==='d'?['d-q','d-ap','d-ano','d-mes']:['i-q','i-ap','i-ano','i-mes']).forEach(i=>$(i).value='');
- if(p==='i')stF='todos';p==='d'?rd():ri();
+ if(p==='e'){['e-q','e-tp'].forEach(i=>$(i).value='');re();}
+ else if(p==='d'){['d-q','d-ap','d-ano','d-mes'].forEach(i=>$(i).value='');rd();}
+ else if(p==='i'){['i-q','i-ap','i-ano','i-mes'].forEach(i=>$(i).value='');stF='todos';ri();}
 }
 
-function tg(k){const x=decodeURIComponent(k);aberto.has(x)?aberto.delete(x):aberto.add(x);x[0]==='d'?rd():ri()}
+function tg(k){const x=decodeURIComponent(k);aberto.has(x)?aberto.delete(x):aberto.add(x);x[0]==='e'?re():x[0]==='d'?rd():ri()}
 const kk=k=>encodeURIComponent(k);
 
-/* ---------- Devoluções ---------- */
+/* ---------- 1. Inventário / Estoque ---------- */
+function re(){
+ const q=$('e-q').value.toLowerCase().trim(),tp=$('e-tp').value;
+ $('fe-n').textContent=[q,tp].filter(Boolean).length?'filtros ativos':'';
+ const f=EST.filter(x=>(!tp||x.categoria===tp)&&(!q||(x.nome+' '+x.codigo+' '+x.local).toLowerCase().includes(q)));
+ 
+ const G={};
+ f.forEach(x=>{
+  const g=G[x.nome]??={nome:x.nome,cat:x.categoria,n:0,locais:new Set(),cods:new Set()};
+  g.n++;g.locais.add(x.local);g.cods.add(x.codigo);
+ });
+ const L=Object.values(G).sort((a,b)=>b.n-a.n||a.nome.localeCompare(b.nome));
+ const mx=L[0]?.n||1;
+
+ const catCont={};
+ f.forEach(x=>{catCont[x.categoria]=(catCont[x.categoria]||0)+1});
+ const catsOrdenadas=Object.keys(catCont).sort((a,b)=>catCont[b]-catCont[a]).slice(0,6);
+ const maxCatVal=Math.max(...Object.values(catCont),1);
+ 
+ $('chart-est').innerHTML=catsOrdenadas.length?catsOrdenadas.map(cat=>{
+  const val=catCont[cat];
+  const h=Math.max(Math.round((val/maxCatVal)*85),val>0?8:4);
+  return `<div class="c-bar-group" onclick="$('e-tp').value='${cat}';re()"><div class="c-bar-val">${val}</div><div class="c-bar" style="height:${h}px;background:#2563eb"></div><div class="c-bar-lbl" title="${cat}">${cat}</div></div>`;
+ }).join(''):'<div class="empty" style="font-size:11px;padding:10px">Sem dados de categorias</div>';
+
+ const top10Est=[...L].slice(0,10);
+ $('top10-est').innerHTML=top10Est.length?top10Est.map((g,idx)=>`
+  <div class="top10-row" onclick="$('e-q').value='${esc(g.nome)}';re();rolarPara('${fId(g.nome)}')">
+   <span><b>#${idx+1}</b> ${esc(g.nome)}</span>
+   <span class="ch2 g">${g.n} un.</span>
+  </div>
+ `).join(''):'<div class="empty" style="font-size:11px;padding:5px">Nenhum registro</div>';
+
+ $('k-est').innerHTML=`
+  <div class="kpi"><b>${EST.length}</b><span>Total de itens</span></div>
+  <div class="kpi"><b>${L.length}</b><span>Tipos únicos</span></div>
+  <div class="kpi"><b>${Object.keys(catCont).length}</b><span>Categorias</span></div>
+  <div class="kpi"><b>${f.length}</b><span>Filtrados</span></div>
+ `;
+
+ $('l-est').innerHTML=L.length?L.map(g=>{
+  const k='e:'+g.nome,o=aberto.has(k);
+  const codList=[...g.cods].filter(c=>c&&c!=='—').join(', ');
+  const locList=[...g.locais].filter(l=>l&&l!=='—').join(', ');
+  return`<div class="c" id="${fId(g.nome)}" style="${o?'grid-column:1/-1':''}"><button class="ch" onclick="tg('${kk(k)}')"><div class="row"><div class="nm">${esc(g.nome)}</div><span class="tot">${g.n} un.</span></div>
+   <div class="bar"><i style="width:${g.n/mx*100}%"></i></div>
+   <div class="chips"><span class="ch2">Categoria: ${esc(g.cat)}</span>${locList?`<span class="ch2">Local: ${esc(locList)}</span>`:''}<span class="ch2">${o?'▲ ocultar':'▼ ver códigos'}</span></div></button>
+   ${o?`<div class="det"><div class="sub" style="font-weight:700;margin-bottom:4px;color:var(--tx)">Detalhes e Códigos de Patrimônio:</div><div class="it"><b>Códigos / Tombos:</b> ${codList||'Não informados'}<div class="sub">Locais cadastrados: ${locList||'Não informado'}</div></div></div>`:''}</div>`;
+ }).join(''):'<div class="empty">Nenhum equipamento encontrado no inventário.</div>';
+}
+
+/* ---------- 2. Devoluções ---------- */
 function rd(){
  const q=$('d-q').value.toLowerCase().trim(),ap=$('d-ap').value,an=$('d-ano').value,me=$('d-mes').value;
  $('fd-n').textContent=[q,ap,an,me].filter(Boolean).length?'filtros ativos':'';
@@ -249,7 +350,6 @@ function rd(){
  const L=Object.values(U).sort((a,b)=>b.max-a.max||b.n-a.n||a.sol.localeCompare(b.sol));
  const mx=L[0]?.n||1;
 
- // Gráfico cronológico
  const mesesCont={};
  f.forEach(x=>{if(x.chaveMes)mesesCont[x.chaveMes]=(mesesCont[x.chaveMes]||0)+1});
  const chavesOrdenadas=Object.keys(mesesCont).sort();
@@ -263,7 +363,6 @@ function rd(){
   return `<div class="c-bar-group" onclick="$('d-ano').value='${anoStr}';$('d-mes').value='${nomeMes}';rd()"><div class="c-bar-val">${val}</div><div class="c-bar" style="height:${h}px;background:#2563eb"></div><div class="c-bar-lbl" title="${nomeMes} ${anoStr}">${nomeMes.slice(0,3)}/${anoStr.slice(2)}</div></div>`;
  }).join(''):'<div class="empty" style="font-size:11px;padding:10px">Sem dados temporais</div>';
 
- // Top 10 Devoluções
  const top10Dev=[...L].sort((a,b)=>b.max-a.max||b.n-a.n).slice(0,10);
  $('top10-dev').innerHTML=top10Dev.length?top10Dev.map((u,idx)=>`
   <div class="top10-row" onclick="$('d-q').value='${esc(u.sol)}';rd();rolarPara('${fId(u.sol)}')">
@@ -284,7 +383,7 @@ function rd(){
  }).join(''):'<div class="empty">Nenhum débito encontrado.</div>';
 }
 
-/* ---------- Calibração ---------- */
+/* ---------- 3. Calibração ---------- */
 function ri(){
  const q=$('i-q').value.toLowerCase().trim(),eqAp=$('i-ap').value,an=$('i-ano').value,me=$('i-mes').value;
  const base=INV.filter(x=>(!eqAp||x.ap===eqAp)&&(!an||x.ano==an)&&(!me||x.mes===me)&&(!q||x.ap.toLowerCase().includes(q)));
@@ -315,7 +414,6 @@ function ri(){
 
  const LAll=Object.values(G).sort((a,b)=>(a.min?+a.min:9e15)-(b.min?+b.min:9e15)||a.ap.localeCompare(b.ap));
  
- // Top 10 Calibração
  const top10Inv=[...LAll].sort((a,b)=>{
   if(a.v!==b.v)return b.v-a.v;
   if(!a.min)return 1;if(!b.min)return -1;
