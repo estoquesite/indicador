@@ -27,10 +27,6 @@
                 <i class="fa-solid fa-clipboard-check w-5 text-slate-400"></i>
                 <span>Indicador de 5S</span>
             </button>
-            <button onclick="mudarAba('estoque')" id="btn-estoque" class="w-full flex items-center space-x-3 px-4 py-3 rounded-lg text-sm font-medium transition-all text-slate-600 hover:bg-slate-50 hover:text-slate-900">
-                <i class="fa-solid fa-boxes-stacked w-5 text-slate-400"></i>
-                <span>Indicador de Estoque</span>
-            </button>
             <button onclick="mudarAba('usuarios')" id="btn-usuarios" class="w-full flex items-center space-x-3 px-4 py-3 rounded-lg text-sm font-medium transition-all text-slate-600 hover:bg-slate-50 hover:text-slate-900">
                 <i class="fa-solid fa-screwdriver-wrench w-5 text-slate-400"></i>
                 <span>Usuários</span>
@@ -55,7 +51,7 @@
                 <h1 class="text-3xl md:text-4xl font-bold mt-4 tracking-tight text-slate-800">Painel de Indicadores</h1>
                 <p class="text-slate-500 mt-2.5 text-sm leading-relaxed max-w-xl mx-auto">Selecione abaixo o indicador que deseja consultar:</p>
                 
-                <div class="mt-8 grid grid-cols-1 sm:grid-cols-3 gap-4 max-w-2xl mx-auto text-left">
+                <div class="mt-8 grid grid-cols-1 sm:grid-cols-2 gap-4 max-w-lg mx-auto text-left">
                     <!-- Botão 5S -->
                     <button onclick="mudarAba('5s')" class="p-5 bg-slate-50 hover:bg-white border border-slate-200 hover:border-slate-300 rounded-xl transition-all shadow-2xs hover:shadow-xs group">
                         <div class="w-10 h-10 rounded-lg bg-white border border-slate-200 flex items-center justify-center text-slate-600 mb-3 group-hover:text-blue-600 transition-colors">
@@ -63,15 +59,6 @@
                         </div>
                         <div class="font-semibold text-sm text-slate-800">Indicador 5S</div>
                         <div class="text-[11px] text-slate-400 mt-1">Avaliação dos postos</div>
-                    </button>
-
-                    <!-- Botão Estoque -->
-                    <button onclick="mudarAba('estoque')" class="p-5 bg-slate-50 hover:bg-white border border-slate-200 hover:border-slate-300 rounded-xl transition-all shadow-2xs hover:shadow-xs group">
-                        <div class="w-10 h-10 rounded-lg bg-white border border-slate-200 flex items-center justify-center text-slate-600 mb-3 group-hover:text-blue-600 transition-colors">
-                            <i class="fa-solid fa-boxes-stacked"></i>
-                        </div>
-                        <div class="font-semibold text-sm text-slate-800">Indicador Estoque</div>
-                        <div class="text-[11px] text-slate-400 mt-1">Materiais e galpões</div>
                     </button>
 
                     <!-- Botão Usuários -->
@@ -214,64 +201,7 @@
             </div>
         </section>
 
-        <!-- ABA 3: INDICADOR DE ESTOQUE -->
-        <section id="aba-estoque" class="view-aba hidden p-8 bg-slate-50 min-h-full">
-            <div class="max-w-7xl mx-auto">
-                <div class="flex justify-between items-center mb-6">
-                    <div>
-                        <h2 class="text-2xl font-extrabold text-slate-900">Indicador de Inventário e Estoque</h2>
-                        <p class="text-sm text-slate-500">Análise estratégica de galpões, baias, solicitantes e rotatividade.</p>
-                    </div>
-                    <div class="bg-white border border-slate-200 text-slate-800 px-5 py-2.5 rounded-xl shadow-sm text-center">
-                        <span class="block text-[10px] text-slate-400 uppercase font-bold">Total de Itens</span>
-                        <span id="totalEstoqueBadge" class="text-xl font-extrabold text-blue-600">0</span>
-                    </div>
-                </div>
-
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
-                    <div class="bg-white p-5 rounded-xl shadow-sm border border-slate-200 flex items-center justify-between">
-                        <div>
-                            <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Galpões / Áreas</span>
-                            <h3 id="cardGalpoesQtd" class="text-3xl font-extrabold text-slate-900 mt-1">0</h3>
-                        </div>
-                        <div class="w-12 h-12 bg-slate-50 text-slate-600 rounded-full flex items-center justify-center text-xl"><i class="fa-solid fa-warehouse"></i></div>
-                    </div>
-                    <div class="bg-white p-5 rounded-xl shadow-sm border border-slate-200 flex items-center justify-between">
-                        <div>
-                            <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Tipos de Materiais</span>
-                            <h3 id="cardTiposQtd" class="text-3xl font-extrabold text-slate-900 mt-1">0</h3>
-                        </div>
-                        <div class="w-12 h-12 bg-slate-50 text-slate-600 rounded-full flex items-center justify-center text-xl"><i class="fa-solid fa-tags"></i></div>
-                    </div>
-                    <div class="bg-white p-5 rounded-xl shadow-sm border border-slate-200 flex items-center justify-between">
-                        <div>
-                            <span class="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Solicitantes Ativos</span>
-                            <h3 id="cardSolicitantesQtd" class="text-3xl font-extrabold text-slate-900 mt-1">0</h3>
-                        </div>
-                        <div class="w-12 h-12 bg-slate-50 text-slate-600 rounded-full flex items-center justify-center text-xl"><i class="fa-solid fa-users"></i></div>
-                    </div>
-                </div>
-
-                <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
-                    <div class="p-4 bg-slate-50 border-b border-slate-200 text-slate-700 font-bold text-xs uppercase tracking-wider flex justify-between items-center">
-                        <span>Base de Inventário Consolidada</span>
-                        <span class="text-[10px] bg-slate-200 text-slate-700 px-3 py-1 rounded">Google Drive</span>
-                    </div>
-                    <div class="overflow-x-auto max-h-[550px] overflow-y-auto">
-                        <table class="w-full text-left border-collapse text-xs">
-                            <thead class="sticky top-0 bg-slate-50 z-10 border-b border-slate-200">
-                                <tr id="estoqueCabecalho" class="font-bold text-slate-600 uppercase"></tr>
-                            </thead>
-                            <tbody id="tabelaCorpoEstoque" class="divide-y divide-slate-100">
-                                <tr><td colspan="5" class="p-6 text-center text-slate-400">Carregando dados do estoque...</td></tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- ABA 4: USUÁRIOS -->
+        <!-- ABA 3: USUÁRIOS -->
         <section id="aba-usuarios" class="view-aba hidden p-4 flex-grow flex flex-col h-full bg-slate-50">
             <div class="flex justify-between items-center mb-3 px-2">
                 <div class="flex items-center gap-2">
@@ -293,7 +223,6 @@
     <!-- SCRIPT DE PROCESSAMENTO -->
     <script>
         const CSV_URL_5S = "https://docs.google.com/spreadsheets/d/e/2PACX-1vQUoRnkIRo0UhP2r1_IbUfJ2abD3UyvsFBGR8c8tUKYtsUQqQvyfdVC2tDRIymeEA/pub?gid=786393118&single=true&output=csv";
-        const CSV_URL_ESTOQUE = "https://docs.google.com/spreadsheets/d/e/2PACX-1vT2pE8TgaukBivJ2UreoGzDFpQ7qy11dMRkkL9G5vAQYcCdsTRL0eGQLNgsPudJow/pub?gid=1381486713&single=true&output=csv";
 
         const basePostos = [
             { codigo: "POST-971536", nome: "Área de Caldeiraria e suas Máquinas G2" },
@@ -330,7 +259,7 @@
             const alvo = document.getElementById(`aba-${aba}`);
             if (alvo) alvo.classList.remove('hidden');
 
-            ['capa', '5s', 'estoque', 'usuarios'].forEach(id => {
+            ['capa', '5s', 'usuarios'].forEach(id => {
                 const btn = document.getElementById(`btn-${id}`);
                 if (btn) {
                     if (id === aba) {
@@ -344,7 +273,7 @@
 
         function normalizar(texto) {
             if (!texto) return "";
-            return texto.toString().normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase().trim();
+            return texto.toString().normalize("NFD").replace(/[\u0300-\u036f]/g, "").toLowerCase().trim();
         }
 
         async function carregarDados5S() {
@@ -393,71 +322,6 @@
                 renderizarTabela5S();
             } catch (erro) {
                 console.error("Erro ao ler CSV 5S:", erro);
-            }
-        }
-
-        async function carregarDadosEstoque() {
-            try {
-                const response = await fetch(CSV_URL_ESTOQUE);
-                const textoCsv = await response.text();
-                const linhas = textoCsv.split(/\r?\n/);
-                
-                const thead = document.getElementById('estoqueCabecalho');
-                const tbody = document.getElementById('tabelaCorpoEstoque');
-                thead.innerHTML = '';
-                tbody.innerHTML = '';
-
-                const linhasValidas = linhas.filter(l => l.trim() !== "" && l.replace(/,/g, "").trim() !== "");
-
-                if (linhasValidas.length === 0) {
-                    tbody.innerHTML = `<tr><td colspan="5" class="p-6 text-center text-slate-400">Nenhum dado encontrado no estoque.</td></tr>`;
-                    return;
-                }
-
-                const cabecalhos = linhasValidas[0].split(',');
-                cabecalhos.forEach(col => {
-                    const th = document.createElement('th');
-                    th.className = "p-2.5 text-xs font-bold text-slate-700 uppercase tracking-wider whitespace-nowrap";
-                    th.innerText = col.replace(/"/g, '').trim();
-                    thead.appendChild(th);
-                });
-
-                let totalItens = 0;
-                let galpoesSet = new Set();
-                let tiposSet = new Set();
-                let solicitantesSet = new Set();
-
-                for (let i = 1; i < linhasValidas.length; i++) {
-                    const linha = linhasValidas[i];
-                    const colunas = linha.split(',');
-                    
-                    const tr = document.createElement('tr');
-                    tr.className = "hover:bg-slate-50 transition-colors";
-
-                    colunas.forEach((val, idx) => {
-                        const td = document.createElement('td');
-                        td.className = "p-2.5 text-slate-700 whitespace-nowrap text-xs";
-                        const textoLimpo = val.replace(/"/g, '').trim();
-                        td.innerText = textoLimpo;
-                        tr.appendChild(td);
-
-                        if (idx === 0 && textoLimpo) galpoesSet.add(textoLimpo);
-                        if (idx === 2 && textoLimpo) tiposSet.add(textoLimpo);
-                        if (idx === 3 && textoLimpo) solicitantesSet.add(textoLimpo);
-                    });
-
-                    tbody.appendChild(tr);
-                    totalItens++;
-                }
-
-                document.getElementById('totalEstoqueBadge').innerText = totalItens;
-                document.getElementById('cardGalpoesQtd').innerText = galpoesSet.size > 0 ? galpoesSet.size : "-";
-                document.getElementById('cardTiposQtd').innerText = tiposSet.size > 0 ? tiposSet.size : "-";
-                document.getElementById('cardSolicitantesQtd').innerText = solicitantesSet.size > 0 ? solicitantesSet.size : "-";
-
-            } catch (erro) {
-                console.error("Erro ao ler CSV Estoque:", erro);
-                document.getElementById('tabelaCorpoEstoque').innerHTML = `<tr><td colspan="5" class="p-6 text-center text-rose-500">Erro ao carregar dados do estoque.</td></tr>`;
             }
         }
 
@@ -565,7 +429,6 @@
 
         window.onload = () => {
             carregarDados5S();
-            carregarDadosEstoque();
         };
     </script>
 </body>
