@@ -4,92 +4,46 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#1e3a8a">
-<title>Painel de Indicadores - Índice Corporativo</title>
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E📊%3C/text%3E%3C/svg%3E">
+<title>Painel Corporativo - Gestão de EPIs</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E🪖%3C/text%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
-<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
 <style>
-:root{--bg:#f1f5f9;--card:#fff;--line:#e2e8f0;--tx:#0f172a;--mu:#64748b;--pri:#2563eb}
+:root{--bg:#0f172a;--card:#fff;--line:#cbd5e1;--tx:#0f172a;--mu:#475569;--pri:#2563eb;--red:#dc2626;--amb:#d97706;--grn:#059669}
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
-body{font-family:Inter,system-ui,-apple-system,sans-serif;background:var(--bg);color:var(--tx);font-size:14px;line-height:1.45}
-.app-container{display:flex;height:100vh;overflow:hidden}
-aside{width:260px;background:#fff;border-right:1px solid var(--line);display:flex;flex-direction:column;z-index:20;flex-shrink:0}
-.main-content{flex-grow:1;display:flex;flex-direction:column;height:100vh;overflow-y:auto;background:var(--bg)}
-header{background:#1e3a8a;color:#fff;padding:16px 24px;position:sticky;top:0;z-index:10}
-main{padding:24px;max-width:1200px;margin:0 auto;width:100%}
-</style>
-</head>
-<body>
+body{font-family:Inter,system-ui,-apple-system,sans-serif;background:#f1f5f9;color:var(--tx);font-size:14px;line-height:1.4;padding-bottom:30px}
 
-<div class="app-container">
-    <!-- MENU LATERAL DE INDICADORES -->
-    <aside>
-        <div class="p-5 border-b border-slate-100">
-            <h2 class="text-sm font-bold text-slate-800 flex items-center gap-2">
-                <i class="fa-solid fa-chart-pie text-blue-600"></i>
-                <span>Indicadores Corporativos</span>
-            </h2>
-        </div>
-        <nav class="flex-grow p-3 space-y-1.5 overflow-y-auto">
-            <!-- Link Ativo para a Capa / Índice -->
-            <a href="index.html" class="w-full flex items-center space-x-3 px-3 py-2.5 rounded-lg text-xs font-semibold bg-blue-50 text-blue-700 border border-blue-100">
-                <i class="fa-solid fa-house w-4"></i>
-                <span>Início / Índice</span>
-            </a>
-            <!-- Link para o Painel de Ferramentas -->
-            <a href="ferramentas.html" class="w-full flex items-center space-x-3 px-3 py-2.5 rounded-lg text-xs font-medium text-slate-600 hover:bg-slate-50 hover:text-slate-900 transition-all">
-                <i class="fa-solid fa-screwdriver-wrench w-4"></i>
-                <span>Ferramentaria & Calibração</span>
-            </a>
-            <!-- Espaço reservado para futuros indicadores -->
-            <a href="#" class="w-full flex items-center space-x-3 px-3 py-2.5 rounded-lg text-xs font-medium text-slate-400 hover:bg-slate-50 hover:text-slate-600 transition-all">
-                <i class="fa-solid fa-plus w-4"></i>
-                <span>Novo Indicador (Em breve)</span>
-            </a>
-        </nav>
-        <div class="p-3 border-t border-slate-100 text-[10px] text-slate-400 text-center">
-            Painel Central &bull; 2026
-        </div>
-    </aside>
+header{position:sticky;top:0;z-index:30;background:#0f172a;color:#fff;padding:12px 20px;border-bottom:3px solid var(--pri);box-shadow:0 4px 6px -1px rgba(0,0,0,0.1)}
+.top{display:flex;justify-content:space-between;align-items:center;gap:12px;max-width:100%;margin:0 auto}
+.title-area{display:flex;align-items:center;gap:12px}
+.home-btn{background:rgba(255,255,255,.15);color:#fff;border:1px solid rgba(255,255,255,.3);border-radius:10px;width:40px;height:40px;font-size:18px;display:flex;align-items:center;justify-content:center;cursor:pointer;text-decoration:none;transition:all .2s}
+.home-btn:hover{background:rgba(255,255,255,.3)}
+h1{font-size:17px;font-weight:900;letter-spacing:-0.5px}
+#upd{font-size:11px;opacity:.7}
+.top-btns{display:flex;gap:8px}
+.rf,.print-btn{background:rgba(255,255,255,.1);color:#fff;border:1px solid rgba(255,255,255,.2);border-radius:8px;min-width:38px;min-height:38px;font-size:16px;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .2s}
+.rf:hover,.print-btn:hover{background:rgba(255,255,255,.2)}
+.rf.spin{animation:sp 1s linear infinite}@keyframes sp{to{transform:rotate(360deg)}}
 
-    <!-- CONTEÚDO DA CAPA / ÍNDICE -->
-    <div class="main-content">
-        <header>
-            <h1 class="text-lg font-bold">📊 Painel Geral de Indicadores</h1>
-            <p class="text-xs text-blue-100 mt-0.5">Selecione abaixo o painel que deseja acessar:</p>
-        </header>
+.seg{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;max-width:100%;margin:12px 20px 0}
+.seg button{background:#e2e8f0;color:#475569;border:0;border-radius:10px;min-height:42px;font-weight:800;font-size:14px;font-family:inherit;cursor:pointer;transition:all .2s;box-shadow:0 1px 2px rgba(0,0,0,0.05)}
+.seg button.on{background:#1e3a8a;color:#fff;box-shadow:0 4px 12px rgba(30,58,138,0.3)}
 
-        <main>
-            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                
-                <!-- CARD DO PAINEL DE FERRAMENTAS -->
-                <a href="ferramentas.html" class="bg-white border border-slate-200 rounded-xl p-6 shadow-sm hover:shadow-md hover:border-blue-300 transition-all group block">
-                    <div class="w-12 h-12 rounded-lg bg-blue-50 text-blue-600 flex items-center justify-center text-xl mb-4 group-hover:bg-blue-600 group-hover:text-white transition-colors">
-                        <i class="fa-solid fa-screwdriver-wrench"></i>
-                    </div>
-                    <h3 class="font-bold text-slate-800 text-base mb-1">Ferramentaria & Calibração</h3>
-                    <p class="text-xs text-slate-500 leading-relaxed">Gerenciamento de inventário, controle de devoluções, atrasos e status de calibração de equipamentos.</p>
-                    <div class="mt-4 text-xs font-semibold text-blue-600 flex items-center gap-1">
-                        <span>Acessar painel</span>
-                        <i class="fa-solid fa-arrow-right text-[10px]"></i>
-                    </div>
-                </a>
+main{max-width:100%;margin:0 auto;padding:14px 20px;display:grid;gap:16px}
 
-                <!-- CARD RESERVADO PARA FUTUROS INDICADORES -->
-                <div class="bg-slate-50 border border-dashed border-slate-300 rounded-xl p-6 flex flex-col items-center justify-center text-center">
-                    <div class="w-12 h-12 rounded-lg bg-slate-200 text-slate-400 flex items-center justify-center text-xl mb-3">
-                        <i class="fa-solid fa-plus"></i>
-                    </div>
-                    <h3 class="font-bold text-slate-600 text-sm mb-1">Próximo Indicador</h3>
-                    <p class="text-[11px] text-slate-400">Espaço reservado para novas adições no sistema.</p>
-                </div>
+/* KPIs compactos em 3 colunas lado a lado */
+.kpis{display:grid;grid-template-columns:repeat(3, 1fr) !important;gap:12px}
+@media(max-width:900px){.kpis{grid-template-columns:1fr}}
 
-            </div>
-        </main>
-    </div>
-</div>
+.kpi{background:#fff;border:1px solid var(--line);border-radius:12px;padding:10px 14px;text-align:left;font-family:inherit;color:inherit;cursor:pointer;box-shadow:0 1px 3px rgba(0,0,0,0.03);display:flex;align-items:center;justify-content:space-between}
+.kpi div{display:flex;flex-direction:column}
+.kpi b{font-size:22px;font-weight:900;line-height:1.1;color:#1e293b}
+.kpi span{font-size:11px;font-weight:800;color:#64748b;text-transform:uppercase;letter-spacing:.5px;margin-top:2px}
+.kpi.on{outline:2px solid var(--pri)}
 
-</body>
-</html>
+.dashboard-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+@media(max-width:1200px){.dashboard-grid{grid-template-columns:1fr}}
+
+.chart-box{background:#fff;border:1px solid var(--line);border-radius:14px;padding:16px;display:flex;flex-direction:column;justify-content:space-between;box-shadow:0 2px 4px rgba(0,0,0,0.03)}
+.chart-title{font-size:13px;font-weight:800;color:#334155;text-transform:uppercase;margin-bottom:10px;letter-spacing:.5px;display:flex;justify-content:space-between;align-items:center}
+.chart-bars{display:flex;align-items:flex-end;gap:8px;height:16
