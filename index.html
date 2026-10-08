@@ -46,4 +46,245 @@ main{max-width:100%;margin:0 auto;padding:14px 20px;display:grid;gap:16px}
 
 .chart-box{background:#fff;border:1px solid var(--line);border-radius:14px;padding:16px;display:flex;flex-direction:column;justify-content:space-between;box-shadow:0 2px 4px rgba(0,0,0,0.03)}
 .chart-title{font-size:13px;font-weight:800;color:#334155;text-transform:uppercase;margin-bottom:10px;letter-spacing:.5px;display:flex;justify-content:space-between;align-items:center}
-.chart-bars{display:flex;align-items:flex-end;gap:8px;height:16
+.chart-bars{display:flex;align-items:flex-end;gap:8px;height:160px;padding-top:16px;overflow-x:auto;padding-bottom:4px}
+.c-bar-group{flex:1;display:flex;flex-direction:column;align-items:center;min-width:38px;height:100%;justify-content:flex-end;cursor:pointer}
+.c-bar{width:100%;max-width:38px;border-radius:6px 6px 0 0;transition:height .4s ease;position:relative}
+.c-bar-val{font-size:11px;font-weight:800;margin-bottom:4px;color:#1e293b}
+.c-bar-lbl{font-size:10px;font-weight:700;color:#64748b;margin-top:6px;text-align:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;width:100%}
+
+.top10-list{display:grid;gap:5px;max-height:300px;overflow-y:auto;padding-right:4px}
+.top10-row{display:flex;justify-content:space-between;align-items:center;padding:8px 12px;background:#f8fafc;border:1px solid #e2e8f0;border-radius:8px;font-size:12px;font-weight:600;cursor:pointer;transition:all .2s}
+.top10-row:hover{background:#eff6ff;border-color:#93c5fd;transform:translateX(2px)}
+.top10-row b{font-weight:800;color:#0f172a}
+
+details.f{background:#fff;border:1px solid var(--line);border-radius:14px;box-shadow:0 2px 4px rgba(0,0,0,0.03)}
+details.f summary{padding:12px 16px;font-weight:800;cursor:pointer;list-style:none;display:flex;justify-content:space-between;color:#334155}
+details.f summary::-webkit-details-marker{display:none}
+.fg{display:grid;gap:10px;padding:0 16px 16px;grid-template-columns:1fr 1fr}
+.fg .w{grid-column:1/-1}
+input,select{width:100%;min-height:42px;padding:8px 12px;border:1px solid #cbd5e1;border-radius:8px;font-size:14px;font-family:inherit;background:#f8fafc;color:var(--tx);font-weight:500}
+.btn{min-height:42px;border:1px solid #cbd5e1;background:#e2e8f0;border-radius:8px;font-weight:800;font-family:inherit;color:#334155;grid-column:1/-1;cursor:pointer}
+
+.cards{display:grid;gap:12px}
+.c{background:#fff;border:1px solid var(--line);border-radius:14px;overflow:hidden;border-left:5px solid transparent;box-shadow:0 2px 4px rgba(0,0,0,0.03);transition:all .3s}
+.c.urgente{border-left-color:var(--red);background:#fff5f5;box-shadow:0 0 0 1px rgba(239,68,68,0.2)}
+
+.highlight-target{animation:flash-card 1.5s ease}
+@keyframes flash-card{0%{background-color:#dbeafe;transform:scale(1.005)}100%{background-color:#fff;transform:scale(1)}}
+
+.ch{width:100%;text-align:left;background:none;border:0;padding:14px 16px;font-family:inherit;color:inherit;display:block;cursor:pointer}
+.row{display:flex;justify-content:space-between;align-items:flex-start;gap:10px}
+.nm{font-weight:800;word-break:break-word;font-size:15px;color:#0f172a}
+.tot{background:#eff6ff;color:#1d4ed8;border-radius:8px;padding:3px 10px;font-weight:900;font-size:14px;flex-shrink:0}
+.bar{height:6px;background:#f1f5f9;border-radius:4px;margin:10px 0 6px}.bar i{display:block;height:100%;border-radius:4px;background:#3b82f6}
+.chips{display:flex;flex-wrap:wrap;gap:5px;margin-top:6px}
+.ch2{font-size:11px;font-weight:700;padding:2px 8px;border-radius:99px;background:#f1f5f9;color:#475569}
+.r{background:#fee2e2;color:#991b1b}.a{background:#fef3c7;color:#92400e}.g{background:#d1fae5;color:#065f46}
+.sub{font-size:11px;color:#64748b;font-weight:600}
+.det{border-top:1px solid var(--line);background:#f8fafc;padding:12px 16px;display:grid;gap:6px;font-size:12px}
+.it{border-left:3px solid #3b82f6;padding:6px 0 6px 12px;background:#fff;border-radius:0 6px 6px 0;margin-bottom:3px}
+.empty{text-align:center;color:var(--mu);padding:30px 10px;font-weight:600}
+.hide{display:none}
+
+@media print{
+  * {-webkit-print-color-adjust:exact !important; print-color-adjust:exact !important;}
+  header,details.f,.top-btns,.rf{display:none!important}
+  body{background:#fff;color:#000;font-size:11px}
+  .seg{display:none!important}
+  main{padding:0!important;display:block!important;max-width:100%!important}
+  section{display:block!important;page-break-before:always !important;page-break-after:always !important}
+  .kpis{display:grid!important;grid-template-columns:repeat(3,1fr)!important;gap:8px!important;margin-bottom:12px!important}
+  .dashboard-grid{display:grid!important;grid-template-columns:1fr 1fr!important;gap:12px!important;margin-bottom:12px!important}
+  .chart-box{border:2px solid var(--line)!important;break-inside:avoid}
+  .top10-list{max-height:none!important;overflow:visible!important}
+}
+</style>
+</head>
+<body>
+<header>
+ <div class="top">
+  <div class="title-area">
+   <a href="index.html" class="home-btn" title="Voltar ao Índice / Início">🏠</a>
+   <div><h1>🪖 Painel Corporativo — Gestão de EPIs</h1><div id="upd">Carregando…</div></div>
+  </div>
+  <div class="top-btns">
+   <button class="print-btn" onclick="window.print()" title="Imprimir / Salvar PDF">🖨️</button>
+   <button class="rf" id="rf" onclick="atualizar(true)" aria-label="Atualizar">↻</button>
+  </div>
+ </div>
+ <div class="seg">
+  <button id="b-est" class="on" onclick="aba('est')">📦 Estoque de EPIs</button>
+  <button id="b-dev" onclick="aba('dev')">🔄 Devoluções & Validades</button>
+ </div>
+</header>
+<main>
+ <!-- ABA 1: ESTOQUE -->
+ <section id="s-est" class="space-y">
+  <div class="kpis" id="k-est"></div>
+  <div class="dashboard-grid">
+    <div class="chart-box">
+      <div class="chart-title">📊 Top EPIs em Estoque <span class="sub">Volume</span></div>
+      <div class="chart-bars" id="chart-est"></div>
+    </div>
+    <div class="chart-box">
+      <div class="chart-title">🏆 Top 10 EPIs Cadastrados <span class="sub">Completo</span></div>
+      <div class="top10-list" id="top10-est"></div>
+    </div>
+  </div>
+  <details class="f"><summary><span>🔎 Filtros Avançados</span><span id="fe-n" class="sub"></span></summary>
+   <div class="fg">
+    <input class="w" id="e-q" type="search" placeholder="Buscar EPI ou CA" oninput="re()">
+    <select id="e-tp" class="w" onchange="re()"></select>
+    <button class="btn" onclick="limpar('e')">Limpar filtros</button>
+   </div>
+  </details>
+  <div id="l-est" class="cards" style="margin-top:14px"></div>
+ </section>
+
+ <!-- ABA 2: DEVOLUÇÕES / VALIDADES -->
+ <section id="s-dev" class="hide">
+  <div class="kpis" id="k-dev"></div>
+  <div class="dashboard-grid">
+    <div class="chart-box">
+      <div class="chart-title">📊 Distribuição por Status <span class="sub">Geral</span></div>
+      <div class="chart-bars" id="chart-dev"></div>
+    </div>
+    <div class="chart-box">
+      <div class="chart-title">🏆 Top 10 Colaboradores com Pendências <span class="sub">Completo</span></div>
+      <div class="top10-list" id="top10-dev"></div>
+    </div>
+  </div>
+  <details class="f"><summary><span>🔎 Filtros Avançados</span><span id="fd-n" class="sub"></span></summary>
+   <div class="fg"><input class="w" id="d-q" type="search" placeholder="Buscar colaborador" oninput="rd()">
+    <button class="btn" onclick="limpar('d')">Limpar filtros</button></div></details>
+  <div id="l-dev" class="cards" style="margin-top:14px"></div>
+ </section>
+</main>
+
+<script>
+// Coloque aqui o link CSV publicado da planilha de EPIs quando estiver pronto
+const URLS=[
+ "https://docs.google.com/spreadsheets/d/e/2PACX-1vTo35odWXfxeP9OhQZRJ36txn6dxH6Y_lOi0l7N0OZV0uOAY51YSVrNFLNHBzawBg/pub?output=csv"
+];
+const KC="epis_cache_v2";
+const CORES_GRAFICO=['#2563eb','#059669','#d97706','#dc2626','#7c3aed','#db2777','#0284c7','#65a30d'];
+const $=id=>document.getElementById(id);
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+let EST=[],DEV=[],HOJE=new Date(),aberto=new Set(),ultimo=0;
+
+function csv(t){ 
+ const r=[];let row=[],c='',q=false;
+ const fim=()=>{row.push(c);c='';if(row.some(x=>x.trim()))r.push(row);row=[]};
+ for(let i=0;i<t.length;i++){const ch=t[i];
+  if(q){if(ch=='"'){if(t[i+1]=='"'){c+='"';i++}else q=false}else c+=ch}
+  else if(ch=='"')q=true;else if(ch==','){row.push(c);c=''}
+  else if(ch=='\n'||ch=='\r'){if(ch=='\r'&&t[i+1]=='\n')i++;fim()}else c+=ch}
+ fim();
+ const h=(r.shift()||[]).map(x=>x.trim());
+ return{h,rows:r.map(a=>Object.fromEntries(h.map((k,i)=>[k,(a[i]||'').trim()])))};
+}
+
+function processar(t1){
+ HOJE=new Date();HOJE.setHours(0,0,0,0);
+ const A=csv(t1);
+ EST=A.rows.map(r=>{
+  const nome=pick(r,'EPI','Equipamento','Descrição','Nome').trim();
+  const categoria=pick(r,'Categoria','Tipo','Grupo')||'Geral';
+  const ca=pick(r,'CA','Certificado')||'—';
+  return{nome,categoria,ca};
+ }).filter(x=>x.nome);
+ DEV=[];
+ preencher();re();rd();
+}
+
+function pick(r,...k){for(const x of k)if(r[x])return r[x];return ''}
+function preencher(){
+ const sel=(id,l,vals)=>{const e=$(id),v=e.value;e.innerHTML=`<option value="">${l}</option>`+vals.map(x=>`<option>${esc(x)}</option>`).join('');if(vals.map(String).includes(v))e.value=v};
+ const u=a=>[...new Set(a.filter(Boolean))];
+ sel('e-tp','Todas as categorias',u(EST.map(x=>x.categoria)).sort());
+}
+
+async function atualizar(manual){
+ const b=$('rf');b.classList.add('spin');
+ try{
+  const r=await fetch(URLS[0],{cache:'no-store'});if(!r.ok)throw 0;const t=await r.text();
+  localStorage.setItem(KC,JSON.stringify({t:Date.now(),t}));ultimo=Date.now();
+  processar(t);$('upd').textContent='Atualizado às '+new Date().toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'});
+ }catch(e){$('upd').textContent='⚠️ Dados salvos (offline)';}
+ b.classList.remove('spin');
+}
+
+function aba(t){
+ ['est','dev'].forEach(x=>{
+  $('s-'+x).classList.toggle('hide',x!==t);
+  const btn=$('b-'+x);
+  if(btn) btn.classList.toggle('on',x===t);
+ });
+ scrollTo(0,0);
+}
+
+function limpar(p){
+ if(p==='e'){['e-q','e-tp'].forEach(i=>$(i).value='');re();}
+ else if(p==='d'){['d-q'].forEach(i=>$(i).value='');rd();}
+}
+
+function re(){
+ const q=$('e-q').value.toLowerCase().trim(),tp=$('e-tp').value;
+ $('fe-n').textContent=[q,tp].filter(Boolean).length?'filtros ativos':'';
+ const f=EST.filter(x=>(!tp||x.categoria===tp)&&(!q||(x.nome+' '+x.ca).toLowerCase().includes(q)));
+ 
+ const G={};
+ f.forEach(x=>{
+  const g=G[x.nome]??={nome:x.nome,cat:x.categoria,n:0,cas:new Set()};
+  g.n++;g.cas.add(x.ca);
+ });
+ const L=Object.values(G).sort((a,b)=>b.n-a.n||a.nome.localeCompare(b.nome));
+ const mx=L[0]?.n||1;
+
+ const topTipos=[...L].slice(0,8);
+ const maxTipoVal=topTipos[0]?.n||1;
+ 
+ $('chart-est').innerHTML=topTipos.length?topTipos.map((item,idx)=>{
+  const h=Math.max(Math.round((item.n/maxTipoVal)*100),item.n>0?8:4);
+  const cor=CORES_GRAFICO[idx % CORES_GRAFICO.length];
+  return `<div class="c-bar-group"><div class="c-bar-val">${item.n}</div><div class="c-bar" style="height:${h}px;background:${cor}"></div><div class="c-bar-lbl" title="${item.nome}">${item.nome}</div></div>`;
+ }).join(''):'<div class="empty" style="font-size:12px;padding:15px">Sem dados</div>';
+
+ const top10Est=[...L].slice(0,10);
+ $('top10-est').innerHTML=top10Est.length?top10Est.map((g,idx)=>`
+  <div class="top10-row">
+   <span><b>#${idx+1}</b> ${esc(g.nome)}</span>
+   <span class="ch2 g">${g.n} un.</span>
+  </div>
+ `).join(''):'<div class="empty" style="font-size:12px;padding:10px">Nenhum registro</div>';
+
+ const maiorItemNome=top10Est[0]?.nome || '—';
+ const maiorItemQtd=top10Est[0]?.n || 0;
+
+ $('k-est').innerHTML=`
+  <div class="kpi"><div><b>${EST.length}</b><span>Total de EPIs</span></div></div>
+  <div class="kpi"><div><b>${L.length}</b><span>Tipos Únicos</span></div></div>
+  <div class="kpi"><div><b>${maiorItemQtd} un.</b><span>Maior Volume (${esc(maiorItemNome)})</span></div></div>
+ `;
+
+ $('l-est').innerHTML=L.length?L.map(g=>`
+  <div class="c"><div class="ch"><div class="row"><div class="nm">${esc(g.nome)}</div><span class="tot">${g.n} un.</span></div>
+  <div class="bar"><i style="width:${g.n/mx*100}%"></i></div>
+  <div class="chips"><span class="ch2">Categoria: ${esc(g.cat)}</span><span class="ch2">CA: ${[...g.cas].join(', ')}</span></div></div></div>
+ `).join(''):'<div class="empty">Nenhum EPI encontrado.</div>';
+}
+
+function rd(){
+ $('k-dev').innerHTML=`
+  <div class="kpi"><div><b>0</b><span>Pendentes</span></div></div>
+  <div class="kpi"><div><b>0</b><span>Colaboradores</span></div></div>
+  <div class="kpi"><div><b>0 dias</b><span>Atraso Máximo</span></div></div>
+`;
+ $('l-dev').innerHTML=`<div class="empty">Nenhum registro de devolução de EPI.</div>`;
+}
+
+try{const c=JSON.parse(localStorage.getItem(KC)||'null');if(c){processar(c.t);ultimo=c.t;$('upd').textContent='Dados salvos'}}catch(e){}
+atualizar();
+</script>
+</body>
+</html>
