@@ -4,113 +4,124 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#1e3a8a">
-<title>Ferramentaria e Calibração</title>
+<title>Painel Corporativo - Ferramentaria & Calibração</title>
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E🛠️%3C/text%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
 <style>
-:root{--bg:#f1f5f9;--card:#fff;--line:#e2e8f0;--tx:#0f172a;--mu:#64748b;--pri:#2563eb;--red:#dc2626;--amb:#d97706;--yel:#ca8a04;--grn:#059669}
+:root{--bg:#0f172a;--card:#1e293b;--card-light:#ffffff;--line:#334155;--line-light:#e2e8f0;--tx:#f8fafc;--tx-dark:#0f172a;--mu:#94a3b8;--pri:#3b82f6;--red:#ef4444;--amb:#f59e0b;--grn:#10b981}
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
-body{font-family:Inter,system-ui,-apple-system,sans-serif;background:var(--bg);color:var(--tx);font-size:14px;line-height:1.45;padding-bottom:calc(24px + env(safe-area-inset-bottom))}
-header{position:sticky;top:0;z-index:20;background:#1e3a8a;color:#fff;padding:calc(env(safe-area-inset-top) + 10px) 14px 10px}
-.top{display:flex;justify-content:space-between;align-items:center;gap:8px;max-width:1200px;margin:0 auto}
-h1{font-size:16px;font-weight:800}
-#upd{font-size:11px;opacity:.8}
-.top-btns{display:flex;gap:6px}
-.rf,.print-btn{background:rgba(255,255,255,.16);color:#fff;border:0;border-radius:10px;min-width:40px;min-height:40px;font-size:16px;display:flex;align-items:center;justify-content:center;cursor:pointer}
+body{font-family:Inter,system-ui,-apple-system,sans-serif;background:#f1f5f9;color:var(--tx-dark);font-size:15px;line-height:1.5;padding-bottom:40px}
+
+/* HEADER ESTILO PAINEL CORPORATIVO */
+header{position:sticky;top:0;z-index:30;background:#0f172a;color:#fff;padding:16px 24px;border-bottom:3px solid var(--pri);box-shadow:0 4px 6px -1px rgba(0,0,0,0.1)}
+.top{display:flex;justify-content:space-between;align-items:center;gap:16px;max-width:100%;margin:0 auto}
+h1{font-size:20px;font-weight:900;letter-spacing:-0.5px}
+#upd{font-size:12px;opacity:.7;margin-top:2px}
+.top-btns{display:flex;gap:10px}
+.rf,.print-btn{background:rgba(255,255,255,.1);color:#fff;border:1px solid rgba(255,255,255,.2);border-radius:10px;min-width:44px;min-height:44px;font-size:18px;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .2s}
+.rf:hover,.print-btn:hover{background:rgba(255,255,255,.2)}
 .rf.spin{animation:sp 1s linear infinite}@keyframes sp{to{transform:rotate(360deg)}}
 
-.seg{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;max-width:1200px;margin:10px auto 0}
-.seg button{background:rgba(255,255,255,.12);color:#dbeafe;border:0;border-radius:12px;min-height:40px;font-weight:700;font-size:13px;font-family:inherit;cursor:pointer}
-.seg button.on{background:#fff;color:#1e3a8a}
+/* ABAS DE NAVEGAÇÃO */
+.seg{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;max-width:100%;margin:16px 24px 0}
+.seg button{background:#e2e8f0;color:#475569;border:0;border-radius:12px;min-height:48px;font-weight:800;font-size:15px;font-family:inherit;cursor:pointer;transition:all .2s;box-shadow:0 1px 2px rgba(0,0,0,0.05)}
+.seg button.on{background:#1e3a8a;color:#fff;box-shadow:0 4px 12px rgba(30,58,138,0.3)}
 
-main{max-width:1200px;margin:0 auto;padding:12px;display:grid;gap:12px}
-.kpis{display:grid;grid-template-columns:repeat(2,1fr);gap:8px}
-@media(min-width:640px){.kpis{grid-template-columns:repeat(4,1fr)}}
+/* CONTEÚDO AMPLO (PAINEL DE TELA CHEIA) */
+main{max-width:100%;margin:0 auto;padding:16px 24px;display:grid;gap:20px}
 
-.kpi{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:12px;text-align:left;font-family:inherit;color:inherit;cursor:pointer}
-.kpi b{display:block;font-size:26px;font-weight:800;line-height:1.1}
-.kpi span{font-size:11px;font-weight:600;color:var(--mu);text-transform:uppercase;letter-spacing:.3px}
-.kpi.on{outline:2px solid var(--pri)}
+/* KPIS DESTAQUE PARA PAINEL */
+.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+@media(max-width:1100px){.kpis{grid-template-columns:repeat(2,1fr)}}
 
-/* Layout Lado a Lado: Gráfico e Top 10 */
-.dashboard-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-@media(max-width:900px){.dashboard-grid{grid-template-columns:1fr}}
+.kpi{background:#fff;border:1px solid var(--line-light);border-radius:16px;padding:18px;text-align:left;font-family:inherit;color:inherit;cursor:pointer;box-shadow:0 4px 6px -1px rgba(0,0,0,0.05);transition:transform .2s}
+.kpi:hover{transform:translateY(-2px)}
+.kpi b{display:block;font-size:32px;font-weight:900;line-height:1.1;color:#1e293b}
+.kpi span{font-size:12px;font-weight:800;color:#64748b;text-transform:uppercase;letter-spacing:.5px}
+.kpi.on{outline:3px solid var(--pri)}
 
-.chart-box{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px;display:flex;flex-direction:column;justify-content:space-between}
-.chart-title{font-size:12px;font-weight:700;color:var(--mu);text-transform:uppercase;margin-bottom:10px;letter-spacing:.3px;display:flex;justify-content:space-between;align-items:center}
-.chart-bars{display:flex;align-items:flex-end;gap:6px;height:130px;padding-top:16px;overflow-x:auto;padding-bottom:4px}
-.c-bar-group{flex:1;display:flex;flex-direction:column;align-items:center;min-width:32px;height:100%;justify-content:flex-end;cursor:pointer}
-.c-bar{width:100%;max-width:32px;border-radius:6px 6px 0 0;transition:height .4s ease;position:relative}
-.c-bar-val{font-size:10px;font-weight:700;margin-bottom:4px;color:var(--tx)}
-.c-bar-lbl{font-size:9px;color:var(--mu);margin-top:6px;text-align:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;width:100%}
+/* GRID LADO A LADO AMPLIADO (Gráfico + Top 10 Inteiro) */
+.dashboard-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+@media(max-width:1200px){.dashboard-grid{grid-template-columns:1fr}}
 
-/* Listas Top 10 (Ajustadas para exibir completo na tela e na impressão) */
-.top10-list{display:grid;gap:5px;max-height:260px;overflow-y:auto;padding-right:4px}
-.top10-row{display:flex;justify-content:space-between;align-items:center;padding:7px 10px;background:#f8fafc;border:1px solid var(--line);border-radius:8px;font-size:11px;cursor:pointer;transition:all .2s}
-.top10-row:hover{background:#eff6ff;border-color:#93c5fd}
-.top10-row b{font-weight:700;color:var(--tx)}
+.chart-box{background:#fff;border:1px solid var(--line-light);border-radius:16px;padding:20px;display:flex;flex-direction:column;justify-content:space-between;box-shadow:0 4px 6px -1px rgba(0,0,0,0.05)}
+.chart-title{font-size:14px;font-weight:800;color:#334155;text-transform:uppercase;margin-bottom:14px;letter-spacing:.5px;display:flex;justify-content:space-between;align-items:center}
+.chart-bars{display:flex;align-items:flex-end;gap:10px;height:180px;padding-top:20px;overflow-x:auto;padding-bottom:6px}
+.c-bar-group{flex:1;display:flex;flex-direction:column;align-items:center;min-width:40px;height:100%;justify-content:flex-end;cursor:pointer}
+.c-bar{width:100%;max-width:42px;border-radius:8px 8px 0 0;transition:height .4s ease;position:relative}
+.c-bar:hover{filter:brightness(1.15)}
+.c-bar-val{font-size:12px;font-weight:800;margin-bottom:6px;color:#1e293b}
+.c-bar-lbl{font-size:11px;font-weight:700;color:#64748b;margin-top:8px;text-align:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;width:100%}
 
-details.f{background:var(--card);border:1px solid var(--line);border-radius:14px}
-details.f summary{padding:12px 14px;font-weight:700;cursor:pointer;list-style:none;display:flex;justify-content:space-between}
+/* TOP 10 COMPLETO SEM CORTES */
+.top10-list{display:grid;gap:6px;max-height:340px;overflow-y:auto;padding-right:4px}
+.top10-row{display:flex;justify-content:space-between;align-items:center;padding:10px 14px;background:#f8fafc;border:1px solid #e2e8f0;border-radius:10px;font-size:13px;font-weight:600;cursor:pointer;transition:all .2s}
+.top10-row:hover{background:#eff6ff;border-color:#93c5fd;transform:translateX(3px)}
+.top10-row b{font-weight:800;color:#0f172a}
+
+details.f{background:#fff;border:1px solid var(--line-light);border-radius:16px;box-shadow:0 4px 6px -1px rgba(0,0,0,0.05)}
+details.f summary{padding:16px 20px;font-weight:800;cursor:pointer;list-style:none;display:flex;justify-content:space-between;color:#334155}
 details.f summary::-webkit-details-marker{display:none}
-.fg{display:grid;gap:8px;padding:0 14px 14px;grid-template-columns:1fr 1fr}
+.fg{display:grid;gap:12px;padding:0 20px 20px;grid-template-columns:1fr 1fr}
 .fg .w{grid-column:1/-1}
-input,select{width:100%;min-height:44px;padding:8px 10px;border:1px solid #cbd5e1;border-radius:10px;font-size:16px;font-family:inherit;background:#f8fafc;color:var(--tx)}
-.btn{min-height:44px;border:1px solid var(--line);background:#f1f5f9;border-radius:10px;font-weight:700;font-family:inherit;color:#475569;grid-column:1/-1;cursor:pointer}
+input,select{width:100%;min-height:48px;padding:10px 14px;border:1px solid #cbd5e1;border-radius:10px;font-size:15px;font-family:inherit;background:#f8fafc;color:var(--tx-dark);font-weight:500}
+.btn{min-height:48px;border:1px solid #cbd5e1;background:#e2e8f0;border-radius:10px;font-weight:800;font-family:inherit;color:#334155;grid-column:1/-1;cursor:pointer;transition:background .2s}
+.btn:hover{background:#cbd5e1}
 
-.cards{display:grid;gap:10px}
-.c{background:var(--card);border:1px solid var(--line);border-radius:14px;overflow:hidden;border-left:4px solid transparent;transition:all .3s}
-.c.urgente{border-left-color:var(--red);background:#fffcfc;box-shadow:0 0 0 1px rgba(220,38,38,0.25)}
+.cards{display:grid;gap:14px}
+.c{background:#fff;border:1px solid var(--line-light);border-radius:16px;overflow:hidden;border-left:6px solid transparent;box-shadow:0 4px 6px -1px rgba(0,0,0,0.05);transition:all .3s}
+.c.urgente{border-left-color:var(--red);background:#fff5f5;box-shadow:0 0 0 1px rgba(239,68,68,0.2)}
 .c.antigo{border-left-color:var(--amb);animation:pulse-border 2s infinite}
-@keyframes pulse-border{0%{box-shadow:0 0 0 0 rgba(217,119,6,.3)}70%{box-shadow:0 0 0 6px rgba(217,119,6,0)}100%{box-shadow:0 0 0 0 rgba(217,119,6,0)}}
+@keyframes pulse-border{0%{box-shadow:0 0 0 0 rgba(245,158,11,.4)}70%{box-shadow:0 0 0 8px rgba(245,158,11,0)}100%{box-shadow:0 0 0 0 rgba(245,158,11,0)}}
 
 .highlight-target{animation:flash-card 1.5s ease}
-@keyframes flash-card{0%{background-color:#dbeafe;transform:scale(1.01)}100%{background-color:var(--card);transform:scale(1)}}
+@keyframes flash-card{0%{background-color:#dbeafe;transform:scale(1.005)}100%{background-color:#fff;transform:scale(1)}}
 
-.ch{width:100%;text-align:left;background:none;border:0;padding:12px 14px;font-family:inherit;color:inherit;display:block;cursor:pointer}
-.row{display:flex;justify-content:space-between;align-items:flex-start;gap:10px}
-.nm{font-weight:700;word-break:break-word}
-.tot{background:#eff6ff;color:#1d4ed8;border-radius:10px;padding:2px 10px;font-weight:800;font-size:15px;flex-shrink:0}
-.bar{height:6px;background:#f1f5f9;border-radius:4px;margin:8px 0 6px}.bar i{display:block;height:100%;border-radius:4px;background:#60a5fa}
-.chips{display:flex;flex-wrap:wrap;gap:5px;margin-top:4px}
-.ch2{font-size:11px;font-weight:600;padding:2px 8px;border-radius:99px;background:#f1f5f9;color:#475569}
-.r{background:#fef2f2;color:var(--red)}.a{background:#fffbeb;color:var(--amb)}.y{background:#fefce8;color:var(--yel)}.g{background:#ecfdf5;color:var(--grn)}
-.sub{font-size:11px;color:var(--mu)}
-.det{border-top:1px solid var(--line);background:#f8fafc;padding:8px 14px;display:grid;gap:6px;font-size:12px}
-.it{border-left:3px solid #60a5fa;padding:4px 0 4px 10px;background:#fff;border-radius:0 8px 8px 0;margin-bottom:2px}
-.empty{text-align:center;color:var(--mu);padding:28px 10px}
+.ch{width:100%;text-align:left;background:none;border:0;padding:16px 20px;font-family:inherit;color:inherit;display:block;cursor:pointer}
+.row{display:flex;justify-content:space-between;align-items:flex-start;gap:12px}
+.nm{font-weight:800;word-break:break-word;font-size:16px;color:#0f172a}
+.tot{background:#eff6ff;color:#1d4ed8;border-radius:10px;padding:4px 12px;font-weight:900;font-size:15px;flex-shrink:0}
+.bar{height:8px;background:#f1f5f9;border-radius:4px;margin:12px 0 8px}.bar i{display:block;height:100%;border-radius:4px;background:#3b82f6}
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+.ch2{font-size:12px;font-weight:700;padding:3px 10px;border-radius:99px;background:#f1f5f9;color:#475569}
+.r{background:#fee2e2;color:#991b1b}.a{background:#fef3c7;color:#92400e}.y{background:#fef9c3;color:#854d0e}.g{background:#d1fae5;color:#065f46}
+.sub{font-size:12px;color:#64748b;font-weight:600}
+.det{border-top:1px solid var(--line-light);background:#f8fafc;padding:14px 20px;display:grid;gap:8px;font-size:13px}
+.it{border-left:4px solid #3b82f6;padding:8px 0 8px 14px;background:#fff;border-radius:0 8px 8px 0;margin-bottom:4px;box-shadow:0 1px 2px rgba(0,0,0,0.02)}
+.empty{text-align:center;color:var(--mu);padding:40px 10px;font-weight:600}
 .hide{display:none}
 
-/* Regras Otimizadas de Impressão para o Top 10 sair inteiro e com cores */
+/* IMPRESSÃO OTIMIZADA PARA PAINEL / PDF */
 @media print{
   * {-webkit-print-color-adjust:exact !important; print-color-adjust:exact !important;}
   header,details.f,.top-btns,.rf{display:none!important}
-  body{background:#fff;color:#000;font-size:11px}
-  main{padding:0!important;display:block!important}
+  body{background:#fff;color:#000;font-size:13px}
+  .seg{display:none!important}
+  main{padding:0!important;display:block!important;max-width:100%!important}
   section{display:block!important;page-break-after:always}
-  .kpis{display:grid!important;grid-template-columns:repeat(4,1fr)!important;gap:6px!important;margin-bottom:10px!important}
-  .dashboard-grid{display:grid!important;grid-template-columns:1fr 1fr!important;gap:10px!important;margin-bottom:12px!important}
-  .chart-box{border:1px solid #cbd5e1!important;break-inside:avoid;max-height:none!important}
+  .kpis{display:grid!important;grid-template-columns:repeat(4,1fr)!important;gap:12px!important;margin-bottom:20px!important}
+  .dashboard-grid{display:grid!important;grid-template-columns:1fr 1fr!important;gap:20px!important;margin-bottom:20px!important}
+  .chart-box{border:2px solid #cbd5e1!important;break-inside:avoid;max-height:none!important}
   .top10-list{max-height:none!important;overflow:visible!important}
   .cards{display:block!important}
-  .c{break-inside:avoid;border:1px solid #cbd5e1!important;margin-bottom:6px!important}
+  .c{break-inside:avoid;border:1px solid #cbd5e1!important;margin-bottom:12px!important}
 }
 </style>
 </head>
 <body>
 <header>
  <div class="top">
-  <div><h1>🛠️ Ferramentaria & Calibração</h1><div id="upd">Carregando…</div></div>
+  <div><h1>🛠️ Painel Corporativo — Ferramentaria & Calibração</h1><div id="upd">Carregando…</div></div>
   <div class="top-btns">
    <button class="print-btn" onclick="window.print()" title="Imprimir / Salvar PDF">🖨️</button>
    <button class="rf" id="rf" onclick="atualizar(true)" aria-label="Atualizar">↻</button>
   </div>
  </div>
  <div class="seg">
-  <button id="b-est" class="on" onclick="aba('est')">Inventário</button>
-  <button id="b-dev" onclick="aba('dev')">Devoluções</button>
-  <button id="b-inv" onclick="aba('inv')">Calibração</button>
+  <button id="b-est" class="on" onclick="aba('est')">📦 Inventário Geral</button>
+  <button id="b-dev" onclick="aba('dev')">🔄 Devoluções & Atrasos</button>
+  <button id="b-inv" onclick="aba('inv')">⚡ Calibração de Equipamentos</button>
  </div>
 </header>
 <main>
@@ -119,7 +130,7 @@ input,select{width:100%;min-height:44px;padding:8px 10px;border:1px solid #cbd5e
   <div class="kpis" id="k-est"></div>
   <div class="dashboard-grid">
     <div class="chart-box">
-      <div class="chart-title">📊 Top Categorias / Tipos <span class="sub">Clique para filtrar</span></div>
+      <div class="chart-title">📊 Top Categorias / Tipos no Inventário <span class="sub">Clique para filtrar</span></div>
       <div class="chart-bars" id="chart-est"></div>
     </div>
     <div class="chart-box">
@@ -127,14 +138,14 @@ input,select{width:100%;min-height:44px;padding:8px 10px;border:1px solid #cbd5e
       <div class="top10-list" id="top10-est"></div>
     </div>
   </div>
-  <details class="f"><summary><span>🔎 Filtros</span><span id="fe-n" class="sub"></span></summary>
+  <details class="f"><summary><span>🔎 Filtros Avançados</span><span id="fe-n" class="sub"></span></summary>
    <div class="fg">
     <input class="w" id="e-q" type="search" placeholder="Buscar ferramenta ou descrição" oninput="re()">
     <select id="e-tp" class="w" onchange="re()"></select>
     <button class="btn" onclick="limpar('e')">Limpar filtros</button>
    </div>
   </details>
-  <div id="l-est" class="cards" style="margin-top:12px"></div>
+  <div id="l-est" class="cards" style="margin-top:16px"></div>
  </section>
 
  <!-- ABA 2: DEVOLUÇÕES -->
@@ -142,7 +153,7 @@ input,select{width:100%;min-height:44px;padding:8px 10px;border:1px solid #cbd5e
   <div class="kpis" id="k-dev"></div>
   <div class="dashboard-grid">
     <div class="chart-box">
-      <div class="chart-title">📊 Pendências por Mês <span class="sub">Clique para filtrar</span></div>
+      <div class="chart-title">📊 Pendências por Mês (Cronológico) <span class="sub">Clique para filtrar</span></div>
       <div class="chart-bars" id="chart-dev"></div>
     </div>
     <div class="chart-box">
@@ -150,11 +161,11 @@ input,select{width:100%;min-height:44px;padding:8px 10px;border:1px solid #cbd5e
       <div class="top10-list" id="top10-dev"></div>
     </div>
   </div>
-  <details class="f"><summary><span>🔎 Filtros</span><span id="fd-n" class="sub"></span></summary>
+  <details class="f"><summary><span>🔎 Filtros Avançados</span><span id="fd-n" class="sub"></span></summary>
    <div class="fg"><input class="w" id="d-q" type="search" placeholder="Buscar solicitante ou ferramenta" oninput="rd()">
     <select id="d-ap" class="w" onchange="rd()"></select><select id="d-ano" onchange="rd()"></select><select id="d-mes" onchange="rd()"></select>
     <button class="btn" onclick="limpar('d')">Limpar filtros</button></div></details>
-  <div id="l-dev" class="cards" style="margin-top:12px"></div>
+  <div id="l-dev" class="cards" style="margin-top:16px"></div>
  </section>
 
  <!-- ABA 3: CALIBRAÇÃO -->
@@ -170,12 +181,12 @@ input,select{width:100%;min-height:44px;padding:8px 10px;border:1px solid #cbd5e
       <div class="top10-list" id="top10-inv"></div>
     </div>
   </div>
-  <details class="f"><summary><span>🔎 Filtros</span><span id="fi-n" class="sub"></span></summary>
+  <details class="f"><summary><span>🔎 Filtros Avançados</span><span id="fi-n" class="sub"></span></summary>
    <div class="fg"><input class="w" id="i-q" type="search" placeholder="Buscar equipamento" oninput="ri()">
     <select id="i-ap" class="w" onchange="ri()"></select>
     <select id="i-ano" onchange="ri()"></select><select id="i-mes" onchange="ri()"></select>
     <button class="btn" onclick="limpar('i')">Limpar filtros</button></div></details>
-  <div id="l-inv" class="cards" style="margin-top:12px"></div>
+  <div id="l-inv" class="cards" style="margin-top:16px"></div>
  </section>
 </main>
 
@@ -184,7 +195,7 @@ const URLS=[
  "https://docs.google.com/spreadsheets/d/e/2PACX-1vTo35odWXfxeP9OhQZRJ36txn6dxH6Y_lOi0l7N0OZV0uOAY51YSVrNFLNHBzawBg/pub?output=csv",
  "https://docs.google.com/spreadsheets/d/e/2PACX-1vR4zF860IfKYViF0uSuN_Hd3LT-1uX_5IQPgZLl5FGu7pMF8CI96hrIlVfQmtOlWw/pub?output=csv"
 ];
-const KC="ferramentaria_cache_v10";
+const KC="ferramentaria_cache_v12";
 const MES_NOME=['janeiro','fevereiro','março','abril','maio','junho','julho','agosto','setembro','outubro','novembro','dezembro'];
 const CORES_GRAFICO=['#2563eb','#059669','#d97706','#dc2626','#7c3aed','#db2777','#0284c7','#65a30d'];
 const $=id=>document.getElementById(id);
@@ -320,15 +331,15 @@ function re(){
 
  const catCont={};
  f.forEach(x=>{catCont[x.categoria]=(catCont[x.categoria]||0)+1});
- const catsOrdenadas=Object.keys(catCont).sort((a,b)=>catCont[b]-catCont[a]).slice(0,6);
+ const catsOrdenadas=Object.keys(catCont).sort((a,b)=>catCont[b]-catCont[a]).slice(0,8);
  const maxCatVal=Math.max(...Object.values(catCont),1);
  
  $('chart-est').innerHTML=catsOrdenadas.length?catsOrdenadas.map((cat,idx)=>{
   const val=catCont[cat];
-  const h=Math.max(Math.round((val/maxCatVal)*85),val>0?8:4);
+  const h=Math.max(Math.round((val/maxCatVal)*100),val>0?8:4);
   const cor=CORES_GRAFICO[idx % CORES_GRAFICO.length];
   return `<div class="c-bar-group" onclick="$('e-tp').value='${cat}';re()"><div class="c-bar-val">${val}</div><div class="c-bar" style="height:${h}px;background:${cor}"></div><div class="c-bar-lbl" title="${cat}">${cat}</div></div>`;
- }).join(''):'<div class="empty" style="font-size:11px;padding:10px">Sem dados</div>';
+ }).join(''):'<div class="empty" style="font-size:12px;padding:15px">Sem dados</div>';
 
  const top10Est=[...L].slice(0,10);
  $('top10-est').innerHTML=top10Est.length?top10Est.map((g,idx)=>`
@@ -336,13 +347,13 @@ function re(){
    <span><b>#${idx+1}</b> ${esc(g.nome)}</span>
    <span class="ch2 g">${g.n} un.</span>
   </div>
- `).join(''):'<div class="empty" style="font-size:11px;padding:5px">Nenhum registro</div>';
+ `).join(''):'<div class="empty" style="font-size:12px;padding:10px">Nenhum registro</div>';
 
  $('k-est').innerHTML=`
-  <div class="kpi"><b>${EST.length}</b><span>Total de itens</span></div>
-  <div class="kpi"><b>${L.length}</b><span>Tipos únicos</span></div>
+  <div class="kpi"><b>${EST.length}</b><span>Total de Itens</span></div>
+  <div class="kpi"><b>${L.length}</b><span>Tipos Únicos</span></div>
   <div class="kpi"><b>${Object.keys(catCont).length}</b><span>Categorias</span></div>
-  <div class="kpi"><b>${f.length}</b><span>Filtrados</span></div>
+  <div class="kpi"><b>${f.length}</b><span>Itens Filtrados</span></div>
  `;
 
  $('l-est').innerHTML=L.length?L.map((g,idx)=>{
@@ -381,10 +392,10 @@ function rd(){
   const [anoStr,mesNum]=cm.split('-');
   const nomeMes=MES_NOME[parseInt(mesNum)-1];
   const val=mesesCont[cm];
-  const h=Math.max(Math.round((val/maxMesVal)*85),val>0?8:4);
+  const h=Math.max(Math.round((val/maxMesVal)*100),val>0?8:4);
   const cor=CORES_GRAFICO[idx % CORES_GRAFICO.length];
   return `<div class="c-bar-group" onclick="$('d-ano').value='${anoStr}';$('d-mes').value='${nomeMes}';rd()"><div class="c-bar-val">${val}</div><div class="c-bar" style="height:${h}px;background:${cor}"></div><div class="c-bar-lbl" title="${nomeMes} ${anoStr}">${nomeMes.slice(0,3)}/${anoStr.slice(2)}</div></div>`;
- }).join(''):'<div class="empty" style="font-size:11px;padding:10px">Sem dados</div>';
+ }).join(''):'<div class="empty" style="font-size:12px;padding:15px">Sem dados</div>';
 
  const top10Dev=[...L].sort((a,b)=>b.max-a.max||b.n-a.n).slice(0,10);
  $('top10-dev').innerHTML=top10Dev.length?top10Dev.map((u,idx)=>`
@@ -392,9 +403,9 @@ function rd(){
    <span><b>#${idx+1}</b> ${esc(u.sol)}</span>
    <span class="ch2 ${u.max>30?'r':'y'}">${u.n} it. (${u.max}d atr.)</span>
   </div>
- `).join(''):'<div class="empty" style="font-size:11px;padding:5px">Nenhum registro</div>';
+ `).join(''):'<div class="empty" style="font-size:12px;padding:10px">Nenhum registro</div>';
 
- $('k-dev').innerHTML=`<div class="kpi"><b>${f.length}</b><span>Pendentes</span></div><div class="kpi"><b>${L.length}</b><span>Usuários</span></div><div class="kpi"><b style="color:var(--red)">${f.length?Math.max(...f.map(x=>x.atraso)):0}</b><span>Maior atraso</span></div><div class="kpi"><b>${f.filter(x=>x.atraso>30).length}</b><span>Atraso &gt; 30d</span></div>`;
+ $('k-dev').innerHTML=`<div class="kpi"><b>${f.length}</b><span>Pendentes</span></div><div class="kpi"><b>${L.length}</b><span>Usuários</span></div><div class="kpi"><b style="color:var(--red)">${f.length?Math.max(...f.map(x=>x.atraso)):0}</b><span>Maior Atraso</span></div><div class="kpi"><b>${f.filter(x=>x.atraso>30).length}</b><span>Atraso &gt; 30d</span></div>`;
  
  $('l-dev').innerHTML=L.length?L.map(u=>{
   const k='d:'+u.sol,o=aberto.has(k);
@@ -423,7 +434,7 @@ function ri(){
  ];
  const maxStVal=Math.max(...stData.map(x=>x.val),1);
  $('chart-inv').innerHTML=stData.map(item=>{
-  const h=Math.max(Math.round((item.val/maxStVal)*85),item.val>0?8:4);
+  const h=Math.max(Math.round((item.val/maxStVal)*100),item.val>0?8:4);
   return `<div class="c-bar-group" onclick="stF='${item.s==='ok'||item.s==='sd'?'todos':item.s}';ri()"><div class="c-bar-val">${item.val}</div><div class="c-bar" style="height:${h}px;background:${item.color}"></div><div class="c-bar-lbl">${item.l}</div></div>`;
  }).join('');
 
@@ -448,7 +459,7 @@ function ri(){
    <span><b>#${idx+1}</b> ${esc(g.ap)}</span>
    <span class="ch2 ${g.v>0?'r':'a'}">${fmt(g.min)}</span>
   </div>
- `).join(''):'<div class="empty" style="font-size:11px;padding:5px">Nenhum equipamento</div>';
+ `).join(''):'<div class="empty" style="font-size:12px;padding:10px">Nenhum equipamento</div>';
 
  $('k-inv').innerHTML=K.map(([s,l,col])=>`<button class="kpi ${stF===s?'on':''}" onclick="stF=stF==='${s}'?'todos':'${s}';ri()"><b style="color:${col}">${s==='todos'?base.length:c(s)}</b><span>${l}</span></button>`).join('');
  const f=LAll.filter(x=>stF==='todos'||x.v>0&&stF==='v'||x.a30>0&&stF==='a30'||x.a90>0&&stF==='a90');
