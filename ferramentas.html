@@ -15,9 +15,9 @@ body{font-family:Inter,system-ui,-apple-system,sans-serif;background:#f1f5f9;col
 
 header{position:sticky;top:0;z-index:30;background:#0f172a;color:#fff;padding:12px 20px;border-bottom:3px solid var(--pri);box-shadow:0 4px 6px -1px rgba(0,0,0,0.1)}
 .top{display:flex;justify-content:space-between;align-items:center;gap:12px;max-width:100%;margin:0 auto}
-.title-area{display:flex;align-items:center;gap:10px}
-.home-btn{background:rgba(255,255,255,.1);color:#fff;border:1px solid rgba(255,255,255,.2);border-radius:8px;width:36px;height:36px;font-size:15px;display:flex;align-items:center;justify-content:center;cursor:pointer;text-decoration:none;transition:all .2s}
-.home-btn:hover{background:rgba(255,255,255,.2)}
+.title-area{display:flex;align-items:center;gap:12px}
+.home-btn{background:rgba(255,255,255,.15);color:#fff;border:1px solid rgba(255,255,255,.3);border-radius:10px;width:40px;height:40px;font-size:18px;display:flex;align-items:center;justify-content:center;cursor:pointer;text-decoration:none;transition:all .2s}
+.home-btn:hover{background:rgba(255,255,255,.3)}
 h1{font-size:17px;font-weight:900;letter-spacing:-0.5px}
 #upd{font-size:11px;opacity:.7}
 .top-btns{display:flex;gap:8px}
@@ -31,7 +31,7 @@ h1{font-size:17px;font-weight:900;letter-spacing:-0.5px}
 
 main{max-width:100%;margin:0 auto;padding:14px 20px;display:grid;gap:16px}
 
-/* KPIs compactos: estritamente 3 colunas lado a lado, economizando altura vertical */
+/* KPIs compactos: estritamente 3 colunas lado a lado */
 .kpis{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
 @media(max-width:900px){.kpis{grid-template-columns:1fr}}
 
@@ -195,7 +195,7 @@ const URLS=[
  "https://docs.google.com/spreadsheets/d/e/2PACX-1vTo35odWXfxeP9OhQZRJ36txn6dxH6Y_lOi0l7N0OZV0uOAY51YSVrNFLNHBzawBg/pub?output=csv",
  "https://docs.google.com/spreadsheets/d/e/2PACX-1vR4zF860IfKYViF0uSuN_Hd3LT-1uX_5IQPgZLl5FGu7pMF8CI96hrIlVfQmtOlWw/pub?output=csv"
 ];
-const KC="ferramentaria_cache_v17";
+const KC="ferramentaria_cache_v18";
 const MES_NOME=['janeiro','fevereiro','março','abril','maio','junho','julho','agosto','setembro','outubro','novembro','dezembro'];
 const CORES_GRAFICO=['#2563eb','#059669','#d97706','#dc2626','#7c3aed','#db2777','#0284c7','#65a30d'];
 const $=id=>document.getElementById(id);
@@ -420,7 +420,7 @@ function rd(){
   return`<div class="c ${isCriticoAnual?'urgente':isUrgente?'urgente':''}" id="${fId(u.sol)}" style="${o?'grid-column:1/-1':''}"><button class="ch" onclick="tg('${kk(k)}')"><div class="row"><div class="nm">${esc(u.sol)} ${isCriticoAnual?'<span class="ch2 r">⚠️ &gt; 1 Ano de Atraso</span>':isUrgente?'<span class="ch2 r">Maior Atraso</span>':''}</div><span class="tot">${u.n} it.</span></div>
    <div class="bar"><i style="width:${u.n/mx*100}%"></i></div>
    <div class="chips">${u.max>0?`<span class="ch2 r">Maior atraso: ${u.max} dias (${(u.max/365).toFixed(1)} anos)</span>`:'<span class="ch2 g">No prazo</span>'}${Object.entries(u.meses).sort((a,b)=>MES_NOME.indexOf(a[0])-MES_NOME.indexOf(b[0])).map(([m,n])=>`<span class="ch2">${m.slice(0,3)} (${n})</span>`).join('')}<span class="ch2">${o?'▲ ocultar':'▼ ver itens'}</span></div></button>
-   ${o?`<div class="det"><div class="sub" style="font-weight:700;margin-bottom:4px;color:var(--tx)">Pendências deste usuário:</div>${Object.values(u.it).sort((a,b)=>b.atraso-a.atraso).map(i=>`<div class="it"><b>${i.q>1?i.q+'× ':''}${esc(i.ap||i.desc)}</b><div class="sub">Protocolo: ${esc(i.prot)} · Retirado: ${esc(i.emp.split(' ')[0])} · Previsto: ${fmt(i.d)}</div><span class="ch2 ${i.atraso>0?'r':'g'}">${i.atraso>0?i.atraso+' dias de atraso ('+(i.atraso/365).toFixed(1)+' anos)':'No prazo'}</span></div>`).join('')}</div>`:''}</div>`;
+   ${o?`<div class="det"><div class="sub" style="font-weight:700;margin-bottom:4px;color:var(--tx)">Pendências deste usuário:</div>${Object.values(u.it).sort((a,b)=>b.atraso-a.atraso).map(i=>`<div class="it"><b>${i.q>1?i.q+'× ':''}${esc(i.ap||i.desc)}</b><div class="sub">Protocolo: ${esc(i.prot)} · Retirado: ${esc(i.emp.split(' ')[0场])} · Previsto: ${fmt(i.d)}</div><span class="ch2 ${i.atraso>0?'r':'g'}">${i.atraso>0?i.atraso+' dias de atraso ('+(i.atraso/365).toFixed(1)+' anos)':'No prazo'}</span></div>`).join('')}</div>`:''}</div>`;
  }).join(''):'<div class="empty">Nenhum débito encontrado.</div>';
 }
 
