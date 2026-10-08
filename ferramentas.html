@@ -31,9 +31,8 @@ h1{font-size:17px;font-weight:900;letter-spacing:-0.5px}
 
 main{max-width:100%;margin:0 auto;padding:14px 20px;display:grid;gap:16px}
 
-/* KPIs compactos: estritamente 3 colunas lado a lado */
-.kpis{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
-@media(max-width:900px){.kpis{grid-template-columns:1fr}}
+/* FORÇADO EM 3 COLUNAS LADO A LADO */
+.kpis{display:grid;grid-template-columns:repeat(3, 1fr) !important;gap:12px}
 
 .kpi{background:#fff;border:1px solid var(--line);border-radius:12px;padding:10px 14px;text-align:left;font-family:inherit;color:inherit;cursor:pointer;box-shadow:0 1px 3px rgba(0,0,0,0.03);display:flex;align-items:center;justify-content:space-between}
 .kpi div{display:flex;flex-direction:column}
@@ -196,7 +195,7 @@ const URLS=[
  "https://docs.google.com/spreadsheets/d/e/2PACX-1vTo35odWXfxeP9OhQZRJ36txn6dxH6Y_lOi0l7N0OZV0uOAY51YSVrNFLNHBzawBg/pub?output=csv",
  "https://docs.google.com/spreadsheets/d/e/2PACX-1vR4zF860IfKYViF0uSuN_Hd3LT-1uX_5IQPgZLl5FGu7pMF8CI96hrIlVfQmtOlWw/pub?output=csv"
 ];
-const KC="ferramentaria_cache_v20";
+const KC="ferramentaria_cache_v21";
 const MES_NOME=['janeiro','fevereiro','março','abril','maio','junho','julho','agosto','setembro','outubro','novembro','dezembro'];
 const CORES_GRAFICO=['#2563eb','#059669','#d97706','#dc2626','#7c3aed','#db2777','#0284c7','#65a30d'];
 const $=id=>document.getElementById(id);
