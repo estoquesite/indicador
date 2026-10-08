@@ -15,6 +15,9 @@ body{font-family:Inter,system-ui,-apple-system,sans-serif;background:#f1f5f9;col
 
 header{position:sticky;top:0;z-index:30;background:#0f172a;color:#fff;padding:16px 24px;border-bottom:3px solid var(--pri);box-shadow:0 4px 6px -1px rgba(0,0,0,0.1)}
 .top{display:flex;justify-content:space-between;align-items:center;gap:16px;max-width:100%;margin:0 auto}
+.title-area{display:flex;align-items:center;gap:12px}
+.home-btn{background:rgba(255,255,255,.1);color:#fff;border:1px solid rgba(255,255,255,.2);border-radius:10px;width:40px;height:40px;font-size:16px;display:flex;align-items:center;justify-content:center;cursor:pointer;text-decoration:none;transition:all .2s}
+.home-btn:hover{background:rgba(255,255,255,.2)}
 h1{font-size:20px;font-weight:900;letter-spacing:-0.5px}
 #upd{font-size:12px;opacity:.7;margin-top:2px}
 .top-btns{display:flex;gap:10px}
@@ -28,11 +31,12 @@ h1{font-size:20px;font-weight:900;letter-spacing:-0.5px}
 
 main{max-width:100%;margin:0 auto;padding:16px 24px;display:grid;gap:20px}
 
-.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
-@media(max-width:1100px){.kpis{grid-template-columns:repeat(2,1fr)}}
+.kpis{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+@media(max-width:900px){.kpis{grid-template-columns:1fr}}
 
-.kpi{background:#fff;border:1px solid var(--line);border-radius:16px;padding:18px;text-align:left;font-family:inherit;color:inherit;cursor:pointer;box-shadow:0 4px 6px -1px rgba(0,0,0,0.05);transition:transform .2s}
-.kpi b{display:block;font-size:32px;font-weight:900;line-height:1.1;color:#1e293b}
+.kpi{background:#fff;border:1px solid var(--line);border-radius:16px;padding:16px 20px;text-align:left;font-family:inherit;color:inherit;cursor:pointer;box-shadow:0 4px 6px -1px rgba(0,0,0,0.05);transition:transform .2s}
+.kpi:hover{transform:translateY(-2px)}
+.kpi b{display:block;font-size:28px;font-weight:900;line-height:1.1;color:#1e293b}
 .kpi span{font-size:12px;font-weight:800;color:#64748b;text-transform:uppercase;letter-spacing:.5px}
 .kpi.on{outline:3px solid var(--pri)}
 
@@ -47,7 +51,6 @@ main{max-width:100%;margin:0 auto;padding:16px 24px;display:grid;gap:20px}
 .c-bar-val{font-size:12px;font-weight:800;margin-bottom:6px;color:#1e293b}
 .c-bar-lbl{font-size:11px;font-weight:700;color:#64748b;margin-top:8px;text-align:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;width:100%}
 
-/* Top 10 Completo e Inteiro */
 .top10-list{display:grid;gap:6px;max-height:350px;overflow-y:auto;padding-right:4px}
 .top10-row{display:flex;justify-content:space-between;align-items:center;padding:10px 14px;background:#f8fafc;border:1px solid #e2e8f0;border-radius:10px;font-size:13px;font-weight:600;cursor:pointer;transition:all .2s}
 .top10-row:hover{background:#eff6ff;border-color:#93c5fd;transform:translateX(3px)}
@@ -84,7 +87,6 @@ input,select{width:100%;min-height:48px;padding:10px 14px;border:1px solid #cbd5
 .empty{text-align:center;color:var(--mu);padding:40px 10px;font-weight:600}
 .hide{display:none}
 
-/* IMPRESSÃO MODULAR: CADA INDICADOR EM SUA PRÓPRIA PÁGINA COM O TOP 10 COMPLETO */
 @media print{
   * {-webkit-print-color-adjust:exact !important; print-color-adjust:exact !important;}
   header,details.f,.top-btns,.rf{display:none!important}
@@ -95,7 +97,7 @@ input,select{width:100%;min-height:48px;padding:10px 14px;border:1px solid #cbd5
   section{display:block!important;page-break-before:always !important;page-break-after:always !important}
   section:first-of-type{page-break-before:avoid !important}
 
-  .kpis{display:grid!important;grid-template-columns:repeat(4,1fr)!important;gap:10px!important;margin-bottom:16px!important}
+  .kpis{display:grid!important;grid-template-columns:repeat(3,1fr)!important;gap:10px!important;margin-bottom:16px!important}
   .dashboard-grid{display:grid!important;grid-template-columns:1fr 1fr!important;gap:16px!important;margin-bottom:16px!important}
   .chart-box{border:2px solid var(--line)!important;break-inside:avoid;max-height:none!important}
   .top10-list{max-height:none!important;overflow:visible!important}
@@ -107,7 +109,10 @@ input,select{width:100%;min-height:48px;padding:10px 14px;border:1px solid #cbd5
 <body>
 <header>
  <div class="top">
-  <div><h1>🛠️ Painel Corporativo — Ferramentaria & Calibração</h1><div id="upd">Carregando…</div></div>
+  <div class="title-area">
+   <a href="index.html" class="home-btn" title="Voltar ao Índice / Início">🏠</a>
+   <div><h1>🛠️ Painel Corporativo — Ferramentaria & Calibração</h1><div id="upd">Carregando…</div></div>
+  </div>
   <div class="top-btns">
    <button class="print-btn" onclick="window.print()" title="Imprimir / Salvar PDF">🖨️</button>
    <button class="rf" id="rf" onclick="atualizar(true)" aria-label="Atualizar">↻</button>
@@ -190,7 +195,7 @@ const URLS=[
  "https://docs.google.com/spreadsheets/d/e/2PACX-1vTo35odWXfxeP9OhQZRJ36txn6dxH6Y_lOi0l7N0OZV0uOAY51YSVrNFLNHBzawBg/pub?output=csv",
  "https://docs.google.com/spreadsheets/d/e/2PACX-1vR4zF860IfKYViF0uSuN_Hd3LT-1uX_5IQPgZLl5FGu7pMF8CI96hrIlVfQmtOlWw/pub?output=csv"
 ];
-const KC="ferramentaria_cache_v14";
+const KC="ferramentaria_cache_v16";
 const MES_NOME=['janeiro','fevereiro','março','abril','maio','junho','julho','agosto','setembro','outubro','novembro','dezembro'];
 const CORES_GRAFICO=['#2563eb','#059669','#d97706','#dc2626','#7c3aed','#db2777','#0284c7','#65a30d'];
 const $=id=>document.getElementById(id);
@@ -310,7 +315,7 @@ function limpar(p){
 function tg(k){const x=decodeURIComponent(k);aberto.has(x)?aberto.delete(x):aberto.add(x);x[0]==='e'?re():x[0]==='d'?rd():ri()}
 const kk=k=>encodeURIComponent(k);
 
-/* ---------- Inventário (Gráfico de Tipos de Ferramentas / Top Itens) ---------- */
+/* ---------- Inventário ---------- */
 function re(){
  const q=$('e-q').value.toLowerCase().trim(),tp=$('e-tp').value;
  $('fe-n').textContent=[q,tp].filter(Boolean).length?'filtros ativos':'';
@@ -324,7 +329,6 @@ function re(){
  const L=Object.values(G).sort((a,b)=>b.n-a.n||a.nome.localeCompare(b.nome));
  const mx=L[0]?.n||1;
 
- // Gráfico focado nas ferramentas mais volumosas do inventário (Top 8 tipos)
  const topTipos=[...L].slice(0,8);
  const maxTipoVal=topTipos[0]?.n||1;
  
@@ -342,11 +346,13 @@ function re(){
   </div>
  `).join(''):'<div class="empty" style="font-size:12px;padding:10px">Nenhum registro</div>';
 
+ const maiorItemNome=top10Est[0]?.nome || '—';
+ const maiorItemQtd=top10Est[0]?.n || 0;
+
  $('k-est').innerHTML=`
   <div class="kpi"><b>${EST.length}</b><span>Total de Itens</span></div>
   <div class="kpi"><b>${L.length}</b><span>Tipos Únicos</span></div>
-  <div class="kpi"><b>${top10Est[0]?.n || 0}</b><span>Maior Volume (${esc(top10Est[0]?.nome || '—' )})</span></div>
-  <div class="kpi"><b>${f.length}</b><span>Itens Filtrados</span></div>
+  <div class="kpi"><b>${maiorItemQtd} un.</b><span>Maior Volume (${esc(maiorItemNome)})</span></div>
  `;
 
  $('l-est').innerHTML=L.length?L.map((g,idx)=>{
