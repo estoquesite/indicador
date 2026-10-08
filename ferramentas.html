@@ -35,8 +35,9 @@ main{max-width:100%;margin:0 auto;padding:14px 20px;display:grid;gap:16px}
 .kpis{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
 @media(max-width:900px){.kpis{grid-template-columns:1fr}}
 
-.kpi{background:#fff;border:1px solid var(--line);border-radius:12px;padding:12px 16px;text-align:left;font-family:inherit;color:inherit;cursor:pointer;box-shadow:0 2px 4px rgba(0,0,0,0.03);display:flex;flex-direction:column;justify-content:center}
-.kpi b{display:block;font-size:24px;font-weight:900;line-height:1.1;color:#1e293b}
+.kpi{background:#fff;border:1px solid var(--line);border-radius:12px;padding:10px 14px;text-align:left;font-family:inherit;color:inherit;cursor:pointer;box-shadow:0 1px 3px rgba(0,0,0,0.03);display:flex;align-items:center;justify-content:space-between}
+.kpi div{display:flex;flex-direction:column}
+.kpi b{font-size:22px;font-weight:900;line-height:1.1;color:#1e293b}
 .kpi span{font-size:11px;font-weight:800;color:#64748b;text-transform:uppercase;letter-spacing:.5px;margin-top:2px}
 .kpi.on{outline:2px solid var(--pri)}
 
@@ -195,7 +196,7 @@ const URLS=[
  "https://docs.google.com/spreadsheets/d/e/2PACX-1vTo35odWXfxeP9OhQZRJ36txn6dxH6Y_lOi0l7N0OZV0uOAY51YSVrNFLNHBzawBg/pub?output=csv",
  "https://docs.google.com/spreadsheets/d/e/2PACX-1vR4zF860IfKYViF0uSuN_Hd3LT-1uX_5IQPgZLl5FGu7pMF8CI96hrIlVfQmtOlWw/pub?output=csv"
 ];
-const KC="ferramentaria_cache_v18";
+const KC="ferramentaria_cache_v20";
 const MES_NOME=['janeiro','fevereiro','março','abril','maio','junho','julho','agosto','setembro','outubro','novembro','dezembro'];
 const CORES_GRAFICO=['#2563eb','#059669','#d97706','#dc2626','#7c3aed','#db2777','#0284c7','#65a30d'];
 const $=id=>document.getElementById(id);
@@ -350,9 +351,9 @@ function re(){
  const maiorItemQtd=top10Est[0]?.n || 0;
 
  $('k-est').innerHTML=`
-  <div class="kpi"><b>${EST.length}</b><span>Total de Itens</span></div>
-  <div class="kpi"><b>${L.length}</b><span>Tipos Únicos</span></div>
-  <div class="kpi"><b>${maiorItemQtd} un.</b><span>Maior Volume (${esc(maiorItemNome)})</span></div>
+  <div class="kpi"><div><b>${EST.length}</b><span>Total de Itens</span></div></div>
+  <div class="kpi"><div><b>${L.length}</b><span>Tipos Únicos</span></div></div>
+  <div class="kpi"><div><b>${maiorItemQtd} un.</b><span>Maior Volume (${esc(maiorItemNome)})</span></div></div>
  `;
 
  $('l-est').innerHTML=L.length?L.map((g,idx)=>{
@@ -405,12 +406,11 @@ function rd(){
  `).join(''):'<div class="empty" style="font-size:12px;padding:5px">Nenhum registro</div>';
 
  const maiorAtrasoGeral=f.length?Math.max(...f.map(x=>x.atraso)):0;
- const atrasosMais30=f.filter(x=>x.atraso>30).length;
 
  $('k-dev').innerHTML=`
-  <div class="kpi"><b>${f.length}</b><span>Itens Pendentes</span></div>
-  <div class="kpi"><b>${L.length}</b><span>Usuários com Débito</span></div>
-  <div class="kpi" style="border-color:${maiorAtrasoGeral>365?'#dc2626':'inherit'}"><b style="color:${maiorAtrasoGeral>365?'#dc2626':'inherit'}">${maiorAtrasoGeral} dias</b><span>Maior Atraso (&gt; 1 Ano)</span></div>
+  <div class="kpi"><div><b>${f.length}</b><span>Itens Pendentes</span></div></div>
+  <div class="kpi"><div><b>${L.length}</b><span>Usuários com Débito</span></div></div>
+  <div class="kpi" style="border-color:${maiorAtrasoGeral>365?'#dc2626':'inherit'}"><div><b style="color:${maiorAtrasoGeral>365?'#dc2626':'inherit'}">${maiorAtrasoGeral} dias</b><span>Maior Atraso (&gt; 1 Ano)</span></div></div>
 `;
  
  $('l-dev').innerHTML=L.length?L.map(u=>{
@@ -420,7 +420,7 @@ function rd(){
   return`<div class="c ${isCriticoAnual?'urgente':isUrgente?'urgente':''}" id="${fId(u.sol)}" style="${o?'grid-column:1/-1':''}"><button class="ch" onclick="tg('${kk(k)}')"><div class="row"><div class="nm">${esc(u.sol)} ${isCriticoAnual?'<span class="ch2 r">⚠️ &gt; 1 Ano de Atraso</span>':isUrgente?'<span class="ch2 r">Maior Atraso</span>':''}</div><span class="tot">${u.n} it.</span></div>
    <div class="bar"><i style="width:${u.n/mx*100}%"></i></div>
    <div class="chips">${u.max>0?`<span class="ch2 r">Maior atraso: ${u.max} dias (${(u.max/365).toFixed(1)} anos)</span>`:'<span class="ch2 g">No prazo</span>'}${Object.entries(u.meses).sort((a,b)=>MES_NOME.indexOf(a[0])-MES_NOME.indexOf(b[0])).map(([m,n])=>`<span class="ch2">${m.slice(0,3)} (${n})</span>`).join('')}<span class="ch2">${o?'▲ ocultar':'▼ ver itens'}</span></div></button>
-   ${o?`<div class="det"><div class="sub" style="font-weight:700;margin-bottom:4px;color:var(--tx)">Pendências deste usuário:</div>${Object.values(u.it).sort((a,b)=>b.atraso-a.atraso).map(i=>`<div class="it"><b>${i.q>1?i.q+'× ':''}${esc(i.ap||i.desc)}</b><div class="sub">Protocolo: ${esc(i.prot)} · Retirado: ${esc(i.emp.split(' ')[0场])} · Previsto: ${fmt(i.d)}</div><span class="ch2 ${i.atraso>0?'r':'g'}">${i.atraso>0?i.atraso+' dias de atraso ('+(i.atraso/365).toFixed(1)+' anos)':'No prazo'}</span></div>`).join('')}</div>`:''}</div>`;
+   ${o?`<div class="det"><div class="sub" style="font-weight:700;margin-bottom:4px;color:var(--tx)">Pendências deste usuário:</div>${Object.values(u.it).sort((a,b)=>b.atraso-a.atraso).map(i=>`<div class="it"><b>${i.q>1?i.q+'× ':''}${esc(i.ap||i.desc)}</b><div class="sub">Protocolo: ${esc(i.prot)} · Retirado: ${esc(i.emp.split(' ')[0])} · Previsto: ${fmt(i.d)}</div><span class="ch2 ${i.atraso>0?'r':'g'}">${i.atraso>0?i.atraso+' dias de atraso ('+(i.atraso/365).toFixed(1)+' anos)':'No prazo'}</span></div>`).join('')}</div>`:''}</div>`;
  }).join(''):'<div class="empty">Nenhum débito encontrado.</div>';
 }
 
@@ -473,9 +473,9 @@ function ri(){
  const totalVencem30 = c('a30');
 
  $('k-inv').innerHTML=`
-  <div class="kpi"><b>${totalCalibracao}</b><span>Total Equipamentos</span></div>
-  <div class="kpi" style="border-color:${totalVencidos>0?'#dc2626':'inherit'}"><b style="color:${totalVencidos>0?'#dc2626':'inherit'}">${totalVencidos}</b><span>Vencidos</span></div>
-  <div class="kpi"><b>${totalVencem30}</b><span>Vencem em 30d</span></div>
+  <div class="kpi"><div><b>${totalCalibracao}</b><span>Total Equipamentos</span></div></div>
+  <div class="kpi" style="border-color:${totalVencidos>0?'#dc2626':'inherit'}"><div><b style="color:${totalVencidos>0?'#dc2626':'inherit'}">${totalVencidos}</b><span>Vencidos</span></div></div>
+  <div class="kpi"><div><b>${totalVencem30}</b><span>Vencem em 30d</span></div></div>
 `;
 
  const f=LAll.filter(x=>stF==='todos'||x.v>0&&stF==='v'||x.a30>0&&stF==='a30'||x.a90>0&&stF==='a90');
