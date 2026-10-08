@@ -179,6 +179,51 @@ input:focus,select:focus{outline:2px solid #93b4f5;border-color:#2563eb}
   .det,.det-closed{display:grid!important;padding:5px 8px;font-size:9px;gap:3px}
   .it{padding:3px 6px;margin-bottom:2px;box-shadow:none}
 }
+
+/* ===== CORES MAIS VIVAS ===== */
+#s-est{--ac:#2563eb}#s-dev{--ac:#ea580c}#s-inv{--ac:#059669}
+body{background:linear-gradient(180deg,#e6ecfb 0,#f4f6fb 280px)}
+header{background:linear-gradient(135deg,#0b1220 0%,#1e3a8a 55%,#2563eb 100%);border-bottom:4px solid #f59e0b}
+.seg button{color:#475569}
+#b-est.on{background:linear-gradient(135deg,#3b82f6,#1d4ed8);color:#fff;box-shadow:0 4px 14px rgba(37,99,235,.45)}
+#b-dev.on{background:linear-gradient(135deg,#fb923c,#ea580c);color:#fff;box-shadow:0 4px 14px rgba(234,88,12,.45)}
+#b-inv.on{background:linear-gradient(135deg,#34d399,#059669);color:#fff;box-shadow:0 4px 14px rgba(5,150,105,.45)}
+.kpi{background:linear-gradient(135deg,#fff 40%,color-mix(in srgb,var(--kc,#2563eb) 16%,#fff));border-color:color-mix(in srgb,var(--kc,#2563eb) 30%,#fff)}
+.kpi::before{width:8px}
+.kpi b{color:var(--kc,#1e293b)}
+.kpi span{color:#475569}
+.chart-box{border-top:5px solid var(--ac,#2563eb);background:linear-gradient(180deg,color-mix(in srgb,var(--ac,#2563eb) 9%,#fff) 0,#fff 100px)}
+.chart-title{color:var(--ac,#1e293b)}
+.chart-title .sub{color:#64748b}
+.top10-row{border-left:4px solid var(--ac,#2563eb)}
+.toolbar button{background:var(--ac,#1e3a8a);color:#fff;border:0}
+.toolbar button:hover{filter:brightness(1.12);background:var(--ac,#1e3a8a)}
+.toolbar .stchip button{background:#fff;color:#991b1b;border:1px solid var(--bd)}
+.btn{background:var(--ac,#1e3a8a)}
+.btn:hover{background:var(--ac,#1e3a8a);filter:brightness(1.12)}
+.c{border-left-color:var(--ac,#cbd5e1)}
+.tot{background:color-mix(in srgb,var(--ac,#2563eb) 14%,#fff);color:var(--ac,#1e3a8a)}
+.bar i{background:linear-gradient(90deg,color-mix(in srgb,var(--ac,#2563eb) 55%,#fff),var(--ac,#2563eb))}
+details.f summary{color:var(--ac,#334155)}
+
+/* ===== IMPRESSÃO: só indicadores + gráficos, 1 aba por folha ===== */
+@media print{
+ .cards,.toolbar{display:none!important}
+ .print-head{font-size:18px;margin-bottom:12px}
+ .kpis{gap:10px!important;margin-bottom:12px!important}
+ .kpi{padding:10px 14px}.kpi b{font-size:26px}.kpi span{font-size:10px}
+ .dashboard-grid{gap:12px!important}
+ .chart-box{padding:12px}
+ .chart-title{font-size:12px}
+ .chart-bars{height:230px}
+ .c-bar-val{font-size:13px}.c-bar-val small{font-size:10px}.c-bar-lbl{font-size:10px;height:30px}
+ .hb{padding:7px 0;font-size:12px}.hb-t{height:14px}
+ .donut{width:150px;height:150px}.donut-in{width:92px;height:92px}.donut-in b{font-size:24px}
+ .lg{font-size:12px;padding:4px 6px}
+ .top10-row{padding:7px 12px;font-size:11px}
+ .top10-list{gap:4px}
+ .chart-foot{font-size:10.5px}
+}
 </style>
 </head>
 <body>
@@ -444,11 +489,10 @@ function re(){
   `<div class="top10-list">${top10.length?top10.map((g,i)=>`<div class="top10-row" data-v="${esc(g.nome)}" onclick="selE(this.dataset.v)"><span><b>#${i+1}</b> ${esc(g.nome)}</span><span class="ch2 g">${g.n} un. · ${pct(g.n,tot)}%</span></div>`).join(''):'<div class="empty" style="font-size:12px;padding:10px">Nenhum registro</div>'}</div>`,
   top10.length?`Top 10 de <b>${L.length}</b> tipos = <b>${pct(s10,tot)}%</b> de todo o estoque.`:'');
 
- const cTop=cats.slice(0,7),outras=soma(cats.slice(7).map(c=>c[1]));
- const citems=cTop.map((c,i)=>({l:c[0],v:c[1],c:CORES_GRAFICO[i%8],a:'selEc',d:c[0]}));
- if(outras)citems.push({l:'Outras categorias',v:outras,c:'#94a3b8'});
- const g3=box('🗂️ Distribuição por categoria','Unidades e % do total',hb(citems),
-  cats.length?`<b>${cats.length}</b> categoria(s). Maior: <b>${esc(cats[0][0])}</b> (${pct(cats[0][1],tot)}%).`:'');
+ const FQ=[['1 unidade',n=>n===1,'#dc2626'],['2 a 5 unidades',n=>n>=2&&n<=5,'#f97316'],['6 a 10 unidades',n=>n>=6&&n<=10,'#eab308'],['11 a 20 unidades',n=>n>=11&&n<=20,'#2563eb'],['Mais de 20 unidades',n=>n>20,'#059669']];
+ const fq=FQ.map(([l,fn,c])=>({l,c,v:L.filter(g=>fn(g.n)).length}));
+ const g3=box('📦 Tipos por faixa de estoque','Quantos tipos existem em cada faixa de unidades',hb(fq),
+  L.length?`Considera todos os <b>${L.length}</b> tipos. Em vermelho: tipos com só <b>${unicos}</b> unidade — atenção à reposição.`:'');
 
  $('dg-est').innerHTML=g1+g2+g3;
  $('n-e').textContent=`${L.length} tipo(s) · ${tot} unidade(s)`;
