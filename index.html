@@ -27,28 +27,39 @@ footer{text-align:center;color:#94a3b8;font-size:12px;font-weight:600;padding:10
 </head>
 <body>
 <header>
- <h1>🏭 Painel Corporativo</h1>
- <p>Escolha o painel que deseja acessar</p>
+  <h1>🏭 Painel Corporativo</h1>
+  <p>Escolha o painel que deseja acessar</p>
 </header>
 
 <main id="menu"></main>
 <footer>Selecione uma das opções acima</footer>
 
 <script>
-/* Para mudar nome, texto, ícone, cor ou link, edite apenas esta lista */
+/* Caminhos ajustados para apontar para ferramentas.html e epis.html no GitHub */
 const PAINEIS=[
- {nome:'Ferramentas',icone:'🛠️',cor:'#2563eb',link:'painel-ferramentaria.html',
-  info:'Inventário geral, devoluções e atrasos, e calibração de equipamentos.'},
- {nome:'EPIs',icone:'🪖',cor:'#ea580c',link:'painel-epis.html',
-  info:'Estoque de equipamentos de proteção individual, devoluções e validades.'}
+  {
+    nome: 'Ferramentas',
+    icone: '🛠️',
+    cor: '#2563eb',
+    link: 'ferramentas.html',
+    info: 'Inventário geral, devoluções e atrasos, e calibração de equipamentos.'
+  },
+  {
+    nome: 'EPIs',
+    icone: '🪖',
+    cor: '#ea580c',
+    link: 'epis.html',
+    info: 'Estoque de equipamentos de proteção individual, devoluções e validades.'
+  }
 ];
-document.getElementById('menu').innerHTML=PAINEIS.map(p=>`
- <a class="card" href="${p.link}" style="--ac:${p.cor}">
-  <div class="icon">${p.icone}</div>
-  <h2>${p.nome}</h2>
-  <p>${p.info}</p>
-  <span class="go">Abrir painel →</span>
- </a>`).join('');
+
+document.getElementById('menu').innerHTML = PAINEIS.map(p => `
+  <a class="card" href="${p.link}" style="--ac:${p.cor}">
+   <div class="icon">${p.icone}</div>
+   <h2>${p.nome}</h2>
+   <p>${p.info}</p>
+   <span class="go">Abrir painel →</span>
+  </a>`).join('');
 </script>
 </body>
 </html>
