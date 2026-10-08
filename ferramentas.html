@@ -39,15 +39,15 @@ main{max-width:1200px;margin:0 auto;padding:12px;display:grid;gap:12px}
 
 .chart-box{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px;display:flex;flex-direction:column;justify-content:space-between}
 .chart-title{font-size:12px;font-weight:700;color:var(--mu);text-transform:uppercase;margin-bottom:10px;letter-spacing:.3px;display:flex;justify-content:space-between;align-items:center}
-.chart-bars{display:flex;align-items:flex-end;gap:6px;height:120px;padding-top:16px;overflow-x:auto;padding-bottom:4px}
+.chart-bars{display:flex;align-items:flex-end;gap:6px;height:130px;padding-top:16px;overflow-x:auto;padding-bottom:4px}
 .c-bar-group{flex:1;display:flex;flex-direction:column;align-items:center;min-width:32px;height:100%;justify-content:flex-end;cursor:pointer}
 .c-bar{width:100%;max-width:32px;border-radius:6px 6px 0 0;transition:height .4s ease;position:relative}
 .c-bar-val{font-size:10px;font-weight:700;margin-bottom:4px;color:var(--tx)}
 .c-bar-lbl{font-size:9px;color:var(--mu);margin-top:6px;text-align:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;width:100%}
 
-/* Listas Top 10 */
-.top10-list{display:grid;gap:6px;max-height:180px;overflow-y:auto;padding-right:4px}
-.top10-row{display:flex;justify-content:space-between;align-items:center;padding:8px 12px;background:#f8fafc;border:1px solid var(--line);border-radius:10px;font-size:12px;cursor:pointer;transition:all .2s}
+/* Listas Top 10 (Ajustadas para exibir completo na tela e na impressão) */
+.top10-list{display:grid;gap:5px;max-height:260px;overflow-y:auto;padding-right:4px}
+.top10-row{display:flex;justify-content:space-between;align-items:center;padding:7px 10px;background:#f8fafc;border:1px solid var(--line);border-radius:8px;font-size:11px;cursor:pointer;transition:all .2s}
 .top10-row:hover{background:#eff6ff;border-color:#93c5fd}
 .top10-row b{font-weight:700;color:var(--tx)}
 
@@ -68,7 +68,6 @@ input,select{width:100%;min-height:44px;padding:8px 10px;border:1px solid #cbd5e
 .highlight-target{animation:flash-card 1.5s ease}
 @keyframes flash-card{0%{background-color:#dbeafe;transform:scale(1.01)}100%{background-color:var(--card);transform:scale(1)}}
 
-.ch{width:100%/*;text-align:left;background:none;border:0;padding:12px 14px;font-family:inherit;color:inherit;display:block;cursor:pointer*/}
 .ch{width:100%;text-align:left;background:none;border:0;padding:12px 14px;font-family:inherit;color:inherit;display:block;cursor:pointer}
 .row{display:flex;justify-content:space-between;align-items:flex-start;gap:10px}
 .nm{font-weight:700;word-break:break-word}
@@ -83,18 +82,19 @@ input,select{width:100%;min-height:44px;padding:8px 10px;border:1px solid #cbd5e
 .empty{text-align:center;color:var(--mu);padding:28px 10px}
 .hide{display:none}
 
-/* Regras de Impressão (PDF / Papel) com Cores e Páginas Claras */
+/* Regras Otimizadas de Impressão para o Top 10 sair inteiro e com cores */
 @media print{
   * {-webkit-print-color-adjust:exact !important; print-color-adjust:exact !important;}
   header,details.f,.top-btns,.rf{display:none!important}
-  body{background:#fff;color:#000}
+  body{background:#fff;color:#000;font-size:11px}
   main{padding:0!important;display:block!important}
   section{display:block!important;page-break-after:always}
-  .kpis{display:grid!important;grid-template-columns:repeat(4,1fr)!important;gap:8px!important;margin-bottom:12px!important}
-  .dashboard-grid{display:grid!important;grid-template-columns:1fr 1fr!important;gap:12px!important;margin-bottom:15px!important}
-  .chart-box{border:1px solid #cbd5e1!important;break-inside:avoid}
+  .kpis{display:grid!important;grid-template-columns:repeat(4,1fr)!important;gap:6px!important;margin-bottom:10px!important}
+  .dashboard-grid{display:grid!important;grid-template-columns:1fr 1fr!important;gap:10px!important;margin-bottom:12px!important}
+  .chart-box{border:1px solid #cbd5e1!important;break-inside:avoid;max-height:none!important}
+  .top10-list{max-height:none!important;overflow:visible!important}
   .cards{display:block!important}
-  .c{break-inside:avoid;border:1px solid #cbd5e1!important;margin-bottom:8px!important}
+  .c{break-inside:avoid;border:1px solid #cbd5e1!important;margin-bottom:6px!important}
 }
 </style>
 </head>
@@ -184,8 +184,9 @@ const URLS=[
  "https://docs.google.com/spreadsheets/d/e/2PACX-1vTo35odWXfxeP9OhQZRJ36txn6dxH6Y_lOi0l7N0OZV0uOAY51YSVrNFLNHBzawBg/pub?output=csv",
  "https://docs.google.com/spreadsheets/d/e/2PACX-1vR4zF860IfKYViF0uSuN_Hd3LT-1uX_5IQPgZLl5FGu7pMF8CI96hrIlVfQmtOlWw/pub?output=csv"
 ];
-const KC="ferramentaria_cache_v9";
+const KC="ferramentaria_cache_v10";
 const MES_NOME=['janeiro','fevereiro','março','abril','maio','junho','julho','agosto','setembro','outubro','novembro','dezembro'];
+const CORES_GRAFICO=['#2563eb','#059669','#d97706','#dc2626','#7c3aed','#db2777','#0284c7','#65a30d'];
 const $=id=>document.getElementById(id);
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 let EST=[],DEV=[],INV=[],HOJE=new Date(),aberto=new Set(),stF='todos',ultimo=0;
@@ -322,10 +323,11 @@ function re(){
  const catsOrdenadas=Object.keys(catCont).sort((a,b)=>catCont[b]-catCont[a]).slice(0,6);
  const maxCatVal=Math.max(...Object.values(catCont),1);
  
- $('chart-est').innerHTML=catsOrdenadas.length?catsOrdenadas.map(cat=>{
+ $('chart-est').innerHTML=catsOrdenadas.length?catsOrdenadas.map((cat,idx)=>{
   const val=catCont[cat];
   const h=Math.max(Math.round((val/maxCatVal)*85),val>0?8:4);
-  return `<div class="c-bar-group" onclick="$('e-tp').value='${cat}';re()"><div class="c-bar-val">${val}</div><div class="c-bar" style="height:${h}px;background:#2563eb"></div><div class="c-bar-lbl" title="${cat}">${cat}</div></div>`;
+  const cor=CORES_GRAFICO[idx % CORES_GRAFICO.length];
+  return `<div class="c-bar-group" onclick="$('e-tp').value='${cat}';re()"><div class="c-bar-val">${val}</div><div class="c-bar" style="height:${h}px;background:${cor}"></div><div class="c-bar-lbl" title="${cat}">${cat}</div></div>`;
  }).join(''):'<div class="empty" style="font-size:11px;padding:10px">Sem dados</div>';
 
  const top10Est=[...L].slice(0,10);
@@ -375,12 +377,13 @@ function rd(){
  const chavesOrdenadas=Object.keys(mesesCont).sort();
  const maxMesVal=Math.max(...Object.values(mesesCont),1);
  
- $('chart-dev').innerHTML=chavesOrdenadas.length?chavesOrdenadas.map(cm=>{
+ $('chart-dev').innerHTML=chavesOrdenadas.length?chavesOrdenadas.map((cm,idx)=>{
   const [anoStr,mesNum]=cm.split('-');
   const nomeMes=MES_NOME[parseInt(mesNum)-1];
   const val=mesesCont[cm];
   const h=Math.max(Math.round((val/maxMesVal)*85),val>0?8:4);
-  return `<div class="c-bar-group" onclick="$('d-ano').value='${anoStr}';$('d-mes').value='${nomeMes}';rd()"><div class="c-bar-val">${val}</div><div class="c-bar" style="height:${h}px;background:#2563eb"></div><div class="c-bar-lbl" title="${nomeMes} ${anoStr}">${nomeMes.slice(0,3)}/${anoStr.slice(2)}</div></div>`;
+  const cor=CORES_GRAFICO[idx % CORES_GRAFICO.length];
+  return `<div class="c-bar-group" onclick="$('d-ano').value='${anoStr}';$('d-mes').value='${nomeMes}';rd()"><div class="c-bar-val">${val}</div><div class="c-bar" style="height:${h}px;background:${cor}"></div><div class="c-bar-lbl" title="${nomeMes} ${anoStr}">${nomeMes.slice(0,3)}/${anoStr.slice(2)}</div></div>`;
  }).join(''):'<div class="empty" style="font-size:11px;padding:10px">Sem dados</div>';
 
  const top10Dev=[...L].sort((a,b)=>b.max-a.max||b.n-a.n).slice(0,10);
