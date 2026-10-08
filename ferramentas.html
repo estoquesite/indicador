@@ -9,11 +9,10 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
 <style>
-:root{--bg:#0f172a;--card:#1e293b;--card-light:#ffffff;--line:#334155;--line-light:#e2e8f0;--tx:#f8fafc;--tx-dark:#0f172a;--mu:#94a3b8;--pri:#3b82f6;--red:#ef4444;--amb:#f59e0b;--grn:#10b981}
+:root{--bg:#0f172a;--card:#fff;--line:#cbd5e1;--tx:#0f172a;--mu:#475569;--pri:#2563eb;--red:#dc2626;--amb:#d97706;--grn:#059669}
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
-body{font-family:Inter,system-ui,-apple-system,sans-serif;background:#f1f5f9;color:var(--tx-dark);font-size:15px;line-height:1.5;padding-bottom:40px}
+body{font-family:Inter,system-ui,-apple-system,sans-serif;background:#f1f5f9;color:var(--tx);font-size:15px;line-height:1.5;padding-bottom:40px}
 
-/* HEADER ESTILO PAINEL CORPORATIVO */
 header{position:sticky;top:0;z-index:30;background:#0f172a;color:#fff;padding:16px 24px;border-bottom:3px solid var(--pri);box-shadow:0 4px 6px -1px rgba(0,0,0,0.1)}
 .top{display:flex;justify-content:space-between;align-items:center;gap:16px;max-width:100%;margin:0 auto}
 h1{font-size:20px;font-weight:900;letter-spacing:-0.5px}
@@ -23,54 +22,47 @@ h1{font-size:20px;font-weight:900;letter-spacing:-0.5px}
 .rf:hover,.print-btn:hover{background:rgba(255,255,255,.2)}
 .rf.spin{animation:sp 1s linear infinite}@keyframes sp{to{transform:rotate(360deg)}}
 
-/* ABAS DE NAVEGAÇÃO */
 .seg{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;max-width:100%;margin:16px 24px 0}
 .seg button{background:#e2e8f0;color:#475569;border:0;border-radius:12px;min-height:48px;font-weight:800;font-size:15px;font-family:inherit;cursor:pointer;transition:all .2s;box-shadow:0 1px 2px rgba(0,0,0,0.05)}
 .seg button.on{background:#1e3a8a;color:#fff;box-shadow:0 4px 12px rgba(30,58,138,0.3)}
 
-/* CONTEÚDO AMPLO (PAINEL DE TELA CHEIA) */
 main{max-width:100%;margin:0 auto;padding:16px 24px;display:grid;gap:20px}
 
-/* KPIS DESTAQUE PARA PAINEL */
 .kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
 @media(max-width:1100px){.kpis{grid-template-columns:repeat(2,1fr)}}
 
-.kpi{background:#fff;border:1px solid var(--line-light);border-radius:16px;padding:18px;text-align:left;font-family:inherit;color:inherit;cursor:pointer;box-shadow:0 4px 6px -1px rgba(0,0,0,0.05);transition:transform .2s}
-.kpi:hover{transform:translateY(-2px)}
+.kpi{background:#fff;border:1px solid var(--line);border-radius:16px;padding:18px;text-align:left;font-family:inherit;color:inherit;cursor:pointer;box-shadow:0 4px 6px -1px rgba(0,0,0,0.05);transition:transform .2s}
 .kpi b{display:block;font-size:32px;font-weight:900;line-height:1.1;color:#1e293b}
 .kpi span{font-size:12px;font-weight:800;color:#64748b;text-transform:uppercase;letter-spacing:.5px}
 .kpi.on{outline:3px solid var(--pri)}
 
-/* GRID LADO A LADO AMPLIADO (Gráfico + Top 10 Inteiro) */
 .dashboard-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px}
 @media(max-width:1200px){.dashboard-grid{grid-template-columns:1fr}}
 
-.chart-box{background:#fff;border:1px solid var(--line-light);border-radius:16px;padding:20px;display:flex;flex-direction:column;justify-content:space-between;box-shadow:0 4px 6px -1px rgba(0,0,0,0.05)}
+.chart-box{background:#fff;border:1px solid var(--line);border-radius:16px;padding:20px;display:flex;flex-direction:column;justify-content:space-between;box-shadow:0 4px 6px -1px rgba(0,0,0,0.05)}
 .chart-title{font-size:14px;font-weight:800;color:#334155;text-transform:uppercase;margin-bottom:14px;letter-spacing:.5px;display:flex;justify-content:space-between;align-items:center}
 .chart-bars{display:flex;align-items:flex-end;gap:10px;height:180px;padding-top:20px;overflow-x:auto;padding-bottom:6px}
 .c-bar-group{flex:1;display:flex;flex-direction:column;align-items:center;min-width:40px;height:100%;justify-content:flex-end;cursor:pointer}
 .c-bar{width:100%;max-width:42px;border-radius:8px 8px 0 0;transition:height .4s ease;position:relative}
-.c-bar:hover{filter:brightness(1.15)}
 .c-bar-val{font-size:12px;font-weight:800;margin-bottom:6px;color:#1e293b}
 .c-bar-lbl{font-size:11px;font-weight:700;color:#64748b;margin-top:8px;text-align:center;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;width:100%}
 
-/* TOP 10 COMPLETO SEM CORTES */
+/* Top 10 Completo e Inteiro */
 .top10-list{display:grid;gap:6px;max-height:340px;overflow-y:auto;padding-right:4px}
 .top10-row{display:flex;justify-content:space-between;align-items:center;padding:10px 14px;background:#f8fafc;border:1px solid #e2e8f0;border-radius:10px;font-size:13px;font-weight:600;cursor:pointer;transition:all .2s}
 .top10-row:hover{background:#eff6ff;border-color:#93c5fd;transform:translateX(3px)}
 .top10-row b{font-weight:800;color:#0f172a}
 
-details.f{background:#fff;border:1px solid var(--line-light);border-radius:16px;box-shadow:0 4px 6px -1px rgba(0,0,0,0.05)}
+details.f{background:#fff;border:1px solid var(--line);border-radius:16px;box-shadow:0 4px 6px -1px rgba(0,0,0,0.05)}
 details.f summary{padding:16px 20px;font-weight:800;cursor:pointer;list-style:none;display:flex;justify-content:space-between;color:#334155}
 details.f summary::-webkit-details-marker{display:none}
 .fg{display:grid;gap:12px;padding:0 20px 20px;grid-template-columns:1fr 1fr}
 .fg .w{grid-column:1/-1}
-input,select{width:100%;min-height:48px;padding:10px 14px;border:1px solid #cbd5e1;border-radius:10px;font-size:15px;font-family:inherit;background:#f8fafc;color:var(--tx-dark);font-weight:500}
-.btn{min-height:48px;border:1px solid #cbd5e1;background:#e2e8f0;border-radius:10px;font-weight:800;font-family:inherit;color:#334155;grid-column:1/-1;cursor:pointer;transition:background .2s}
-.btn:hover{background:#cbd5e1}
+input,select{width:100%;min-height:48px;padding:10px 14px;border:1px solid #cbd5e1;border-radius:10px;font-size:15px;font-family:inherit;background:#f8fafc;color:var(--tx);font-weight:500}
+.btn{min-height:48px;border:1px solid #cbd5e1;background:#e2e8f0;border-radius:10px;font-weight:800;font-family:inherit;color:#334155;grid-column:1/-1;cursor:pointer}
 
 .cards{display:grid;gap:14px}
-.c{background:#fff;border:1px solid var(--line-light);border-radius:16px;overflow:hidden;border-left:6px solid transparent;box-shadow:0 4px 6px -1px rgba(0,0,0,0.05);transition:all .3s}
+.c{background:#fff;border:1px solid var(--line);border-radius:16px;overflow:hidden;border-left:6px solid transparent;box-shadow:0 4px 6px -1px rgba(0,0,0,0.05);transition:all .3s}
 .c.urgente{border-left-color:var(--red);background:#fff5f5;box-shadow:0 0 0 1px rgba(239,68,68,0.2)}
 .c.antigo{border-left-color:var(--amb);animation:pulse-border 2s infinite}
 @keyframes pulse-border{0%{box-shadow:0 0 0 0 rgba(245,158,11,.4)}70%{box-shadow:0 0 0 8px rgba(245,158,11,0)}100%{box-shadow:0 0 0 0 rgba(245,158,11,0)}}
@@ -87,25 +79,29 @@ input,select{width:100%;min-height:48px;padding:10px 14px;border:1px solid #cbd5
 .ch2{font-size:12px;font-weight:700;padding:3px 10px;border-radius:99px;background:#f1f5f9;color:#475569}
 .r{background:#fee2e2;color:#991b1b}.a{background:#fef3c7;color:#92400e}.y{background:#fef9c3;color:#854d0e}.g{background:#d1fae5;color:#065f46}
 .sub{font-size:12px;color:#64748b;font-weight:600}
-.det{border-top:1px solid var(--line-light);background:#f8fafc;padding:14px 20px;display:grid;gap:8px;font-size:13px}
-.it{border-left:4px solid #3b82f6;padding:8px 0 8px 14px;background:#fff;border-radius:0 8px 8px 0;margin-bottom:4px;box-shadow:0 1px 2px rgba(0,0,0,0.02)}
+.det{border-top:1px solid var(--line);background:#f8fafc;padding:14px 20px;display:grid;gap:8px;font-size:13px}
+.it{border-left:4px solid #3b82f6;padding:8px 0 8px 14px;background:#fff;border-radius:0 8px 8px 0;margin-bottom:4px}
 .empty{text-align:center;color:var(--mu);padding:40px 10px;font-weight:600}
 .hide{display:none}
 
-/* IMPRESSÃO OTIMIZADA PARA PAINEL / PDF */
+/* IMPRESSÃO MODULAR: CADA INDICADOR EM SUA PRÓPRIA PÁGINA COM O TOP 10 COMPLETO */
 @media print{
   * {-webkit-print-color-adjust:exact !important; print-color-adjust:exact !important;}
   header,details.f,.top-btns,.rf{display:none!important}
-  body{background:#fff;color:#000;font-size:13px}
+  body{background:#fff;color:#000;font-size:12px}
   .seg{display:none!important}
   main{padding:0!important;display:block!important;max-width:100%!important}
-  section{display:block!important;page-break-after:always}
-  .kpis{display:grid!important;grid-template-columns:repeat(4,1fr)!important;gap:12px!important;margin-bottom:20px!important}
-  .dashboard-grid{display:grid!important;grid-template-columns:1fr 1fr!important;gap:20px!important;margin-bottom:20px!important}
-  .chart-box{border:2px solid #cbd5e1!important;break-inside:avoid;max-height:none!important}
+  
+  /* Cada aba gera uma folha estrita separada */
+  section{display:block!important;page-break-before:always !important;page-break-after:always !important}
+  section:first-of-type{page-break-before:avoid !important}
+
+  .kpis{display:grid!important;grid-template-columns:repeat(4,1fr)!important;gap:10px!important;margin-bottom:16px!important}
+  .dashboard-grid{display:grid!important;grid-template-columns:1fr 1fr!important;gap:16px!important;margin-bottom:16px!important}
+  .chart-box{border:2px solid var(--line)!important;break-inside:avoid;max-height:none!important}
   .top10-list{max-height:none!important;overflow:visible!important}
   .cards{display:block!important}
-  .c{break-inside:avoid;border:1px solid #cbd5e1!important;margin-bottom:12px!important}
+  .c{break-inside:avoid;border:1px solid var(--line)!important;margin-bottom:10px!important}
 }
 </style>
 </head>
@@ -130,11 +126,11 @@ input,select{width:100%;min-height:48px;padding:10px 14px;border:1px solid #cbd5
   <div class="kpis" id="k-est"></div>
   <div class="dashboard-grid">
     <div class="chart-box">
-      <div class="chart-title">📊 Top Categorias / Tipos no Inventário <span class="sub">Clique para filtrar</span></div>
+      <div class="chart-title">📊 Top Categorias / Tipos no Inventário <span class="sub">Tendência</span></div>
       <div class="chart-bars" id="chart-est"></div>
     </div>
     <div class="chart-box">
-      <div class="chart-title">🏆 Top 10 Ferramentas em Estoque <span class="sub">Clique para ver</span></div>
+      <div class="chart-title">🏆 Top 10 Ferramentas em Estoque <span class="sub">Completo</span></div>
       <div class="top10-list" id="top10-est"></div>
     </div>
   </div>
@@ -153,11 +149,11 @@ input,select{width:100%;min-height:48px;padding:10px 14px;border:1px solid #cbd5
   <div class="kpis" id="k-dev"></div>
   <div class="dashboard-grid">
     <div class="chart-box">
-      <div class="chart-title">📊 Pendências por Mês (Cronológico) <span class="sub">Clique para filtrar</span></div>
+      <div class="chart-title">📊 Tendência de Pendências por Mês <span class="sub">Cronológico</span></div>
       <div class="chart-bars" id="chart-dev"></div>
     </div>
     <div class="chart-box">
-      <div class="chart-title">🏆 Top 10 Usuários com Mais Atrasos <span class="sub">Clique para ver</span></div>
+      <div class="chart-title">🏆 Top 10 Usuários com Mais Atrasos <span class="sub">Completo</span></div>
       <div class="top10-list" id="top10-dev"></div>
     </div>
   </div>
@@ -173,11 +169,11 @@ input,select{width:100%;min-height:48px;padding:10px 14px;border:1px solid #cbd5
   <div class="kpis" id="k-inv"></div>
   <div class="dashboard-grid">
     <div class="chart-box">
-      <div class="chart-title">📊 Status de Calibração <span class="sub">Clique para filtrar</span></div>
+      <div class="chart-title">📊 Status de Calibração <span class="sub">Tendência</span></div>
       <div class="chart-bars" id="chart-inv"></div>
     </div>
     <div class="chart-box">
-      <div class="chart-title">🏆 Top 10 Equipamentos Críticos <span class="sub">Clique para ver</span></div>
+      <div class="chart-title">🏆 Top 10 Equipamentos Críticos <span class="sub">Completo</span></div>
       <div class="top10-list" id="top10-inv"></div>
     </div>
   </div>
@@ -195,7 +191,7 @@ const URLS=[
  "https://docs.google.com/spreadsheets/d/e/2PACX-1vTo35odWXfxeP9OhQZRJ36txn6dxH6Y_lOi0l7N0OZV0uOAY51YSVrNFLNHBzawBg/pub?output=csv",
  "https://docs.google.com/spreadsheets/d/e/2PACX-1vR4zF860IfKYViF0uSuN_Hd3LT-1uX_5IQPgZLl5FGu7pMF8CI96hrIlVfQmtOlWw/pub?output=csv"
 ];
-const KC="ferramentaria_cache_v12";
+const KC="ferramentaria_cache_v13";
 const MES_NOME=['janeiro','fevereiro','março','abril','maio','junho','julho','agosto','setembro','outubro','novembro','dezembro'];
 const CORES_GRAFICO=['#2563eb','#059669','#d97706','#dc2626','#7c3aed','#db2777','#0284c7','#65a30d'];
 const $=id=>document.getElementById(id);
@@ -405,15 +401,24 @@ function rd(){
   </div>
  `).join(''):'<div class="empty" style="font-size:12px;padding:10px">Nenhum registro</div>';
 
- $('k-dev').innerHTML=`<div class="kpi"><b>${f.length}</b><span>Pendentes</span></div><div class="kpi"><b>${L.length}</b><span>Usuários</span></div><div class="kpi"><b style="color:var(--red)">${f.length?Math.max(...f.map(x=>x.atraso)):0}</b><span>Maior Atraso</span></div><div class="kpi"><b>${f.filter(x=>x.atraso>30).length}</b><span>Atraso &gt; 30d</span></div>`;
+ const maiorAtrasoGeral=f.length?Math.max(...f.map(x=>x.atraso)):0;
+ const atrasosMais30=f.filter(x=>x.atraso>30).length;
+
+ $('k-dev').innerHTML=`
+  <div class="kpi"><b>${f.length}</b><span>Itens Pendentes</span></div>
+  <div class="kpi"><b>${L.length}</b><span>Usuários com Débito</span></div>
+  <div class="kpi" style="border-color:${maiorAtrasoGeral>365?'#dc2626':'inherit'}"><b style="color:${maiorAtrasoGeral>365?'#dc2626':'inherit'}">${maiorAtrasoGeral} dias</b><span>Maior Atraso (&gt; 1 Ano)</span></div>
+  <div class="kpi"><b>${atrasosMais30}</b><span>Atrasos &gt; 30d</span></div>
+`;
  
  $('l-dev').innerHTML=L.length?L.map(u=>{
   const k='d:'+u.sol,o=aberto.has(k);
   const isUrgente=u.max>30;
-  return`<div class="c ${isUrgente?'urgente':''}" id="${fId(u.sol)}" style="${o?'grid-column:1/-1':''}"><button class="ch" onclick="tg('${kk(k)}')"><div class="row"><div class="nm">${esc(u.sol)} ${isUrgente?'<span class="ch2 r">Maior Atraso</span>':''}</div><span class="tot">${u.n} it.</span></div>
+  const isCriticoAnual=u.max>365;
+  return`<div class="c ${isCriticoAnual?'urgente':isUrgente?'urgente':''}" id="${fId(u.sol)}" style="${o?'grid-column:1/-1':''}"><button class="ch" onclick="tg('${kk(k)}')"><div class="row"><div class="nm">${esc(u.sol)} ${isCriticoAnual?'<span class="ch2 r">⚠️ &gt; 1 Ano de Atraso</span>':isUrgente?'<span class="ch2 r">Maior Atraso</span>':''}</div><span class="tot">${u.n} it.</span></div>
    <div class="bar"><i style="width:${u.n/mx*100}%"></i></div>
-   <div class="chips">${u.max>0?`<span class="ch2 r">Maior atraso: ${u.max} dias</span>`:'<span class="ch2 g">No prazo</span>'}${Object.entries(u.meses).sort((a,b)=>MES_NOME.indexOf(a[0])-MES_NOME.indexOf(b[0])).map(([m,n])=>`<span class="ch2">${m.slice(0,3)} (${n})</span>`).join('')}<span class="ch2">${o?'▲ ocultar':'▼ ver itens'}</span></div></button>
-   ${o?`<div class="det"><div class="sub" style="font-weight:700;margin-bottom:4px;color:var(--tx)">Pendências deste usuário:</div>${Object.values(u.it).sort((a,b)=>b.atraso-a.atraso).map(i=>`<div class="it"><b>${i.q>1?i.q+'× ':''}${esc(i.ap||i.desc)}</b><div class="sub">Protocolo: ${esc(i.prot)} · Retirado: ${esc(i.emp.split(' ')[0])} · Previsto: ${fmt(i.d)}</div><span class="ch2 ${i.atraso>0?'r':'g'}">${i.atraso>0?i.atraso+' dias de atraso':'No prazo'}</span></div>`).join('')}</div>`:''}</div>`;
+   <div class="chips">${u.max>0?`<span class="ch2 r">Maior atraso: ${u.max} dias (${(u.max/365).toFixed(1)} anos)</span>`:'<span class="ch2 g">No prazo</span>'}${Object.entries(u.meses).sort((a,b)=>MES_NOME.indexOf(a[0])-MES_NOME.indexOf(b[0])).map(([m,n])=>`<span class="ch2">${m.slice(0,3)} (${n})</span>`).join('')}<span class="ch2">${o?'▲ ocultar':'▼ ver itens'}</span></div></button>
+   ${o?`<div class="det"><div class="sub" style="font-weight:700;margin-bottom:4px;color:var(--tx)">Pendências deste usuário:</div>${Object.values(u.it).sort((a,b)=>b.atraso-a.atraso).map(i=>`<div class="it"><b>${i.q>1?i.q+'× ':''}${esc(i.ap||i.desc)}</b><div class="sub">Protocolo: ${esc(i.prot)} · Retirado: ${esc(i.emp.split(' ')[0])} · Previsto: ${fmt(i.d)}</div><span class="ch2 ${i.atraso>0?'r':'g'}">${i.atraso>0?i.atraso+' dias de atraso ('+(i.atraso/365).toFixed(1)+' anos)':'No prazo'}</span></div>`).join('')}</div>`:''}</div>`;
  }).join(''):'<div class="empty">Nenhum débito encontrado.</div>';
 }
 
