@@ -156,7 +156,7 @@ tr:hover{background:#f8fafc}
 </main>
 
 <script>
-const KC_STK = "estoque_cache_flex_v1";
+const KC_STK = "estoque_cache_vale_v2";
 const CORES_GRAFICO=['#be123c','#7c3aed','#2563eb','#059669','#d97706','#dc2626','#db2777','#0284c7','#65a30d','#4f46e5'];
 const $=id=>document.getElementById(id);
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -181,11 +181,11 @@ function processarDadosEstoque(rows){
  STK = rows.map(r=>{
   const keys = Object.keys(r);
   
-  // Função flexível: busca por nome aproximado ou pega a coluna pelo índice caso venha em formato de array/matriz
-  const getCol = (terms, indexFallback) => {
-   for(let t of terms) {
-    const found = keys.find(k => k.toLowerCase().replace(/[^a-z0-9]/g, '').includes(t.toLowerCase().replace(/[^a-z0-9]/g, '')));
-    if(found !== undefined && r[found] !== undefined && r[found] !== '') return r[found];
+  // Função flexível que busca exato ou parcial e possui fallback por posição exata baseada na sua foto
+  const getCol = (names, indexFallback) => {
+   for(let n of names) {
+    const foundKey = keys.find(k => k.trim().toLowerCase().includes(n.toLowerCase()));
+    if(foundKey !== undefined && r[foundKey] !== undefined && r[foundKey] !== '') return r[foundKey];
    }
    if(indexFallback !== undefined && keys[indexFallback] !== undefined) {
     return r[keys[indexFallback]];
@@ -193,26 +193,26 @@ function processarDadosEstoque(rows){
    return '';
   };
 
-  const item = getCol(['item', 'codigo', 'cod'], 0);
-  const projeto = getCol(['projeto', 'proj'], 1);
-  const solicitante = getCol(['solicitante', 'solic'], 2);
-  const pedido = getCol(['pedido', 'ordem', 'oc'], 3);
-  const desc = getCol(['descri', 'descrição', 'descricao', 'texto'], 4);
-  const material = getCol(['material', 'mat'], 5);
+  const item = getCol(['Item', 'Cod', 'Codigo'], 6);
+  const projeto = getCol(['Projeto'], 3);
+  const solicitante = getCol(['Solicitante'], 4);
+  const pedido = getCol(['Pedido'], 5);
+  const desc = getCol(['Descrição', 'Descricao', 'Item'], 8);
+  const material = getCol(['Material'], 7);
   
-  let saldoRaw = getCol(['saldo em estoque', 'saldo', 'quantidade', 'qtd'], 6);
+  let saldoRaw = getCol(['Saldo', 'Estoque'], 18);
   let saldo = parseFloat(String(saldoRaw).replace(',', '.')) || 0;
 
-  let qtdSaidaRaw = getCol(['quantidade de saida', 'quantidade de saída', 'saida', 'saída'], 7);
+  let qtdSaidaRaw = getCol(['Quantidade de saida', 'Saida', 'Qtd Saída'], 16);
   let qtdSaida = parseFloat(String(qtdSaidaRaw).replace(',', '.')) || 0;
 
-  const dataRec = getCol(['data-rec', 'data rec', 'rec', 'datarecebimento'], 8);
-  const dataSaida = getCol(['data de saida', 'data de saída', 'datasaida'], 9);
-  const loc = getCol(['localização', 'localizacao', 'local'], 10);
-  const baia = getCol(['baia', 'armazenamento', 'prateleira'], 11);
+  const dataRec = getCol(['Data-Rec', 'Recebimento'], 12);
+  const dataSaida = getCol(['Data de Saida'], 15);
+  const loc = getCol(['Localização', 'IDLocalização', 'ID'], 1);
+  const baia = getCol(['Baia', 'Armazenamento'], 2);
 
   return {item, projeto, solicitante, pedido, desc, material, saldo, qtdSaida, dataRec, dataSaida, loc, baia};
- }).filter(x => x.desc || x.material || x.item || x.saldo > 0);
+ }).filter(x => x.desc || x.material || x.item || x.saldo > 0 || x.qtdSaida > 0);
 
  renderizarTudo();
  $('upd').textContent = 'Atualizado às ' + new Date().toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'});
@@ -222,29 +222,25 @@ function carregarArquivo(event) {
  const file = event.target.files[0];
  if (!file) return;
 
- const b = $('rf'); if(b) b.classList.add('spin');
  const reader = new FileReader();
-
  reader.onload = function(e) {
   try {
    const data = new Uint8Array(e.target.result);
    const workbook = XLSX.read(data, {type: 'array', cellDates: true});
    const firstSheetName = workbook.SheetNames[0];
    const worksheet = workbook.Sheets[firstSheetName];
-   // Converte garantindo que a primeira linha seja o cabeçalho e lê dados brutos
-   const rows = XLSX.utils.sheet_to_json(worksheet, {header: 2, defval: ""});
+   const rows = XLSX.utils.sheet_to_json(worksheet, {defval: ""});
 
    if (rows && rows.length > 0) {
     localStorage.setItem(KC_STK, JSON.stringify(rows));
     processarDadosEstoque(rows);
    } else {
-    alert("O arquivo está vazio ou sem dados legíveis.");
+    alert("O arquivo está vazio.");
    }
   } catch(err) {
    console.error(err);
-   alert("Erro ao processar a planilha. Certifique-se de carregar um arquivo .xlsx ou .csv válido.");
+   alert("Erro ao ler o arquivo. Certifique-se de carregar um arquivo .xlsx ou .csv válido.");
   }
-  if(b) b.classList.remove('spin');
  };
  reader.readAsArrayBuffer(file);
 }
