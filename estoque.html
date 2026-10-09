@@ -132,7 +132,7 @@ tr:hover{background:#f8fafc}
        <th>Pedido</th>
        <th>Descrição do Item</th>
        <th>Material</th>
-       <th>Saldo em Estoque</th>
+       <th>Saldo em Estocque</th>
        <th>Qtd Saída</th>
        <th>Data-Rec.</th>
        <th>Data de Saida</th>
@@ -179,7 +179,7 @@ tr:hover{background:#f8fafc}
 </main>
 
 <script>
-const KC_STK = "estoque_cache_universal_v5";
+const KC_STK = "estoque_cache_universal_v6";
 const CORES_GRAFICO=['#be123c','#7c3aed','#2563eb','#059669','#d97706','#dc2626','#db2777','#0284c7','#65a30d','#4f46e5'];
 const $=id=>document.getElementById(id);
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -266,8 +266,28 @@ function carregarArquivo(event) {
      }
     }
     if (Object.keys(currentObj).length > 0) rows.push(currentObj);
+   } else if (fileName.endsWith('.csv') || typeof content === 'string') {
+    // Leitura PapaParse robusta para arquivos CSV de sistemas
+    Papa.parse(content, {
+     header: true,
+     skipEmptyLines: true,
+     complete: function(results) {
+      if(results.data && results.data.length > 0) {
+       rows = results.data;
+       finalizarCarga(rows);
+      } else {
+       alert("O arquivo CSV está vazio.");
+       if(b) b.classList.remove('spin');
+      }
+     },
+     error: function(err) {
+      alert("Erro ao ler o CSV.");
+      if(b) b.classList.remove('spin');
+     }
+    });
+    return;
    } else {
-    // Leitura blindada via SheetJS para Excel e CSV
+    // Leitura via SheetJS para Excel (.xlsx)
     const data = new Uint8Array(content);
     const workbook = XLSX.read(data, {type: 'array', cellDates: true});
     const firstSheetName = workbook.SheetNames[0];
@@ -275,21 +295,23 @@ function carregarArquivo(event) {
    }
 
    if (rows && rows.length > 0) {
-    localStorage.setItem(KC_STK, JSON.stringify(rows));
-    processarDadosEstoque(rows);
-   } else {
-    alert("O arquivo foi lido, mas está vazio ou sem linhas reconhecíveis.");
+    finalizarCarga(rows);
    }
   } catch(err) {
    console.error(err);
-   // Fallback de segurança: se falhar o binário, tenta ler como texto simples separando por linhas
-   alert("Formato complexo detectado. Dica rápida: abra a planilha no Excel, clique em Salvar Como e salve como 'Pasta de Trabalho do Excel (.xlsx)' ou 'CSV (separado por vírgulas)' antes de carregar.");
+   alert("Erro ao processar o arquivo. Salve a planilha como .xlsx padrão do Excel e tente novamente.");
+   if(b) b.classList.remove('spin');
   }
-  if(b) b.classList.remove('spin');
  };
 
- if (file.name.toLowerCase().endsWith('.xml')) {
-  reader.readAsText(file);
+ function finalizarCarga(rows) {
+  localStorage.setItem(KC_STK, JSON.stringify(rows));
+  processarDadosEstoque(rows);
+  if(b) b.classList.remove('spin');
+ }
+
+ if (file.name.toLowerCase().endsWith('.csv') || file.name.toLowerCase().endsWith('.txt') || file.name.toLowerCase().endsWith('.xml')) {
+  reader.readAsText(file, 'UTF-8');
  } else {
   reader.readAsArrayBuffer(file);
  }
