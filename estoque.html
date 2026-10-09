@@ -1,0 +1,513 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#1e3a8a">
+<title>Painel Corporativo - Gestão de EPIs e Estoque</title>
+<!-- Ícone profissional de Capacete de Segurança Industrial Branco -->
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E⛑️%3C/text%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<!-- Importando o PapaParse para ler CSV do Google Sheets perfeitamente -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
+<style>
+:root{--line:#cbd5e1;--tx:#0f172a;--mu:#475569;--pri:#2563eb;--red:#dc2626;--amb:#d97706;--grn:#059669;--bd:#e3e8f0;--sh:0 1px 2px rgba(15,23,42,.05),0 4px 14px rgba(15,23,42,.06);--sh2:0 8px 28px rgba(15,23,42,.14)}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+body{font-family:Inter,system-ui,-apple-system,sans-serif;background:#f4f6fb;color:var(--tx);font-size:15px;line-height:1.4;padding-bottom:30px;font-feature-settings:"tnum";-webkit-font-smoothing:antialiased}
+
+/* Cabeçalho */
+header{position:sticky;top:0;z-index:30;background:linear-gradient(135deg,#0b1220 0%,#14233f 60%,#1e3a8a 100%);color:#fff;padding:14px 28px;box-shadow:0 6px 24px rgba(11,18,32,.35)}
+.top{display:flex;justify-content:space-between;align-items:center;gap:12px}
+.title-area{display:flex;align-items:center;gap:12px}
+.home-btn{background:rgba(255,255,255,.15);color:#fff;border:1px solid rgba(255,255,255,.3);border-radius:12px;width:40px;height:40px;font-size:18px;display:flex;align-items:center;justify-content:center;cursor:pointer;text-decoration:none;transition:all .2s}
+.home-btn:hover{background:rgba(255,255,255,.3)}
+h1{font-size:19px;font-weight:900;letter-spacing:-.3px}
+#upd{font-size:12px;opacity:.65;margin-top:2px}
+.top-btns{display:flex;gap:8px}
+.rf,.print-btn{background:rgba(255,255,255,.1);color:#fff;border:1px solid rgba(255,255,255,.2);border-radius:12px;min-width:38px;min-height:38px;font-size:16px;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .2s}
+.rf:hover,.print-btn:hover{background:rgba(255,255,255,.2)}
+.rf.spin{animation:sp 1s linear infinite}@keyframes sp{to{transform:rotate(360deg)}}
+
+/* 4 Abas */
+.seg{display:grid;grid-template-columns:repeat(4,1fr);gap:5px;margin:16px 28px 0;background:#e6eaf3;padding:5px;border-radius:14px}
+.seg button{background:transparent;color:#51607a;border:0;border-radius:10px;min-height:46px;font-weight:800;font-size:13px;font-family:inherit;cursor:pointer;transition:all .2s}
+.seg button:hover{background:rgba(255,255,255,.6)}
+.seg button.on{background:#fff;color:#1e3a8a;box-shadow:0 2px 8px rgba(30,58,138,.18)}
+
+main{max-width:1800px;margin:0 auto;padding:18px 28px;display:grid;gap:18px}
+section{display:grid;gap:18px}
+
+/* KPIs */
+.kpis{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.kpis-4{grid-template-columns:repeat(4,1fr)!important;}
+.kpi{position:relative;background:#fff;border:1px solid var(--bd);border-radius:16px;padding:16px 22px;box-shadow:var(--sh);overflow:hidden;display:flex;align-items:center}
+.kpi::before{content:"";position:absolute;left:0;top:0;bottom:0;width:5px;background:var(--kc,var(--pri))}
+.kpi div{display:flex;flex-direction:column;min-width:0}
+.kpi b{font-size:26px;font-weight:900;line-height:1.1;letter-spacing:-1px;color:#1e293b}
+.kpi span{font-size:11.5px;font-weight:800;color:#6b7a90;text-transform:uppercase;letter-spacing:.4px;margin-top:3px}
+
+/* Layout Gráficos */
+.dashboard-grid{display:grid;grid-template-columns:1.2fr 1fr;gap:18px}
+.chart-box{background:#fff;border:1px solid var(--bd);border-radius:16px;padding:20px;display:flex;flex-direction:column;justify-content:space-between;box-shadow:var(--sh);min-width:0}
+.chart-title{font-size:13px;font-weight:800;color:#1e293b;text-transform:uppercase;letter-spacing:.4px;padding-bottom:10px;margin-bottom:12px;border-bottom:1px solid var(--bd);display:flex;flex-direction:column;gap:2px}
+.chart-title .sub{text-transform:none;letter-spacing:0;font-weight:600}
+
+/* Gráfico de Barras */
+.chart-bars{display:flex;align-items:flex-end;justify-content:space-between;gap:6px;height:240px;padding:10px 4px 6px;background:repeating-linear-gradient(to top,transparent 0,transparent 30px,#f1f5f9 30px,#f1f5f9 31px);border-radius:8px;overflow-x:auto}
+.c-bar-group{flex:1;display:flex;flex-direction:column;align-items:center;min-width:36px;max-width:70px;height:100%;justify-content:flex-end;cursor:pointer}
+.c-bar{width:100%;border-radius:6px 6px 0 0;box-shadow:inset 0 -8px 12px rgba(0,0,0,.1);transition:height .5s cubic-bezier(.2,.8,.2,1),filter .2s}
+.c-bar-group:hover .c-bar{filter:brightness(1.1)}
+.c-bar-val{font-size:11px;font-weight:800;margin-bottom:4px;color:#1e293b;text-align:center;line-height:1.1}
+.c-bar-val small{display:block;font-size:8.5px;color:#64748b;font-weight:700}
+.c-bar-lbl{font-size:9.5px;font-weight:700;color:#475569;margin-top:6px;text-align:center;line-height:1.15;height:36px;overflow:hidden;width:100%;word-break:break-word;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical}
+
+/* Top 10 Listas Abertas */
+.top10-list{display:grid;gap:4px;max-height:240px;overflow-y:auto;padding-right:4px}
+.top10-row{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:7px 12px;background:#fff;border:1px solid var(--bd);border-radius:8px;font-size:12.5px;font-weight:600;cursor:pointer;transition:all .2s}
+.top10-row span:first-child{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.top10-row:hover{background:#f1f6ff;border-color:#9bbcf5;box-shadow:0 2px 8px rgba(37,99,235,.12)}
+.top10-row b{font-weight:800;color:#0f172a}
+
+/* Filtros e Ferramentas */
+details.f{background:#fff;border:1px solid var(--bd);border-radius:16px;box-shadow:var(--sh)}
+details.f summary{padding:14px 20px;font-weight:800;font-size:15px;cursor:pointer;list-style:none;display:flex;justify-content:space-between;color:#334155}
+details.f summary::-webkit-details-marker{display:none}
+.fg{display:grid;gap:10px;padding:0 16px 16px;grid-template-columns:repeat(3,1fr)}
+.fg .w{grid-column:1/-1}
+input,select{width:100%;min-height:42px;padding:8px 12px;border:1px solid #d5dce8;border-radius:10px;font-size:14px;font-family:inherit;background:#fff;color:var(--tx);font-weight:500}
+input:focus,select:focus{outline:2px solid #93b4f5;border-color:#2563eb}
+.btn{min-height:42px;border:0;background:#1e3a8a;border-radius:10px;font-weight:800;font-family:inherit;color:#fff;grid-column:1/-1;cursor:pointer}
+.btn:hover{background:#2748a8}
+
+.toolbar{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.toolbar button{min-height:38px;padding:0 16px;border-radius:10px;border:1px solid var(--bd);background:#fff;font-weight:800;font-size:13px;font-family:inherit;color:#1e3a8a;cursor:pointer;box-shadow:var(--sh)}
+.toolbar button:hover{background:#eef3ff}
+.toolbar .sub{margin-left:auto;font-size:12.5px}
+
+.btn-voltar-filtro{background:#d97706;color:#fff;border:0;padding:6px 14px;border-radius:8px;font-weight:800;font-size:12px;cursor:pointer;display:inline-flex;align-items:center;gap:6px;box-shadow:var(--sh);transition:all .2s}
+.btn-voltar-filtro:hover{background:#b45309}
+
+/* Cards */
+.cards{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;align-items:start}
+.c{background:#fff;border:1px solid var(--bd);border-left:5px solid #cbd5e1;border-radius:16px;overflow:hidden;box-shadow:var(--sh);transition:all .3s}
+.c:hover{box-shadow:var(--sh2);transform:translateY(-2px)}
+.highlight-target{animation:flash-card 1.5s ease}
+@keyframes flash-card{0%{background-color:#dbeafe;transform:scale(1.005)}100%{background-color:#fff;transform:scale(1)}}
+.ch{width:100%;text-align:left;background:none;border:0;padding:14px 16px;font-family:inherit;color:inherit;display:block;cursor:pointer}
+.row{display:flex;justify-content:space-between;align-items:flex-start;gap:10px}
+.nm{font-weight:800;word-break:break-word;font-size:15.5px;color:#0f172a}
+.tot{background:#e8effd;color:#1e3a8a;border-radius:10px;padding:4px 11px;font-weight:900;font-size:14px;flex-shrink:0}
+.bar{height:7px;background:#eaeef5;border-radius:99px;margin:10px 0 6px}
+.bar i{display:block;height:100%;border-radius:99px;background:linear-gradient(90deg,#3b82f6,#1e3a8a)}
+.chips{display:flex;flex-wrap:wrap;gap:5px;margin-top:6px}
+.ch2{font-size:12px;font-weight:700;padding:3px 9px;border-radius:99px;background:#f1f5f9;color:#475569}
+.g{background:#d1fae5;color:#065f46}
+.sub{font-size:12px;color:#64748b;font-weight:600}
+.det{border-top:1px solid var(--line);background:#f7f9fc;padding:14px 18px;display:grid;gap:6px;font-size:13px}
+.det-closed{display:none}
+.it{border-left:3px solid #1e3a8a;padding:8px 12px;background:#fff;border-radius:0 8px 8px 0;margin-bottom:3px;box-shadow:0 1px 2px rgba(15,23,42,.05)}
+.empty{text-align:center;color:var(--mu);padding:30px 10px;font-weight:600}
+.hide{display:none}
+.print-title-only { display: none; }
+
+/* Cores e Estilos das Abas */
+#s-rel{--ac:#059669}#s-est{--ac:#2563eb}#s-dev{--ac:#ea580c}#s-stk{--ac:#7c3aed}
+body{background:linear-gradient(180deg,#e6ecfb 0,#f4f6fb 280px)}
+header{background:linear-gradient(135deg,#0b1220 0%,#1e3a8a 55%,#2563eb 100%);border-bottom:4px solid #f59e0b}
+.seg button{color:#475569}
+#b-rel.on{background:linear-gradient(135deg,#059669,#047857);color:#fff;box-shadow:0 4px 14px rgba(5,150,105,.45)}
+#b-est.on{background:linear-gradient(135deg,#3b82f6,#1d4ed8);color:#fff;box-shadow:0 4px 14px rgba(37,99,235,.45)}
+#b-dev.on{background:linear-gradient(135deg,#fb923c,#ea580c);color:#fff;box-shadow:0 4px 14px rgba(234,88,12,.45)}
+#b-stk.on{background:linear-gradient(135deg,#8b5cf6,#7c3aed);color:#fff;box-shadow:0 4px 14px rgba(124,58,237,.45)}
+.kpi{background:linear-gradient(135deg,#fff 40%,color-mix(in srgb,var(--kc,#2563eb) 16%,#fff));border-color:color-mix(in srgb,var(--kc,#2563eb) 30%,#fff)}
+.kpi::before{width:8px}
+.kpi b{color:var(--kc,#1e293b)}
+.kpi span{color:#475569}
+.chart-box{border-top:5px solid var(--ac,#2563eb);background:linear-gradient(180deg,color-mix(in srgb,var(--ac,#2563eb) 9%,#fff) 0,#fff 100px)}
+
+/* ==========================================================
+   IMPRESSÃO DA ABA DE PAINEL OU ESTOQUE (1 PÁGINA A4)
+   ========================================================== */
+@media print {
+  * {-webkit-print-color-adjust: exact !important; print-color-adjust: exact !important;}
+  @page { size: A4 landscape; margin: 8mm 10mm; }
+  body { background: #fff !important; color: #000 !important; font-size: 10.5px !important; }
+  header { display: none !important; }
+  .seg, .toolbar, details.f, .top-btns, #s-est, #s-dev, #s-stk, .home-btn, .btn-voltar-filtro { display: none !important; }
+  #s-rel { display: grid !important; }
+  .print-title-only { display: block !important; font-size: 14px; font-weight: 900; color: #1e3a8a; margin-bottom: 10px; text-transform: uppercase; border-bottom: 2px solid #1e3a8a; padding-bottom: 4px; }
+  .dashboard-grid { grid-template-columns: 1fr 1fr !important; gap: 14px !important; align-items: stretch !important; }
+  .chart-box { padding: 14px !important; height: 100% !important; justify-content: flex-start !important; }
+  .chart-bars { height: 190px !important; margin-top: 8px !important; }
+  .top10-list { max-height: none !important; overflow: visible !important; gap: 3px !important; margin-top: 8px !important; }
+  .top10-row { padding: 4.5px 10px !important; font-size: 11px !important; border-radius: 4px !important; }
+  main { padding: 4px 0 0 0 !important; gap: 12px !important; }
+  .kpis { gap: 12px !important; margin-bottom: 4px !important; }
+  .kpi { padding: 10px 16px !important; }
+  .kpi b { font-size: 22px !important; }
+}
+
+@media(max-width:1300px){.cards{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:1100px){.dashboard-grid{grid-template-columns:1fr}}
+@media(max-width:820px){.cards{grid-template-columns:1fr};.fg{grid-template-columns:1fr 1fr}}
+</style>
+</head>
+<body>
+<header>
+ <div class="top">
+  <div class="title-area">
+   <a href="index.html" class="home-btn" title="Voltar ao Índice">🏠</a>
+   <div><h1>⛑️ Painel Corporativo — Gestão de EPIs e Estoque</h1><div id="upd">Carregando dados…</div></div>
+  </div>
+  <div class="top-btns">
+   <button class="print-btn" onclick="window.print()" title="Imprimir / Salvar PDF">🖨️</button>
+   <button class="rf" id="rf" onclick="atualizarTudo()" aria-label="Atualizar">↻</button>
+  </div>
+ </div>
+ <div class="seg">
+  <button id="b-rel" class="on" onclick="aba('rel')">📊 Painel Executivo</button>
+  <button id="b-est" onclick="aba('est')">📦 Movimentações de EPIs</button>
+  <button id="b-dev" onclick="aba('dev')">👥 Colaboradores</button>
+  <button id="b-stk" onclick="aba('stk')">🏭 Gestão de Estoque</button>
+ </div>
+</header>
+<main>
+ <!-- ABA 1: PAINEL EXECUTIVO -->
+ <section id="s-rel">
+  <div class="print-title-only">Relatório Corporativo: Movimentações e Consumo de EPIs</div>
+  <div class="kpis kpis-4" id="k-rel"></div>
+  <div class="dashboard-grid" id="dg-rel"></div>
+ </section>
+
+ <!-- ABA 2: MOVIMENTAÇÕES DE EPIS -->
+ <section id="s-est" class="hide">
+  <div class="kpis" id="k-est"></div>
+  <div class="dashboard-grid" id="dg-est"></div>
+  <details class="f"><summary><span>🔎 Filtros Avançados</span><span id="fe-n" class="sub"></span></summary>
+   <div class="fg">
+    <input class="w" id="e-q" type="search" placeholder="Buscar EPI ou Colaborador" oninput="re()">
+    <select id="e-ano" onchange="re()"></select>
+    <select id="e-mes" onchange="re()"></select>
+    <button class="btn" onclick="limpar('e')">Limpar filtros</button>
+   </div>
+  </details>
+  <div class="toolbar">
+   <button onclick="abrirTudo('e')">▼ Abrir tudo</button>
+   <button onclick="fecharTudo('e')">▲ Fechar tudo</button>
+   <div id="container-btn-voltar"></div>
+   <span class="sub" id="n-e"></span>
+  </div>
+  <div id="l-est" class="cards"></div>
+ </section>
+
+ <!-- ABA 3: COLABORADORES -->
+ <section id="s-dev" class="hide">
+  <div class="kpis" id="k-dev"></div>
+  <div class="dashboard-grid" id="dg-dev"></div>
+  <details class="f"><summary><span>🔎 Filtros Avançados</span><span id="fd-n" class="sub"></span></summary>
+   <div class="fg">
+    <input class="w" id="d-q" type="search" placeholder="Buscar colaborador" oninput="rd()">
+    <button class="btn" onclick="limpar('d')">Limpar filtros</button>
+   </div>
+  </details>
+  <div class="toolbar"><button onclick="abrirTudo('d')">▼ Abrir tudo</button><button onclick="fecharTudo('d')">▲ Fechar tudo</button><span class="sub" id="n-dev"></span></div>
+  <div id="l-dev" class="cards"></div>
+ </section>
+
+ <!-- ABA 4: GESTÃO DE ESTOQUE -->
+ <section id="s-stk" class="hide">
+  <div class="kpis" id="k-stk"></div>
+  <div class="dashboard-grid" id="dg-stk"></div>
+  <details class="f"><summary><span>🔎 Filtros de Estoque</span><span id="fst-n" class="sub"></span></summary>
+   <div class="fg">
+    <input class="w" id="stk-q" type="search" placeholder="Buscar por Material, Descrição ou Localização" oninput="rStk()">
+    <button class="btn" onclick="limpar('stk')">Limpar filtros</button>
+   </div>
+  </details>
+  <div class="toolbar"><span class="sub" id="n-stk"></span></div>
+  <div id="l-stk" class="cards"></div>
+ </section>
+</main>
+
+<script>
+const BASE_URL = "https://docs.google.com/spreadsheets/d/e/";
+const SHEET_ID_EPI = "2PACX-1vQVEgArNMWRAxt9I1pomlnmMRqYQ39ZfDDR-G2r7NFkqFSJf0af8t0o8FlSbomI4w";
+const CSV_URL_EPI = BASE_URL + SHEET_ID_EPI + "/pub?output=csv";
+
+// Link CSV do Estoque fornecido pelo usuário
+const CSV_URL_STK = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSwssGdZjM9ONVf2YkxwVlmN9JcK7oylQ2EIwDWWRobg339OveHYIjLoSrt-bi-wG76C0OL8Vp_L4Z8/pub?output=csv";
+
+const KC_EPI = "epis_cache_papaparse";
+const KC_STK = "estoque_cache_papaparse";
+const CORES_GRAFICO=['#2563eb','#059669','#d97706','#dc2626','#7c3aed','#db2777','#0284c7','#65a30d','#4f46e5','#0d9488'];
+const $=id=>document.getElementById(id);
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+
+function abreviarEPI(nome) {
+  if (!nome) return '';
+  let n = nome.trim();
+  n = n.replace(/LUVA HYFLEX\/EDGE\/YELING/gi, 'LUVA HYFLEX');
+  n = n.replace(/OCULOS POLIC LENTE ESPRESSA MARROM S3201HS-BR UVEX/gi, 'OCULOS ESPRESSO');
+  n = n.replace(/RESPIRADOR DESCARTAVEL N95 S\/ VALVULA PFF2/gi, 'RESPIRADOR N95');
+  n = n.replace(/BOTINA CADARCO COMPOS MANOBREIRO CPAP/gi, 'BOTINA CPAP');
+  n = n.replace(/OCULOS GRADUADOS OPERACIONAL/gi, 'OCULOS GRADUADOS');
+  n = n.replace(/SUSPENSAO DUPLA COM CATRACA 3M/gi, 'SUSPENSAO 3M');
+  return n;
+}
+
+let EST=[], STK=[], aberto=new Set();
+const LK={e:[],d:[]};
+const pct=(a,b)=>b?Math.round(a/b*100):0;
+const soma=a=>a.reduce((s,x)=>s+x,0);
+function fId(s,prefix='card-'){return prefix+String(s).toLowerCase().replace(/[^a-z0-9]/g,'_')}
+function rolarPara(id){setTimeout(()=>{const el=$(id);if(el){el.scrollIntoView({behavior:'smooth',block:'center'});el.classList.add('highlight-target');setTimeout(()=>el.classList.remove('highlight-target'),1600)}},80)}
+
+const VAZIO='<div class="empty" style="font-size:12px;padding:15px">Sem dados</div>';
+const kpi=(v,l,c)=>`<div class="kpi" style="--kc:${c||'#2563eb'}"><div><b>${v}</b><span>${l}</span></div></div>`;
+const box=(t,s,b)=>`<div class="chart-box"><div><div class="chart-title">${t}<span class="sub">${s}</span></div>${b}</div></div>`;
+
+function vb(items){
+ if(!items.length)return VAZIO;
+ const mx=Math.max(...items.map(i=>i.v),1);
+ return '<div class="chart-bars">'+items.map(i=>{
+  const h=Math.max(Math.round(i.v/mx*150),i.v>0?8:3);
+  const nomeCurto = abreviarEPI(i.l);
+  return `<div class="c-bar-group" title="${esc(i.t||i.l)}"><div class="c-bar-val">${i.v}${i.x?`<small>${i.x}</small>`:''}</div><div class="c-bar" style="height:${h}px;background:${i.c}"></div><div class="c-bar-lbl">${esc(nomeCurto)}</div></div>`;
+ }).join('')+'</div>';
+}
+
+function selE(v){$('e-q').value=v;aba('est');re();rolarPara(fId(v,'card-e-'))}
+function selD(v){$('d-q').value=v;aba('dev');rd();rolarPara(fId(v,'card-d-'))}
+function limparBuscaEPI(){$('e-q').value='';re();}
+
+function processarDadosEPI(results){
+ const rows = results.data;
+ EST = rows.map(r=>{
+  const colaborador = r['SolicitanteNome'] || '';
+  const nome = r['ItemNome'] || '';
+  const qtd = parseFloat(r['ItemQuantidade']) || 0;
+  const dataCriacao = r['CriadaEm'] || '';
+  const ano = dataCriacao ? dataCriacao.substring(0, 4) : '';
+  const mes = dataCriacao ? dataCriacao.substring(5, 7) : '';
+  const valor = r['ItemPreco'] || '';
+  return {ano, mes, nome, qtd, valor, colaborador, data: dataCriacao};
+ }).filter(x => x.nome && x.colaborador);
+
+ preencherFiltros();
+ re();
+ rd();
+ renderizarRelatorio();
+ $('upd').textContent = 'Atualizado às ' + new Date().toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'});
+}
+
+function processarDadosEstoque(results){
+ const rows = results.data;
+ STK = rows.map(r=>{
+  const material = r['Material'] || '';
+  const desc = r['Descrição do Item'] || '';
+  const saldo = parseFloat(r['Saldo em Estoque']) || 0;
+  const loc = r['Localização'] || '';
+  const baia = r['Baia Armazenamento'] || '';
+  const solicitante = r['Solicitante'] || '';
+  return {material, desc, saldo, loc, baia, solicitante};
+ }).filter(x => x.desc || x.material);
+
+ rStk();
+}
+
+function atualizarTudo(){
+ const b = $('rf'); if(b) b.classList.add('spin');
+ 
+ // Carrega EPIs
+ Papa.parse(CSV_URL_EPI + '&_t=' + new Date().getTime(), {
+  download: true, header: true, skipEmptyLines: true,
+  complete: function(resEPI) {
+   if(resEPI.data && resEPI.data.length > 0) {
+    localStorage.setItem(KC_EPI, JSON.stringify(resEPI.data));
+    processarDadosEPI(resEPI);
+   }
+   if(b) b.classList.remove('spin');
+  },
+  error: function() {
+   const cache = localStorage.getItem(KC_EPI);
+   if(cache) processarDadosEPI({data: JSON.parse(cache)});
+   if(b) b.classList.remove('spin');
+  }
+ });
+
+ // Carrega Estoque
+ Papa.parse(CSV_URL_STK + '&_t=' + new Date().getTime(), {
+  download: true, header: true, skipEmptyLines: true,
+  complete: function(resStk) {
+   if(resStk.data && resStk.data.length > 0) {
+    localStorage.setItem(KC_STK, JSON.stringify(resStk.data));
+    processarDadosEstoque(resStk);
+   }
+  },
+  error: function() {
+   const cache = localStorage.getItem(KC_STK);
+   if(cache) processarDadosEstoque({data: JSON.parse(cache)});
+  }
+ });
+}
+
+function preencherFiltros(){
+ const u=a=>[...new Set(a.filter(Boolean))];
+ 
+ const selAno = $('e-ano');
+ const vAno = selAno.value;
+ const anos = u(EST.map(x=>x.ano)).sort().reverse();
+ selAno.innerHTML = `<option value="">Todos os anos</option>` + anos.map(x=>`<option value="${x}">${x}</option>`).join('');
+ if(anos.includes(vAno)) selAno.value = vAno;
+
+ const selMes = $('e-mes');
+ const vMes = selMes.value;
+ const meses = [
+  {v:'01', l:'Janeiro'}, {v:'02', l:'Fevereiro'}, {v:'03', l:'Março'},
+  {v:'04', l:'Abril'}, {v:'05', l:'Maio'}, {v:'06', l:'Junho'},
+  {v:'07', l:'Julho'}, {v:'08', l:'Agosto'}, {v:'09', l:'Setembro'},
+  {v:'10', l:'Outubro'}, {v:'11', l:'Novembro'}, {v:'12', l:'Dezembro'}
+ ];
+ selMes.innerHTML = `<option value="">Todos os meses</option>` + meses.map(m=>`<option value="${m.v}">${m.l}</option>`).join('');
+ if(meses.map(m=>m.v).includes(vMes)) selMes.value = vMes;
+}
+
+function aba(t){
+ ['rel','est','dev','stk'].forEach(x=>{
+  $('s-'+x).classList.toggle('hide',x!==t);
+  const btn=$('b-'+x);
+  if(btn) btn.classList.toggle('on',x===t);
+ });
+ scrollTo(0,0);
+}
+
+function limpar(p){
+ if(p==='e'){['e-q','e-ano','e-mes'].forEach(i=>$(i).value='');re();}
+ else if(p==='d'){$('d-q').value='';rd();}
+ else if(p==='stk'){$('stk-q').value='';rStk();}
+}
+
+function tg(k){const x=decodeURIComponent(k);aberto.has(x)?aberto.delete(x):aberto.add(x);re();rd()}
+const kk=k=>encodeURIComponent(k);
+function abrirTudo(p){(p==='e'?LK.e:LK.d).forEach(k=>aberto.add(k));re();rd()}
+function fecharTudo(p){(p==='e'?LK.e:LK.d).forEach(k=>aberto.delete(k));re();rd()}
+
+function re(){
+ const q=$('e-q').value.toLowerCase().trim(), ano=$('e-ano').value, mes=$('e-mes').value;
+ $('fe-n').textContent=[q,ano,mes].filter(Boolean).length?'filtros ativos':'';
+ 
+ const containerBtn = $('container-btn-voltar');
+ if(q){
+  containerBtn.innerHTML = `<button class="btn-voltar-filtro" onclick="limparBuscaEPI()">↩️ Voltar à Visão Geral</button>`;
+ } else {
+  containerBtn.innerHTML = '';
+ }
+
+ const f=EST.filter(x=>(!ano||x.ano===ano)&&(!mes||x.mes===mes)&&(!q||(x.nome+' '+x.colaborador).toLowerCase().includes(q)));
+ const totQtd=soma(f.map(x=>x.qtd));
+ const G={};
+ f.forEach(x=>{
+  const g=G[x.nome]??={nome:x.nome,n:0,solics:new Set(),registros:[]};
+  g.n+=x.qtd;g.solics.add(x.colaborador);g.registros.push(x);
+ });
+ const L=Object.values(G).sort((a,b)=>b.n-a.n||a.nome.localeCompare(b.nome));
+ const mx=L[0]?.n||1;
+ LK.e=L.map(g=>'e:'+g.nome);
+ const top10=L.slice(0,10);
+
+ $('k-est').innerHTML=kpi(totQtd,'Total de Itens Requisitados','#2563eb')+kpi(L.length,'Tipos de EPIs distintos','#059669')+kpi(top10[0]?.n||0,'Maior Saída','#d97706');
+ 
+ const g1=box('📊 Top 10 EPIs Requisitados','Volume total entregue por material',vb(top10.map((g,i)=>({v:g.n,l:g.nome,c:CORES_GRAFICO[i%10],x:pct(g.n,totQtd)+'%',a:'selE',d:g.nome}))));
+ const g2=box('🏆 Ranking Geral (Top 10)','Itens mais solicitados',`<div class="top10-list">${top10.length?top10.map((g,i)=>`<div class="top10-row" data-v="${esc(g.nome)}" onclick="selE(this.dataset.v)"><span><b>#${i+1}</b>${esc(abreviarEPI(g.nome))}</span><span class="ch2 g">${g.n} un.</span></div>`).join(''):VAZIO}</div>`);
+
+ $('dg-est').innerHTML=g1+g2;
+ $('n-e').textContent=`${L.length} tipo(s) · ${totQtd} unidade(s)`;
+ $('l-est').innerHTML=L.length?L.map(g=>{
+  const k='e:'+g.nome,o=aberto.has(k);
+  return `<div class="c" id="${fId(g.nome,'card-e-')}"><button class="ch" onclick="tg('${kk(k)}')"><div class="row"><div class="nm">${esc(g.nome)}</div><span class="tot">${g.n} un.</span></div><div class="bar"><i style="width:${g.n/mx*100}%"></i></div><div class="chips"><span class="ch2">Colaboradores: ${g.solics.size}</span><span class="ch2">${o?'▲ ocultar':'▼ ver histórico'}</span></div></button><div class="det ${o?'':'det-closed'}">${g.registros.map(r=>`<div class="it"><b>${esc(r.colaborador)}</b> — ${r.qtd} un. (Data:${esc(r.data)||'N/D'})</div>`).join('')}</div></div>`;
+ }).join(''):'<div class="empty">Nenhum registro encontrado.</div>';
+}
+
+function rd(){
+ const q=$('d-q').value.toLowerCase().trim();$('fd-n').textContent=q?'filtro ativo':'';
+ const f=EST.filter(x=>!q||x.colaborador.toLowerCase().includes(q));
+ const totQtd=soma(f.map(x=>x.qtd));
+ const C={};
+ f.forEach(x=>{
+  const c=C[x.colaborador]??={nome:x.colaborador,n:0,itens:new Set(),registros:[]};
+  c.n+=x.qtd;c.itens.add(x.nome);c.registros.push(x);
+ });
+ const L=Object.values(C).sort((a,b)=>b.n-a.n||a.nome.localeCompare(b.nome));
+ const mx=L[0]?.n||1;
+ LK.d=L.map(c=>'d:'+c.nome);
+ const top10=L.slice(0,10);
+
+ $('k-dev').innerHTML=kpi(L.length,'Colaboradores','#2563eb')+kpi(totQtd,'Total de Itens','#059669')+kpi(top10[0]?.n||0,'Maior Retirada','#d97706');
+ const g1=box('🏆 Top Colaboradores','Maior volume retirado',`<div class="top10-list">${top10.length?top10.map((c,i)=>`<div class="top10-row" data-v="${esc(c.nome)}" onclick="selD(this.dataset.v)"><span><b>#${i+1}</b>${esc(c.nome)}</span><span class="ch2 g">${c.n} un.</span></div>`).join(''):VAZIO}</div>`);
+ $('dg-dev').innerHTML=g1+'<div></div>';$('n-dev').textContent=`${L.length} colaborador(es)`;
+ $('l-dev').innerHTML=L.length?L.map(c=>{
+  const k='d:'+c.nome,o=aberto.has(k);
+  return `<div class="c" id="${fId(c.nome,'card-d-')}"><button class="ch" onclick="tg('${kk(k)}')"><div class="row"><div class="nm">${esc(c.nome)}</div><span class="tot">${c.n} un.</span></div><div class="bar"><i style="width:${c.n/mx*100}%"></i></div><div class="chips"><span class="ch2">Tipos de EPIs: ${c.itens.size}</span></div></button><div class="det ${o?'':'det-closed'}">${c.registros.map(r=>`<div class="it"><b>${esc(r.nome)}</b> — ${r.qtd} un. (Data:${esc(r.data)||'N/D'})</div>`).join('')}</div></div>`;
+ }).join(''):'<div class="empty">Nenhum colaborador encontrado.</div>';
+}
+
+function rStk(){
+ const q=$('stk-q').value.toLowerCase().trim();$('fst-n').textContent=q?'filtro ativo':'';
+ const f=STK.filter(x=>!q||(x.material+' '+x.desc+' '+x.loc+' '+x.baia).toLowerCase().includes(q));
+ 
+ const totalItensEstoque = STK.length;
+ const saldoTotal = soma(STK.map(x=>x.saldo));
+ const itensComSaldo = STK.filter(x=>x.saldo > 0).length;
+
+ $('k-stk').innerHTML=kpi(totalItensEstoque,'Registros em Estoque','#7c3aed')+kpi(itensComSaldo,'Itens com Saldo Positivo','#059669')+kpi(saldoTotal,'Quantidade Total em Saldo','#2563eb');
+ $('n-stk').textContent=`${f.length} registro(s) encontrado(s)`;
+
+ $('l-stk').innerHTML=f.length?f.map(s=>`
+  <div class="c" style="border-left-color:#7c3aed">
+   <div style="padding:14px 16px;">
+    <div class="row"><div class="nm">${esc(s.desc || 'Material s/ descrição')}</div><span class="tot" style="background:#f3e8ff;color:#7c3aed">${s.saldo} un.</span></div>
+    <div class="chips" style="margin-top:10px">
+     <span class="ch2">Mat: ${esc(s.material || 'N/D')}</span>
+     <span class="ch2 g">Loc: ${esc(s.loc || 'N/D')}</span>
+     <span class="ch2">Baia: ${esc(s.baia || 'N/D')}</span>
+    </div>
+   </div>
+  </div>`).join(''):'<div class="empty">Nenhum item encontrado no estoque.</div>';
+}
+
+function renderizarRelatorio(){
+ const totQtd=soma(EST.map(x=>x.qtd));
+ const G={}, C={};
+ EST.forEach(x=>{
+  const g=G[x.nome]??={nome:x.nome,n:0}; g.n+=x.qtd;
+  const c=C[x.colaborador]??={nome:x.colaborador,n:0}; c.n+=x.qtd;
+ });
+ const L_EPI=Object.values(G).sort((a,b)=>b.n-a.n);
+ const L_Colab=Object.values(C).sort((a,b)=>b.n-a.n);
+ const top10EPI=L_EPI.slice(0,10);
+ const top10Colab=L_Colab.slice(0,10);
+
+ $('k-rel').innerHTML=
+  kpi(totQtd,'Total de Itens','#2563eb')+
+  kpi(L_EPI.length,'EPIs Distintos','#059669')+
+  kpi(L_Colab.length,'Colaboradores','#d97706')+
+  kpi(top10EPI[0]?.n||0,'Maior Saída','#7c3aed');
+
+ const g1=box('📊 Top 10 EPIs Requisitados','Volume total entregue por material',vb(top10EPI.map((g,i)=>({v:g.n,l:g.nome,c:CORES_GRAFICO[i%10],x:pct(g.n,totQtd)+'%'}))));
+ const g2=box('🏆 Top 10 Colaboradores','Maior volume retirado',`<div class="top10-list">${top10Colab.length?top10Colab.map((c,i)=>`<div class="top10-row" onclick="selD('${esc(c.nome)}')"><span><b>#${i+1}</b>${esc(c.nome)}</span><span class="ch2 g">${c.n} un.</span></div>`).join(''):VAZIO}</div>`);
+
+ $('dg-rel').innerHTML=g1+g2;
+}
+
+try{
+ const cacheEPI = localStorage.getItem(KC_EPI);
+ if(cacheEPI) processarDadosEPI({data: JSON.parse(cacheEPI)});
+ const cacheStk = localStorage.getItem(KC_STK);
+ if(cacheStk) processarDadosEstoque({data: JSON.parse(cacheStk)});
+}catch(e){}
+
+atualizarTudo();
+</script>
+</body>
+</html>
