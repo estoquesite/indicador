@@ -45,13 +45,13 @@ section{display:grid;gap:18px}
 .kpi b{font-size:28px;font-weight:900;line-height:1.1;letter-spacing:-1px;color:#1e293b}
 .kpi span{font-size:11.5px;font-weight:800;color:#6b7a90;text-transform:uppercase;letter-spacing:.4px;margin-top:3px}
 
-/* Layout dos Gráficos: 2 colunas equilibradas (Gráfico de Barras Top 10 e Ranking List Top 10) */
+/* Layout Gráficos */
 .dashboard-grid{display:grid;grid-template-columns:1.2fr 1fr;gap:18px}
 .chart-box{background:#fff;border:1px solid var(--bd);border-radius:16px;padding:20px;display:flex;flex-direction:column;justify-content:space-between;box-shadow:var(--sh);min-width:0}
 .chart-title{font-size:13px;font-weight:800;color:#1e293b;text-transform:uppercase;letter-spacing:.4px;padding-bottom:10px;margin-bottom:12px;border-bottom:1px solid var(--bd);display:flex;flex-direction:column;gap:2px}
 .chart-title .sub{text-transform:none;letter-spacing:0;font-weight:600}
 
-/* Barras do Gráfico Top 10 */
+/* Gráfico de Barras Top 10 */
 .chart-bars{display:flex;align-items:flex-end;justify-content:space-between;gap:8px;height:260px;padding:10px 4px 4px;background:repeating-linear-gradient(to top,transparent 0,transparent 35px,#f1f5f9 35px,#f1f5f9 36px);border-radius:8px;overflow-x:auto}
 .c-bar-group{flex:1;display:flex;flex-direction:column;align-items:center;min-width:36px;max-width:65px;height:100%;justify-content:flex-end;cursor:pointer}
 .c-bar{width:100%;border-radius:6px 6px 0 0;box-shadow:inset 0 -8px 12px rgba(0,0,0,.1);transition:height .5s cubic-bezier(.2,.8,.2,1),filter .2s}
@@ -67,7 +67,7 @@ section{display:grid;gap:18px}
 .top10-row:hover{background:#f1f6ff;border-color:#9bbcf5;box-shadow:0 2px 8px rgba(37,99,235,.12)}
 .top10-row b{font-weight:800;color:#0f172a}
 
-/* Filtros */
+/* Filtros e Ferramentas */
 details.f{background:#fff;border:1px solid var(--bd);border-radius:16px;box-shadow:var(--sh)}
 details.f summary{padding:14px 20px;font-weight:800;font-size:15px;cursor:pointer;list-style:none;display:flex;justify-content:space-between;color:#334155}
 details.f summary::-webkit-details-marker{display:none}
@@ -78,7 +78,6 @@ input:focus,select:focus{outline:2px solid #93b4f5;border-color:#2563eb}
 .btn{min-height:42px;border:0;background:#1e3a8a;border-radius:10px;font-weight:800;font-family:inherit;color:#fff;grid-column:1/-1;cursor:pointer}
 .btn:hover{background:#2748a8}
 
-/* Barra de ferramentas */
 .toolbar{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
 .toolbar button{min-height:38px;padding:0 16px;border-radius:10px;border:1px solid var(--bd);background:#fff;font-weight:800;font-size:13px;font-family:inherit;color:#1e3a8a;cursor:pointer;box-shadow:var(--sh)}
 .toolbar button:hover{background:#eef3ff}
@@ -106,7 +105,7 @@ input:focus,select:focus{outline:2px solid #93b4f5;border-color:#2563eb}
 .empty{text-align:center;color:var(--mu);padding:30px 10px;font-weight:600}
 .hide{display:none}
 
-/* Cores */
+/* Cores e Estilos */
 #s-est{--ac:#2563eb}#s-dev{--ac:#ea580c}
 body{background:linear-gradient(180deg,#e6ecfb 0,#f4f6fb 280px)}
 header{background:linear-gradient(135deg,#0b1220 0%,#1e3a8a 55%,#2563eb 100%);border-bottom:4px solid #f59e0b}
@@ -118,6 +117,20 @@ header{background:linear-gradient(135deg,#0b1220 0%,#1e3a8a 55%,#2563eb 100%);bo
 .kpi b{color:var(--kc,#1e293b)}
 .kpi span{color:#475569}
 .chart-box{border-top:5px solid var(--ac,#2563eb);background:linear-gradient(180deg,color-mix(in srgb,var(--ac,#2563eb) 9%,#fff) 0,#fff 100px)}
+
+/* ==========================================================
+   CONFIGURAÇÃO DE IMPRESSÃO / PDF (OCULTA ABAS, EXPANDE TUDO)
+   ========================================================== */
+@media print {
+  * {-webkit-print-color-adjust: exact !important; print-color-adjust: exact !important;}
+  body { background: #fff !important; color: #000 !important; }
+  header { background: #1e3a8a !important; color: #fff !important; }
+  .seg, .toolbar, details.f, .top-btns, #s-dev { display: none !important; }
+  .det-closed, .det { display: grid !important; }
+  .cards { grid-template-columns: 1fr 1fr !important; gap: 10px !important; }
+  .c { break-inside: avoid; page-break-inside: avoid; }
+  .top10-list { max-height: none !important; overflow: visible !important; }
+}
 
 @media(max-width:1300px){.cards{grid-template-columns:repeat(2,1fr)}}
 @media(max-width:1100px){.dashboard-grid{grid-template-columns:1fr}}
@@ -148,7 +161,8 @@ header{background:linear-gradient(135deg,#0b1220 0%,#1e3a8a 55%,#2563eb 100%);bo
   <details class="f"><summary><span>🔎 Filtros Avançados</span><span id="fe-n" class="sub"></span></summary>
    <div class="fg">
     <input class="w" id="e-q" type="search" placeholder="Buscar EPI ou Colaborador" oninput="re()">
-    <select id="e-mes" class="w" onchange="re()"></select>
+    <select id="e-ano" onchange="re()"></select>
+    <select id="e-mes" onchange="re()"></select>
     <button class="btn" onclick="limpar('e')">Limpar filtros</button>
    </div>
   </details>
@@ -206,12 +220,13 @@ function processarDados(results){
   const nome = r['ItemNome'] || '';
   const qtd = parseFloat(r['ItemQuantidade']) || 0;
   const dataCriacao = r['CriadaEm'] || '';
-  const mes = dataCriacao ? dataCriacao.substring(0, 7) : '';
+  const ano = dataCriacao ? dataCriacao.substring(0, 4) : '';
+  const mes = dataCriacao ? dataCriacao.substring(5, 7) : '';
   const valor = r['ItemPreco'] || '';
-  return {mes, nome, qtd, valor, colaborador, data: dataCriacao};
+  return {ano, mes, nome, qtd, valor, colaborador, data: dataCriacao};
  }).filter(x => x.nome && x.colaborador);
 
- preencher();
+ preencherFiltros();
  re();
  rd();
  $('upd').textContent = 'Atualizado às ' + new Date().toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'});
@@ -246,10 +261,25 @@ function atualizar(){
  });
 }
 
-function preencher(){
- const sel=(id,l,vals)=>{const e=$(id),v=e.value;e.innerHTML=`<option value="">${l}</option>`+vals.map(x=>`<option>${esc(x)}</option>`).join('');if(vals.map(String).includes(v))e.value=v};
+function preencherFiltros(){
  const u=a=>[...new Set(a.filter(Boolean))];
- sel('e-mes','Todos os meses',u(EST.map(x=>x.mes)).sort());
+ 
+ const selAno = $('e-ano');
+ const vAno = selAno.value;
+ const anos = u(EST.map(x=>x.ano)).sort().reverse();
+ selAno.innerHTML = `<option value="">Todos os anos</option>` + anos.map(x=>`<option value="${x}">${x}</option>`).join('');
+ if(anos.includes(vAno)) selAno.value = vAno;
+
+ const selMes = $('e-mes');
+ const vMes = selMes.value;
+ const meses = [
+  {v:'01', l:'Janeiro'}, {v:'02', l:'Fevereiro'}, {v:'03', l:'Março'},
+  {v:'04', l:'Abril'}, {v:'05', l:'Maio'}, {v:'06', l:'Junho'},
+  {v:'07', l:'Julho'}, {v:'08', l:'Agosto'}, {v:'09', l:'Setembro'},
+  {v:'10', l:'Outubro'}, {v:'11', l:'Novembro'}, {v:'12', l:'Dezembro'}
+ ];
+ selMes.innerHTML = `<option value="">Todos os meses</option>` + meses.map(m=>`<option value="${m.v}">${m.l}</option>`).join('');
+ if(meses.map(m=>m.v).includes(vMes)) selMes.value = vMes;
 }
 
 function aba(t){
@@ -262,7 +292,7 @@ function aba(t){
 }
 
 function limpar(p){
- if(p==='e'){['e-q','e-mes'].forEach(i=>$(i).value='');re();}
+ if(p==='e'){['e-q','e-ano','e-mes'].forEach(i=>$(i).value='');re();}
  else if(p==='d'){$('d-q').value='';rd();}
 }
 
@@ -272,9 +302,10 @@ function abrirTudo(p){(p==='e'?LK.e:LK.d).forEach(k=>aberto.add(k));re();rd()}
 function fecharTudo(p){(p==='e'?LK.e:LK.d).forEach(k=>aberto.delete(k));re();rd()}
 
 function re(){
- const q=$('e-q').value.toLowerCase().trim(),mes=$('e-mes').value;
- $('fe-n').textContent=[q,mes].filter(Boolean).length?'filtros ativos':'';
- const f=EST.filter(x=>(!mes||x.mes===mes)&&(!q||(x.nome+' '+x.colaborador).toLowerCase().includes(q)));
+ const q=$('e-q').value.toLowerCase().trim(), ano=$('e-ano').value, mes=$('e-mes').value;
+ $('fe-n').textContent=[q,ano,mes].filter(Boolean).length?'filtros ativos':'';
+ 
+ const f=EST.filter(x=>(!ano||x.ano===ano)&&(!mes||x.mes===mes)&&(!q||(x.nome+' '+x.colaborador).toLowerCase().includes(q)));
  const totQtd=soma(f.map(x=>x.qtd));
  const G={};
  f.forEach(x=>{
@@ -288,7 +319,6 @@ function re(){
 
  $('k-est').innerHTML=kpi(totQtd,'Total de Itens Requisitados','#2563eb')+kpi(L.length,'Tipos de EPIs distintos','#059669')+kpi(top10[0]?.n||0,'Maior Saída','#d97706');
  
- // Gráfico de Barras com o TOP 10 completo e Ranking em lista do TOP 10 lado a lado
  const g1=box('📊 Top 10 EPIs Requisitados','Volume total entregue por material',vb(top10.map((g,i)=>({v:g.n,l:g.nome,c:CORES_GRAFICO[i%10],x:pct(g.n,totQtd)+'%',a:'selE',d:g.nome}))));
  const g2=box('🏆 Ranking Geral (Top 10)','Itens mais solicitados',`<div class="top10-list">${top10.length?top10.map((g,i)=>`<div class="top10-row" data-v="${esc(g.nome)}" onclick="selE(this.dataset.v)"><span><b>#${i+1}</b>${esc(g.nome)}</span><span class="ch2 g">${g.n} un.</span></div>`).join(''):VAZIO}</div>`);
 
@@ -296,7 +326,7 @@ function re(){
  $('n-e').textContent=`${L.length} tipo(s) · ${totQtd} unidade(s)`;
  $('l-est').innerHTML=L.length?L.map(g=>{
   const k='e:'+g.nome,o=aberto.has(k);
-  return`<div class="c" id="${fId(g.nome,'card-e-')}"><button class="ch" onclick="tg('${kk(k)}')"><div class="row"><div class="nm">{esc(g.nome)}</div><span class="tot">${g.n} un.</span></div><div class="bar"><i style="width:${g.n/mx*100}%"></i></div><div class="chips"><span class="ch2">Colaboradores: ${g.solics.size}</span><span class="ch2">${o?'▲ ocultar':'▼ ver histórico'}</span></div></button><div class="det ${o?'':'det-closed'}">${g.registros.map(r=>`<div class="it"><b>${esc(r.colaborador)}</b> — ${r.qtd} un. (Data:${esc(r.data)||'N/D'})</div>`).join('')}</div></div>`;
+  return`<div class="c" id="${fId(g.nome,'card-e-')}"><button class="ch" onclick="tg('${kk(k)}')"><div class="row"><div class="nm">${esc(g.nome)}</div><span class="tot">${g.n} un.</span></div><div class="bar"><i style="width:${g.n/mx*100}%"></i></div><div class="chips"><span class="ch2">Colaboradores: ${g.solics.size}</span><span class="ch2">${o?'▲ ocultar':'▼ ver histórico'}</span></div></button><div class="det ${o?'':'det-closed'}">${g.registros.map(r=>`<div class="it"><b>${esc(r.colaborador)}</b> — ${r.qtd} un. (Data:${esc(r.data)||'N/D'})</div>`).join('')}</div></div>`;
  }).join(''):'<div class="empty">Nenhum registro encontrado.</div>';
 }
 
