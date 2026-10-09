@@ -50,7 +50,7 @@ tr:nth-child(even) td{background:rgba(128,128,128,.07)}
 <script>
 const $=id=>document.getElementById(id),MS=['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
 const CL=['1 - Até 2 meses','2 - De 2 a 6 meses','3 - De 6 meses a 1 ano','4 - Mais de 1 ano'],CC=['#1e90ff','#1a2a9c','#e8703a','#c0305a'];
-let D=[],tab='est',F={},sort={};
+let D=[],tab='pai',F={},sort={};
 const nz=s=>String(s).normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().replace(/[^a-z]/g,'');
 const dt=v=>v instanceof Date&&!isNaN(v)?v:(typeof v==='string'&&v.trim()&&!isNaN(new Date(v))?new Date(v):null);
 const num=v=>{v=parseFloat(v);return isNaN(v)?null:v};
@@ -67,7 +67,7 @@ function load(file){
    const desc=String(g(r,'descricaodoitem')||'').trim(),rec=dt(g(r,'datarec')),sa=dt(g(r,'datadesaida')),q=num(g(r,'quant'))||0,qs=num(g(r,'quantidadedesaida'));
    let sl=num(g(r,'saldoemestoque'));if(sl===null)sl=q-(qs||0);
    const last=sa||rec,d=last?dias(last):null;
-   return{site:String(g(r,'site')||'CTSS').trim().toUpperCase(),loc:String(g(r,'localizacao')||'—').trim().toUpperCase(),baia:String(g(r,'baiaarmazenamento')||'—').trim().toUpperCase(),ped:String(g(r,'pedido')||'').replace(/\.0$/,''),
+   return{site:map.site?String(g(r,'site')||'SEM SITE').trim().toUpperCase():'CTSS',nf:String(g(r,'nf')||'').trim(),sol:String(g(r,'solicitante')||'').trim(),pr:dt(g(r,'prazoret')),dinv:dt(g(r,'datadoinventario')),emin:num(g(r,'estoqueminimo')),val:dt(g(r,'datadevalidade')),qr:qs||0,loc:String(g(r,'localizacao')||'—').trim().toUpperCase(),baia:String(g(r,'baiaarmazenamento')||'—').trim().toUpperCase(),ped:String(g(r,'pedido')||'').replace(/\.0$/,''),
     mat:String(g(r,'material')||'').replace(/\.0$/,''),desc,grp:(desc.split(/[\s;,]/)[0]||'—').toUpperCase(),q,um:g(r,'um')||'',rec,sa,qs:qs!==null?qs:(sl<=0?q:0),sl,d,
     cl:d===null?3:d<=60?0:d<=180?1:d<=365?2:3,dsto:rec&&sa?Math.max(0,Math.floor((sa-rec)/864e5)):''};
   });
@@ -80,11 +80,11 @@ dz.addEventListener('dragleave',()=>dz.classList.remove('o'));
 dz.addEventListener('drop',e=>{e.preventDefault();dz.classList.remove('o');e.dataTransfer.files[0]&&load(e.dataTransfer.files[0])});
 document.body.addEventListener('dragover',e=>e.preventDefault());
 document.body.addEventListener('drop',e=>{e.preventDefault();e.dataTransfer.files[0]&&load(e.dataTransfer.files[0])});
-const TABS={est:'Estoques',rot:'Rotatividade',zer:'Zerados'};
+const TABS={pai:'Painel',est:'Estoques',rot:'Rotatividade',zer:'Zerados',prz:'Prazo de retirada',inv:'Inventário',pen:'Pendências'};
 function dateOf(r){return tab==='zer'?r.sa:r.rec}
 function filt(){
  return D.filter(r=>{
-  const z=r.sl<=0;if(tab==='zer'?!z:z&&tab==='est')return false;
+  const z=r.sl<=0;if(tab==='zer'?!z:z&&tab!=='rot')return false;
   const d=dateOf(r);
   if(F.ano&&(!d||d.getFullYear()!=F.ano))return false;
   if(F.mes!==undefined&&F.mes!==''&&(!d||d.getMonth()!=F.mes))return false;
@@ -100,7 +100,7 @@ function render(full){
    inp=(id,l)=>`<div><label>${l}</label><input id="${id}" value="${F[id]||''}" oninput="sf('${id}',this.value,1)"></div>`;
   $('fl').innerHTML=sel('site','Site',u('site').map(x=>[x,x]))+sel('ano','Ano ('+(tab==='zer'?'data de saída':'data de recebimento')+')',anos.map(a=>[a,a]))+sel('mes','Mês',MS.map((m,i)=>[i,m]))+sel('loc','Localização',u('loc').map(x=>[x,x]))+sel('baia','Baia de armazenamento',u('baia').map(x=>[x,x]))+inp('desc','Descrição do item')+`<div><label>Código (material)</label><input id="mat" list="dl" placeholder="digite ou escolha" value="${F.mat||''}" oninput="sf('mat',this.value,1)"><datalist id="dl">${u('mat').filter(Boolean).map(x=>`<option value="${x}">`).join('')}</datalist></div>`+inp('ped','Pedido');
  }
- const R=filt();$('v').innerHTML=tab==='est'?vEst(R):tab==='rot'?vRot(R):vZer(R);
+ const R=filt();$('v').innerHTML=({pai:vPai,est:vEst,rot:vRot,zer:vZer,prz:vPrz,inv:vInv,pen:vPen})[tab](R);
 }
 function sf(k,v,keep){F[k]=v;if(keep){const y=document.activeElement.id,p=document.activeElement.selectionStart;render(false)}else render(false)}
 function agg(R,key,val){const m={};R.forEach(r=>{const k=key(r);if(k!==null)m[k]=(m[k]||0)+val(r)});return Object.entries(m).sort((a,b)=>b[1]-a[1])}
@@ -136,6 +136,27 @@ function vZer(R){
  return`<div class="kp">${kp('Itens zerados no estoque',fn(R.length),1)}${kp('Total saído (un.)',fn(R.reduce((a,r)=>a+r.qs,0)))}</div>
  <div class="g">${bars('Saída dos materiais zerados por grupo',agg(R,r=>r.grp,r=>r.qs),'var(--red)')}${bars('Saída dos materiais zerados por mês',months(R,r=>r.qs,r=>r.sa),'var(--blue)',12)}</div>
  ${tbl(R,[['Galpão',r=>r.loc],['Material',r=>r.mat],['Descrição',r=>r.desc],['Data-Rec.',r=>r.rec],['Data de saída',r=>r.sa],['Dias no estoque',r=>r.dsto],['Última mov. (dias)',r=>r.sa?dias(r.sa):r.d],['Saldo',r=>r.sl],['Qtd. saída',r=>r.qs]])}`}
+const CF={},ven=r=>r.pr&&r.pr<Date.now()?dias(r.pr):0,IC=['Sem inventário','Até 6 meses','De 6 meses a 1 ano','Mais de 1 ano'],ic=r=>!r.dinv?0:(d=>d<=180?1:d<=365?2:3)(dias(r.dinv)),
+PEN=[['Código de material inválido',r=>['','0','1','-'].includes(r.mat)],['Sem nota fiscal',r=>!r.nf],['Sem pedido',r=>!r.ped],['Sem solicitante',r=>!r.sol],['Sem baia',r=>r.baia==='—'],['Saldo ≠ quant. − saída',r=>Math.abs(r.q-r.qr-r.sl)>.001],['Recebimento com data futura',r=>r.rec&&r.rec>Date.now()]];
+const pn=R=>{R.forEach(r=>r.pn=PEN.filter(p=>p[1](r)).map(p=>p[0]));return R};
+function cf(i,v){(CF[tab]=CF[tab]||{})[i]=v;render(false);const e=$('cf'+i);e.focus();e.setSelectionRange(v.length,v.length)}
+function tbl(R,cols){
+ const s=sort[tab],f=CF[tab]||{},k=(c,r)=>{const v=c[1](r);return v instanceof Date?fd(v):v};
+ const rows=R.filter(r=>cols.every((c,i)=>!f[i]||String(k(c,r)??'').toLowerCase().includes(f[i].toLowerCase())));
+ if(s)rows.sort((a,b)=>{const x=cols[s.i][1](a),y=cols[s.i][1](b),xv=x instanceof Date?+x:x,yv=y instanceof Date?+y:y;return(xv>yv?1:xv<yv?-1:0)*s.d});
+ return`<div class='c'><h3>Tabela status de material</h3><div class='tw'><table><tr>${cols.map((c,i)=>`<th onclick='srt(${i})'>${c[0]}${s&&s.i===i?(s.d>0?' ▲':' ▼'):''}</th>`).join('')}</tr><tr>${cols.map((c,i)=>`<th style='top:31px;background:var(--card);padding:2px'><input id='cf${i}' value="${(f[i]||'').replace(/"/g,'&quot;')}" oninput='cf(${i},this.value)' placeholder='filtrar' style='width:100%;min-width:70px;padding:3px;border:1px solid var(--bd);border-radius:4px;background:var(--card);color:var(--tx)'></th>`).join('')}</tr>${rows.slice(0,300).map(r=>'<tr>'+cols.map(c=>{const v=k(c,r);return`<td title="${String(v??'').replace(/"/g,'&quot;')}">${v??''}</td>`}).join('')+'</tr>').join('')}</table></div><div class='n'>Mostrando ${Math.min(300,rows.length)} de ${rows.length} linhas (filtre por coluna ou clique no cabeçalho para ordenar)</div></div>`}
+function vPai(R){
+ const S=D.filter(r=>!F.site||r.site===F.site),z=S.filter(r=>r.sl<=0).length,rc=S.reduce((a,r)=>a+r.q,0),sa=S.reduce((a,r)=>a+r.qs,0),v=R.filter(r=>ven(r)>0),c=n=>R.filter(r=>ic(r)===n).length,pc=pn(R).filter(r=>r.pn.length).length,mn=R.filter(r=>r.emin!==null&&r.sl<r.emin).length,vl=R.filter(r=>r.val&&r.val<Date.now()+30*864e5).length;
+ return`<div class='kp'>${kp('Itens em estoque',fn(R.length))}${kp('Unidades em estoque',fn(R.reduce((a,r)=>a+r.sl,0)))}${kp('Itens zerados',fn(z))}${kp('Giro (saída/recebido)',(rc?sa/rc*100:0).toFixed(1)+'%')}${kp('Parados há +1 ano',fn(R.filter(r=>r.cl===3).length))}</div><div class='kp'>${kp('Prazo de retirada vencido',fn(v.length),1)}${kp('Vencido há +90 dias',fn(v.filter(r=>ven(r)>90).length),1)}${kp('Sem inventário',fn(c(0)),1)}${kp('Inventário há +1 ano',fn(c(3)),1)}${kp('Pendência de cadastro',fn(pc),1)}${kp('Abaixo do estoque mínimo',fn(mn))}${kp('Validade em até 30 dias',fn(vl))}</div><div class='g'>${bars('Estoque por localização (un.)',agg(R,r=>r.loc,r=>r.sl),'var(--org)',15)}${donut(R)}${bars('Prazo vencido por solicitante',agg(v,r=>r.sol||'—',()=>1),'var(--red)',15)}${bars('Itens por site',agg(R,r=>r.site,()=>1),'var(--teal)',6)}</div>`}
+function vPrz(R0){
+ const R=R0.filter(r=>ven(r)>0).sort((a,b)=>ven(b)-ven(a));
+ return`<div class='kp'>${kp('Itens com prazo vencido',fn(R.length),1)}${kp('Vencidos há +90 dias',fn(R.filter(r=>ven(r)>90).length),1)}${kp('Vencidos há +180 dias',fn(R.filter(r=>ven(r)>180).length),1)}${kp('Unidades paradas',fn(R.reduce((a,r)=>a+r.sl,0)))}</div><div class='g'>${bars('Vencidos por solicitante',agg(R,r=>r.sol||'—',()=>1),'var(--red)')}${bars('Vencidos por localização',agg(R,r=>r.loc,()=>1),'var(--org)')}</div>${tbl(R,[['Solicitante',r=>r.sol],['Pedido',r=>r.ped],['Material',r=>r.mat],['Descrição',r=>r.desc],['Saldo',r=>r.sl],['Prazo ret.',r=>r.pr],['Dias vencido',r=>ven(r)],['Localização',r=>r.loc],['Baia',r=>r.baia]])}`}
+function vInv(R){
+ const c=[0,0,0,0];R.forEach(r=>c[ic(r)]++);const T=R.filter(r=>ic(r)!==1);
+ return`<div class='kp'>${kp('Sem inventário',fn(c[0]),1)}${kp('Até 6 meses',fn(c[1]))}${kp('6 meses a 1 ano',fn(c[2]))}${kp('Mais de 1 ano',fn(c[3]),1)}${kp('Cobertura (até 6 meses)',(c[1]/(R.length||1)*100).toFixed(1)+'%')}</div><div class='g'>${bars('Situação do inventário (itens)',IC.map((l,i)=>[l,c[i]]),'var(--blue)',4)}${bars('A inventariar por localização',agg(T,r=>r.loc,()=>1),'var(--red)')}</div>${tbl(T,[['Material',r=>r.mat],['Descrição',r=>r.desc],['Saldo',r=>r.sl],['Localização',r=>r.loc],['Baia',r=>r.baia],['Situação',r=>IC[ic(r)]],['Data inventário',r=>r.dinv],['Dias desde inventário',r=>r.dinv?dias(r.dinv):'']])}`}
+function vPen(R0){
+ const R=pn(R0),P=R.filter(r=>r.pn.length);
+ return`<div class='kp'>${kp('Itens com pendência',fn(P.length),1)}${kp('% do estoque',(P.length/(R.length||1)*100).toFixed(1)+'%')}</div><div class='g'>${bars('Pendências por tipo',PEN.map(p=>[p[0],R.filter(p[1]).length]),'var(--org)',10)}${bars('Itens com pendência por localização',agg(P,r=>r.loc,()=>1),'var(--red)')}</div>${tbl(P,[['Pendências',r=>r.pn.join(', ')],['Material',r=>r.mat],['Descrição',r=>r.desc],['Pedido',r=>r.ped],['NF',r=>r.nf],['Solicitante',r=>r.sol],['Localização',r=>r.loc],['Baia',r=>r.baia],['Saldo',r=>r.sl],['Data-Rec.',r=>r.rec]])}`}
 </script>
 </body>
 </html>
