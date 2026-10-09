@@ -18,6 +18,7 @@ h1{margin:0;font-size:22px;color:#fff}
 .header-right{display:flex;align-items:center;gap:10px;flex-wrap:wrap;}
 .up{background:#fff;color:var(--teal);border:0;border-radius:6px;padding:9px 16px;font-weight:700;cursor:pointer}
 .save-btn{background:#1a2a9c;color:#fff;border:0;border-radius:6px;padding:9px 16px;font-weight:700;cursor:pointer}
+.dl-btn{background:#007e7a;color:#fff;border:0;border-radius:6px;padding:9px 16px;font-weight:700;cursor:pointer}
 #drop{margin:20px;padding:50px 20px;border:2px dashed var(--teal);border-radius:10px;text-align:center;color:var(--mut);background:var(--card)}
 #drop.o{background:rgba(0,126,122,.1)}#drop b{display:block;font-size:18px;color:var(--teal);margin-bottom:6px}
 main{padding:16px 20px;max-width:1500px;margin:auto}
@@ -54,10 +55,11 @@ tr:nth-child(even) td{background:rgba(128,128,128,.07)}
     <span id="fn" style="color:#fff;font-size:12px;margin-right:5px">Pronto para carregar</span>
     <label for="f" class="up" style="display:inline-block;cursor:pointer;margin:0;">Carregar arquivo mensal</label>
     <input id="f" type="file" accept=".xlsx,.xls,.csv" style="display:none">
+    <button class="dl-btn" onclick="baixarComputador()">Salvar no Computador</button>
     <button class="save-btn" onclick="salvarEstoqueSupabase()">Salvar na Nuvem</button>
 </div>
 </header>
-<div id="drop"><b>Arraste o estoques.xlsx aqui</b>ou clique em "Carregar arquivo mensal" no topo. Você também pode sincronizar com o Supabase.</div>
+<div id="drop"><b>Arraste o estoques.xlsx aqui</b>ou clique em "Carregar arquivo mensal" no topo. Você também pode sincronizar com o Supabase ou salvar localmente.</div>
 <main id="app" hidden>
 <div class="tabs" id="tabs"></div>
 <div class="fl" id="fl"></div>
@@ -65,12 +67,10 @@ tr:nth-child(even) td{background:rgba(128,128,128,.07)}
 </main>
 <script>
 // --- CONFIGURAÇÃO DO SUPABASE ---
-// Troque pelos valores reais do seu projeto (Settings > API)
 const SUPABASE_URL = 'SUA_URL_DO_SUPABASE';
 const SUPABASE_ANON_KEY = 'SUA_CHAVE_ANON_PUBLICA';
 const TABELA = 'estoque_linhas';
 
-// Cliente criado de forma segura: se faltar configurar, o resto da página continua funcionando
 let sb = null;
 try {
   if (SUPABASE_URL.startsWith('http') && window.supabase) {
@@ -85,7 +85,8 @@ try {
 const $=id=>document.getElementById(id),MS=['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
 const CL=['1 - Até 2 meses','2 - De 2 a 6 meses','3 - De 6 meses a 1 ano','4 - Mais de 1 ano'],CC=['#1e90ff','#1a2a9c','#e8703a','#c0305a'];
 let D=[],tab='pai',F={},sort={};
-const nz=s=>String(s).normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().replace(/[^a-z]/g,'');
+let currentFileName = 'estoque_atualizado.xlsx';
+const nz=s=>String(s).normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().replace(/[^a-z]/g, '');
 const dt=v=>v instanceof Date&&!isNaN(v)?v:(typeof v==='string'&&v.trim()&&!isNaN(new Date(v))?new Date(v):null);
 const num=v=>{v=parseFloat(v);return isNaN(v)?null:v};
 const fd=d=>d?d.toLocaleDateString('pt-BR'):'';const fn=n=>Math.round(n).toLocaleString('pt-BR');
@@ -93,6 +94,7 @@ const dias=(a)=>Math.max(0,Math.floor((Date.now()-a)/864e5));
 
 function processarDadosRows(rows, fileName){
   if(!rows.length){alert('Arquivo vazio');return}
+  currentFileName = fileName || 'estoque_atualizado.xlsx';
   const map={};Object.keys(rows[0]).forEach(k=>map[nz(k)]=k);
   const g=(r,k)=>r[map[k]];
   D=rows.map(r=>{
@@ -103,7 +105,7 @@ function processarDadosRows(rows, fileName){
     mat:String(g(r,'material')||'').replace(/\.0$/,''),desc,grp:(desc.split(/[\s;,]/)[0]||'—').toUpperCase(),q,um:g(r,'um')||'',rec,sa,qs:qs!==null?qs:(sl<=0?q:0),sl,d,
     cl:d===null?3:d<=60?0:d<=180?1:d<=365?2:3,dsto:rec&&sa?Math.max(0,Math.floor((sa-rec)/864e5)):''};
   });
-  $('fn').textContent = fileName + ' • ' + D.length + ' linhas';$('drop').hidden = true;
+  $('fn').textContent = currentFileName + ' • ' + D.length + ' linhas';$('drop').hidden = true;
   $('app').hidden = false;
   F={};
   render(true);
@@ -133,6 +135,42 @@ dz.addEventListener('drop',e=>{e.preventDefault();dz.classList.remove('o');e.dat
 document.body.addEventListener('dragover',e=>e.preventDefault());
 document.body.addEventListener('drop',e=>{e.preventDefault();e.dataTransfer.files[0]&&load(e.dataTransfer.files[0])});
 
+// --- FUNÇÃO PARA SALVAR NO COMPUTADOR ---
+function baixarComputador(){
+  if(!D.length){alert('Não há dados carregados para salvar.');return}
+  try {
+    // Reconverte os dados originais processados para o formato de planilha
+    const exportData = D.map(r => ({
+      'Site': r.site,
+      'NF': r.nf,
+      'Solicitante': r.sol,
+      'Prazo Ret.': fd(r.pr),
+      'Data do Inventário': fd(r.dinv),
+      'Estoque Mínimo': r.emin,
+      'Data de Validade': fd(r.val),
+      'Localização': r.loc,
+      'Baia Armazenamento': r.baia,
+      'Pedido': r.ped,
+      'Material': r.mat,
+      'Descrição do Item': r.desc,
+      'Quant': r.q,
+      'UM': r.um,
+      'Data Rec': fd(r.rec),
+      'Data de Saída': fd(r.sa),
+      'Quantidade de Saída': r.qs,
+      'Saldo em Estoque': r.sl
+    }));
+    
+    const ws = XLSX.utils.json_to_sheet(exportData);
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, "Estoque");
+    XLSX.writeFile(wb, currentFileName.includes('.') ? currentFileName : 'estoque_atualizado.xlsx');
+    alert('Arquivo salvo com sucesso no seu computador!');
+  } catch(e) {
+    alert('Erro ao baixar arquivo: ' + e.message);
+  }
+}
+
 // --- SUPABASE: carregar ---
 async function carregarEstoqueSupabase(){
   if(!sb)return;
@@ -153,7 +191,7 @@ async function carregarEstoqueSupabase(){
   }catch(e){console.error(e)}
 }
 
-// --- SUPABASE: salvar (substitui todo o conteúdo) ---
+// --- SUPABASE: salvar ---
 async function salvarEstoqueSupabase(){
   if(!sb){alert('Supabase não configurado. Preencha SUPABASE_URL e SUPABASE_ANON_KEY no código.');return}
   if(!D.length){alert('Carregue um arquivo primeiro.');return}
@@ -167,7 +205,7 @@ async function salvarEstoqueSupabase(){
       if(r.error)throw r.error;
     }
     $('fn').textContent=D.length+' linhas salvas!';
-    alert('Salvo com sucesso!');
+    alert('Salvo com sucesso na nuvem!');
   }catch(e){
     $('fn').textContent='Erro ao salvar';
     alert('Erro ao salvar: '+e.message);
