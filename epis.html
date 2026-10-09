@@ -45,22 +45,23 @@ section{display:grid;gap:18px}
 .kpi b{font-size:28px;font-weight:900;line-height:1.1;letter-spacing:-1px;color:#1e293b}
 .kpi span{font-size:11.5px;font-weight:800;color:#6b7a90;text-transform:uppercase;letter-spacing:.4px;margin-top:3px}
 
-/* Gráficos Redenhados e Alinhados */
-.dashboard-grid{display:grid;grid-template-columns:2fr 1fr;gap:18px}
+/* Layout dos Gráficos: 2 colunas equilibradas (Gráfico de Barras Top 10 e Ranking List Top 10) */
+.dashboard-grid{display:grid;grid-template-columns:1.2fr 1fr;gap:18px}
 .chart-box{background:#fff;border:1px solid var(--bd);border-radius:16px;padding:20px;display:flex;flex-direction:column;justify-content:space-between;box-shadow:var(--sh);min-width:0}
 .chart-title{font-size:13px;font-weight:800;color:#1e293b;text-transform:uppercase;letter-spacing:.4px;padding-bottom:10px;margin-bottom:12px;border-bottom:1px solid var(--bd);display:flex;flex-direction:column;gap:2px}
 .chart-title .sub{text-transform:none;letter-spacing:0;font-weight:600}
 
-.chart-bars{display:flex;align-items:flex-end;justify-content:space-between;gap:12px;height:240px;padding:10px 4px 4px;background:repeating-linear-gradient(to top,transparent 0,transparent 35px,#f1f5f9 35px,#f1f5f9 36px);border-radius:8px;overflow-x:auto}
-.c-bar-group{flex:1;display:flex;flex-direction:column;align-items:center;min-width:45px;max-width:80px;height:100%;justify-content:flex-end;cursor:pointer}
+/* Barras do Gráfico Top 10 */
+.chart-bars{display:flex;align-items:flex-end;justify-content:space-between;gap:8px;height:260px;padding:10px 4px 4px;background:repeating-linear-gradient(to top,transparent 0,transparent 35px,#f1f5f9 35px,#f1f5f9 36px);border-radius:8px;overflow-x:auto}
+.c-bar-group{flex:1;display:flex;flex-direction:column;align-items:center;min-width:36px;max-width:65px;height:100%;justify-content:flex-end;cursor:pointer}
 .c-bar{width:100%;border-radius:6px 6px 0 0;box-shadow:inset 0 -8px 12px rgba(0,0,0,.1);transition:height .5s cubic-bezier(.2,.8,.2,1),filter .2s}
 .c-bar-group:hover .c-bar{filter:brightness(1.1)}
-.c-bar-val{font-size:12px;font-weight:800;margin-bottom:4px;color:#1e293b;text-align:center;line-height:1.1}
-.c-bar-val small{display:block;font-size:9.5px;color:#64748b;font-weight:700}
-.c-bar-lbl{font-size:10px;font-weight:700;color:#64748b;margin-top:8px;text-align:center;line-height:1.15;height:32px;overflow:hidden;width:100%;text-overflow:ellipsis;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
+.c-bar-val{font-size:11.5px;font-weight:800;margin-bottom:4px;color:#1e293b;text-align:center;line-height:1.1}
+.c-bar-val small{display:block;font-size:9px;color:#64748b;font-weight:700}
+.c-bar-lbl{font-size:9.5px;font-weight:700;color:#64748b;margin-top:8px;text-align:center;line-height:1.15;height:35px;overflow:hidden;width:100%;text-overflow:ellipsis;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical}
 
-/* Top 10 / Ranking */
-.top10-list{display:grid;gap:6px;max-height:280px;overflow-y:auto;padding-right:4px}
+/* Top 10 Lista */
+.top10-list{display:grid;gap:6px;max-height:270px;overflow-y:auto;padding-right:4px}
 .top10-row{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:10px 14px;background:#fff;border:1px solid var(--bd);border-radius:10px;font-size:13px;font-weight:600;cursor:pointer;transition:all .2s}
 .top10-row span:first-child{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .top10-row:hover{background:#f1f6ff;border-color:#9bbcf5;box-shadow:0 2px 8px rgba(37,99,235,.12)}
@@ -172,7 +173,7 @@ const SHEET_ID = "2PACX-1vQVEgArNMWRAxt9I1pomlnmMRqYQ39ZfDDR-G2r7NFkqFSJf0af8t0o
 const CSV_URL = BASE_URL + SHEET_ID + "/pub?output=csv";
 
 const KC = "epis_cache_papaparse";
-const CORES_GRAFICO=['#2563eb','#059669','#d97706','#dc2626','#7c3aed','#db2777','#0284c7','#65a30d'];
+const CORES_GRAFICO=['#2563eb','#059669','#d97706','#dc2626','#7c3aed','#db2777','#0284c7','#65a30d','#4f46e5','#0d9488'];
 const $=id=>document.getElementById(id);
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 let EST=[],aberto=new Set();
@@ -180,7 +181,7 @@ const LK={e:[],d:[]};
 const pct=(a,b)=>b?Math.round(a/b*100):0;
 const soma=a=>a.reduce((s,x)=>s+x,0);
 function fId(s,prefix='card-'){return prefix+String(s).toLowerCase().replace(/[^a-z0-9]/g,'_')}
-function rolarPara(id){setTimeout(()=>{const el=$(id);if(el){el.scrollIntoView({behavior:'smooth',block:'center'});el.classList.add('highlight-target');setTimeout(()=>el.classList.remove('highlight-target'),1600)}} ,80)}
+function rolarPara(id){setTimeout(()=>{const el=$(id);if(el){el.scrollIntoView({behavior:'smooth',block:'center'});el.classList.add('highlight-target');setTimeout(()=>el.classList.remove('highlight-target'),1600)}},80)}
 
 const VAZIO='<div class="empty" style="font-size:12px;padding:15px">Sem dados</div>';
 const kpi=(v,l,c)=>`<div class="kpi" style="--kc:${c||'#2563eb'}"><div><b>${v}</b><span>${l}</span></div></div>`;
@@ -190,7 +191,7 @@ function vb(items){
  if(!items.length)return VAZIO;
  const mx=Math.max(...items.map(i=>i.v),1);
  return '<div class="chart-bars">'+items.map(i=>{
-  const h=Math.max(Math.round(i.v/mx*140),i.v>0?8:3);
+  const h=Math.max(Math.round(i.v/mx*160),i.v>0?8:3);
   return `<div class="c-bar-group" title="${esc(i.t||i.l)}"${i.a?` data-v="${esc(i.d)}" onclick="${i.a}(this.dataset.v)"`:''}><div class="c-bar-val">${i.v}${i.x?`<small>${i.x}</small>`:''}</div><div class="c-bar" style="height:${h}px;background:${i.c}"></div><div class="c-bar-lbl">${esc(i.l)}</div></div>`;
  }).join('')+'</div>';
 }
@@ -283,19 +284,19 @@ function re(){
  const L=Object.values(G).sort((a,b)=>b.n-a.n||a.nome.localeCompare(b.nome));
  const mx=L[0]?.n||1;
  LK.e=L.map(g=>'e:'+g.nome);
- const top5=L.slice(0,5),top10=L.slice(0,10);
+ const top10=L.slice(0,10);
 
  $('k-est').innerHTML=kpi(totQtd,'Total de Itens Requisitados','#2563eb')+kpi(L.length,'Tipos de EPIs distintos','#059669')+kpi(top10[0]?.n||0,'Maior Saída','#d97706');
  
- // Gráficos organizados lado a lado no grid superior
- const g1=box('📊 Top 5 EPIs Requisitados','Volume total entregue',vb(top5.map((g,i)=>({v:g.n,l:g.nome,c:CORES_GRAFICO[i%8],x:pct(g.n,totQtd)+'%',a:'selE',d:g.nome}))));
- const g2=box('🏆 Ranking Geral','Top itens mais pedidos',`<div class="top10-list">${top10.length?top10.map((g,i)=>`<div class="top10-row" data-v="${esc(g.nome)}" onclick="selE(this.dataset.v)"><span><b>#${i+1}</b>${esc(g.nome)}</span><span class="ch2 g">${g.n} un.</span></div>`).join(''):VAZIO}</div>`);
+ // Gráfico de Barras com o TOP 10 completo e Ranking em lista do TOP 10 lado a lado
+ const g1=box('📊 Top 10 EPIs Requisitados','Volume total entregue por material',vb(top10.map((g,i)=>({v:g.n,l:g.nome,c:CORES_GRAFICO[i%10],x:pct(g.n,totQtd)+'%',a:'selE',d:g.nome}))));
+ const g2=box('🏆 Ranking Geral (Top 10)','Itens mais solicitados',`<div class="top10-list">${top10.length?top10.map((g,i)=>`<div class="top10-row" data-v="${esc(g.nome)}" onclick="selE(this.dataset.v)"><span><b>#${i+1}</b>${esc(g.nome)}</span><span class="ch2 g">${g.n} un.</span></div>`).join(''):VAZIO}</div>`);
 
  $('dg-est').innerHTML=g1+g2;
  $('n-e').textContent=`${L.length} tipo(s) · ${totQtd} unidade(s)`;
  $('l-est').innerHTML=L.length?L.map(g=>{
   const k='e:'+g.nome,o=aberto.has(k);
-  return`<div class="c" id="${fId(g.nome,'card-e-')}"><button class="ch" onclick="tg('${kk(k)}')"><div class="row"><div class="nm">${esc(g.nome)}</div><span class="tot">${g.n} un.</span></div><div class="bar"><i style="width:${g.n/mx*100}%"></i></div><div class="chips"><span class="ch2">Colaboradores: ${g.solics.size}</span><span class="ch2">${o?'▲ ocultar':'▼ ver histórico'}</span></div></button><div class="det ${o?'':'det-closed'}">${g.registros.map(r=>`<div class="it"><b>${esc(r.colaborador)}</b> — ${r.qtd} un. (Data:${esc(r.data)||'N/D'})</div>`).join('')}</div></div>`;
+  return`<div class="c" id="${fId(g.nome,'card-e-')}"><button class="ch" onclick="tg('${kk(k)}')"><div class="row"><div class="nm">{esc(g.nome)}</div><span class="tot">${g.n} un.</span></div><div class="bar"><i style="width:${g.n/mx*100}%"></i></div><div class="chips"><span class="ch2">Colaboradores: ${g.solics.size}</span><span class="ch2">${o?'▲ ocultar':'▼ ver histórico'}</span></div></button><div class="det ${o?'':'det-closed'}">${g.registros.map(r=>`<div class="it"><b>${esc(r.colaborador)}</b> — ${r.qtd} un. (Data:${esc(r.data)||'N/D'})</div>`).join('')}</div></div>`;
  }).join(''):'<div class="empty">Nenhum registro encontrado.</div>';
 }
 
