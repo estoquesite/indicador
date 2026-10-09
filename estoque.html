@@ -9,6 +9,8 @@
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E📦%3C/text%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<!-- Importando o PapaParse para ler arquivos CSV locais perfeitamente -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
 <style>
 :root{--line:#cbd5e1;--tx:#0f172a;--mu:#475569;--pri:#7c3aed;--bd:#e3e8f0;--sh:0 1px 2px rgba(15,23,42,.05),0 4px 14px rgba(15,23,42,.06);--sh2:0 8px 28px rgba(15,23,42,.14)}
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
@@ -16,12 +18,19 @@ body{font-family:Inter,system-ui,-apple-system,sans-serif;background:#f4f6fb;col
 
 /* Cabeçalho */
 header{position:sticky;top:0;z-index:30;background:linear-gradient(135deg,#0b1220 0%,#1e1b4b 60%,#7c3aed 100%);color:#fff;padding:14px 28px;box-shadow:0 6px 24px rgba(11,18,32,.35);border-bottom:4px solid #f59e0b}
-.top{display:flex;justify-content:space-between;align-items:center;gap:12px}
+.top{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
 .title-area{display:flex;align-items:center;gap:12px}
 .home-btn{background:rgba(255,255,255,.15);color:#fff;border:1px solid rgba(255,255,255,.3);border-radius:12px;width:40px;height:40px;font-size:18px;display:flex;align-items:center;justify-content:center;cursor:pointer;text-decoration:none;transition:all .2s}
 .home-btn:hover{background:rgba(255,255,255,.3)}
 h1{font-size:19px;font-weight:900;letter-spacing:-.3px}
 #upd{font-size:12px;opacity:.75;margin-top:2px}
+
+/* Caixa de Upload Estilizada */
+.upload-box {display:flex;align-items:center;gap:8px;background:rgba(255,255,255,0.12);border:1px dashed rgba(255,255,255,0.4);padding:8px 14px;border-radius:12px;cursor:pointer;transition:all .2s}
+.upload-box:hover {background:rgba(255,255,255,0.2)}
+.upload-box label {cursor:pointer;font-weight:700;font-size:12.5px;color:#fff;display:flex;align-items:center;gap:6px}
+.upload-box input {display:none}
+
 .top-btns{display:flex;gap:8px}
 .rf,.print-btn{background:rgba(255,255,255,.1);color:#fff;border:1px solid rgba(255,255,255,.2);border-radius:12px;min-width:38px;min-height:38px;font-size:16px;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .2s}
 .rf:hover,.print-btn:hover{background:rgba(255,255,255,.2)}
@@ -71,4 +80,264 @@ tr:hover{background:#f8fafc}
 
 @media print {
   * {-webkit-print-color-adjust: exact !important; print-color-adjust: exact !important;}
-  @page { size: A4 landscape; margin: 10mm
+  @page { size: A4 landscape; margin: 10mm 12mm; }
+  body { background: #fff !important; color: #000 !important; font-size: 10px !important; }
+  header { display: none !important; }
+  .seg, .top-btns, .home-btn { display: none !important; }
+  .print-title-only { display: block !important; font-size: 14px; font-weight: 900; color: #7c3aed; margin-bottom: 10px; text-transform: uppercase; border-bottom: 2px solid #7c3aed; padding-bottom: 4px; }
+  main { padding: 4px 0 0 0 !important; gap: 12px !important; }
+}
+</style>
+</head>
+<body>
+<header>
+ <div class="top">
+  <div class="title-area">
+   <a href="index.html" class="home-btn" title="Voltar ao Índice">🏠</a>
+   <div><h1>📦 Gestão de Materiais não Estocáveis</h1><div id="upd">Nenhum arquivo carregado ainda</div></div>
+  </div>
+  
+  <!-- CAIXINHA DE ANEXAR ARQUIVO NO CABEÇALHO -->
+  <div class="upload-box" title="Selecione o arquivo CSV da sua planilha">
+   <label for="csvFileInput">
+    📂 <span>Carregar Planilha</span>
+   </label>
+   <input type="file" id="csvFileInput" accept=".csv" onchange="carregarArquivoLocal(event)">
+  </div>
+
+  <div class="top-btns">
+   <button class="print-btn" onclick="window.print()" title="Imprimir / Salvar PDF">🖨️</button>
+   <button class="rf" id="rf" onclick="avisarUpload()" aria-label="Atualizar">↻</button>
+  </div>
+ </div>
+ <div class="seg">
+  <button id="b-disp" class="on" onclick="aba('disp')">📊 Acompanhamento Itens Disponíveis</button>
+  <button id="b-zer" onclick="aba('zer')">⚠️ Acompanhamento Itens Zerados</button>
+ </div>
+</header>
+<main>
+ <!-- ABA 1: ITENS DISPONÍVEIS -->
+ <section id="s-disp">
+  <div class="print-title-only">Relatório Corporativo: Gestão de Materiais não Estocáveis (Disponíveis)</div>
+  <div class="kpis" id="k-disp"></div>
+  <div class="dashboard-grid" id="dg-disp"></div>
+  <div class="table-container">
+   <div class="table-header">Tabela Status de Material — Disponíveis</div>
+   <div style="overflow-x:auto">
+    <table>
+     <thead>
+      <tr>
+       <th>Item</th>
+       <th>Projeto</th>
+       <th>Solicitante</th>
+       <th>Pedido</th>
+       <th>Descrição do Item</th>
+       <th>Material</th>
+       <th>Saldo em Estoque</th>
+       <th>Qtd Saída</th>
+       <th>Data-Rec.</th>
+       <th>Data de Saida</th>
+       <th>Localização</th>
+       <th>Baia</th>
+      </tr>
+     </thead>
+     <tbody id="tb-disp"></tbody>
+    </table>
+   </div>
+  </div>
+ </section>
+
+ <!-- ABA 2: ITENS ZERADOS -->
+ <section id="s-zer" class="hide">
+  <div class="print-title-only">Relatório Corporativo: Gestão de Materiais não Estocáveis (Zerados)</div>
+  <div class="kpis" id="k-zer"></div>
+  <div class="dashboard-grid" id="dg-zer"></div>
+  <div class="table-container" style="border-color:#be123c">
+   <div class="table-header" style="background:#be123c">Tabela Status de Material — Zerados</div>
+   <div style="overflow-x:auto">
+    <table>
+     <thead>
+      <tr>
+       <th>Item</th>
+       <th>Projeto</th>
+       <th>Solicitante</th>
+       <th>Pedido</th>
+       <th>Descrição do Item</th>
+       <th>Material</th>
+       <th>Saldo em Estoque</th>
+       <th>Qtd Saída</th>
+       <th>Data-Rec.</th>
+       <th>Data de Saida</th>
+       <th>Localização</th>
+       <th>Baia</th>
+      </tr>
+     </thead>
+     <tbody id="tb-zer"></tbody>
+    </table>
+   </div>
+  </div>
+ </section>
+</main>
+
+<script>
+const KC_STK = "estoque_cache_local_v1";
+const CORES_GRAFICO=['#be123c','#7c3aed','#2563eb','#059669','#d97706','#dc2626','#db2777','#0284c7','#65a30d','#4f46e5'];
+const $=id=>document.getElementById(id);
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const soma=a=>a.reduce((s,x)=>s+x,0);
+
+let STK=[];
+
+const VAZIO='<tr><td colspan="12" class="empty">Nenhum registro encontrado. Carregue uma planilha no botão acima.</td></tr>';
+const kpi=(v,l,tipo)=>`<div class="kpi ${tipo}"><div><b>${v}</b><span>${l}</span></div></div>`;
+const box=(t,s,b)=>`<div class="chart-box"><div><div class="chart-title">${t}<span class="sub">${s}</span></div>${b}</div></div>`;
+
+function vb(items){
+ if(!items.length)return '<div class="empty">Sem dados</div>';
+ const mx=Math.max(...items.map(i=>i.v),1);
+ return '<div class="chart-bars">'+items.map(i=>{
+  const h=Math.max(Math.round(i.v/mx*160),i.v>0?8:3);
+  return `<div class="c-bar-group" title="${esc(i.l)}: ${i.v}"><div class="c-bar-val">${i.v}</div><div class="c-bar" style="height:${h}px;background:${i.c}"></div><div class="c-bar-lbl">${esc(i.l)}</div></div>`;
+ }).join('')+'</div>';
+}
+
+function processarDadosEstoque(rows){
+ STK = rows.map(r=>{
+  const keys = Object.keys(r);
+  
+  const getCol = (terms) => {
+   for(let t of terms) {
+    const found = keys.find(k => k.toLowerCase().replace(/[^a-z0-9]/g, '').includes(t.toLowerCase().replace(/[^a-z0-9]/g, '')));
+    if(found !== undefined && r[found] !== undefined) return r[found];
+   }
+   return '';
+  };
+
+  const item = getCol(['item']);
+  const projeto = getCol(['projeto']);
+  const solicitante = getCol(['solicitante']);
+  const pedido = getCol(['pedido']);
+  const desc = getCol(['descri', 'descrição']);
+  const material = getCol(['material']);
+  
+  let saldoRaw = getCol(['saldo em estoque', 'saldo']);
+  let saldo = parseFloat(String(saldoRaw).replace(',', '.')) || 0;
+
+  let qtdSaidaRaw = getCol(['quantidade de saida', 'quantidade de saída', 'saida', 'saída']);
+  let qtdSaida = parseFloat(String(qtdSaidaRaw).replace(',', '.')) || 0;
+
+  const dataRec = getCol(['data-rec', 'data rec', 'rec']);
+  const dataSaida = getCol(['data de saida', 'data de saída']);
+  const loc = getCol(['localização', 'localizacao', 'local']);
+  const baia = getCol(['baia', 'armazenamento']);
+
+  return {item, projeto, solicitante, pedido, desc, material, saldo, qtdSaida, dataRec, dataSaida, loc, baia};
+ }).filter(x => x.desc || x.material || x.item);
+
+ renderizarTudo();
+ $('upd').textContent = 'Atualizado às ' + new Date().toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'});
+}
+
+function carregarArquivoLocal(event) {
+ const file = event.target.files[0];
+ if (!file) return;
+
+ const b = $('rf'); if(b) b.classList.add('spin');
+ Papa.parse(file, {
+  header: true,
+  skipEmptyLines: true,
+  complete: function(results) {
+   if(results.data && results.data.length > 0) {
+    localStorage.setItem(KC_STK, JSON.stringify(results.data));
+    processarDadosEstoque(results.data);
+   }
+   if(b) b.classList.remove('spin');
+  },
+  error: function(err) {
+   alert("Erro ao ler o arquivo CSV.");
+   if(b) b.classList.remove('spin');
+  }
+ });
+}
+
+function avisarUpload() {
+ alert("Por favor, clique em 'Carregar Planilha' no topo para selecionar o seu arquivo CSV atualizado.");
+}
+
+function aba(t){
+ ['disp','zer'].forEach(x=>{
+  $('s-'+x).classList.toggle('hide',x!==t);
+  const btn=$('b-'+x);
+  if(btn) btn.classList.toggle('on',x===t);
+ });
+ scrollTo(0,0);
+}
+
+function renderizarTudo(){
+ const disp = STK.filter(x => x.saldo > 0);
+ const zer = STK.filter(x => x.saldo <= 0);
+
+ // --- DISPONÍVEIS ---
+ const totalUnDisp = soma(disp.map(x => x.saldo));
+ $('k-disp').innerHTML = kpi(disp.length, 'Qtd de itens', 'normal') + kpi(totalUnDisp, 'Total em unidades', 'normal');
+
+ const mapDisp = {};
+ disp.forEach(x => {
+  const d = x.desc ? String(x.desc).substring(0, 15) : 'Outros';
+  mapDisp[d] = (mapDisp[d] || 0) + x.saldo;
+ });
+ const topDisp = Object.entries(mapDisp).sort((a,b)=>b[1]-a[1]).slice(0,12).map(([l,v],i)=>({l, v, c:CORES_GRAFICO[i%10]}));
+ $('dg-disp').innerHTML = box('Estoque por Descrição (Top Itens)', 'Volume em saldo', vb(topDisp));
+
+ $('tb-disp').innerHTML = disp.length ? disp.map(s=>`
+  <tr>
+   <td>${esc(s.item)}</td>
+   <td>${esc(s.projeto)}</td>
+   <td>${esc(s.solicitante)}</td>
+   <td>${esc(s.pedido)}</td>
+   <td><b>${esc(s.desc)}</b></td>
+   <td>${esc(s.material)}</td>
+   <td><span style="color:#059669;font-weight:800">${s.saldo}</span></td>
+   <td>${s.qtdSaida}</td>
+   <td>${esc(s.dataRec)}</td>
+   <td>${esc(s.dataSaida)}</td>
+   <td>${esc(s.loc)}</td>
+   <td>${esc(s.baia)}</td>
+  </tr>`).join('') : VAZIO;
+
+ // --- ZERADOS ---
+ const totalUnZer = soma(zer.map(x => x.qtdSaida || 1));
+ $('k-zer').innerHTML = kpi(zer.length, 'Itens zerados no estoque', 'alert') + kpi(totalUnZer, 'Total de saídas', 'alert');
+
+ const mapZer = {};
+ zer.forEach(x => {
+  const d = x.desc ? String(x.desc).substring(0, 15) : 'Outros';
+  mapZer[d] = (mapZer[d] || 0) + 1;
+ });
+ const topZer = Object.entries(mapZer).sort((a,b)=>b[1]-a[1]).slice(0,12).map(([l,v],i)=>({l, v, c:CORES_GRAFICO[i%10]}));
+ $('dg-zer').innerHTML = box('Saída dos Materiais Zerados', 'Itens com saldo zerado', vb(topZer));
+
+ $('tb-zer').innerHTML = zer.length ? zer.map(s=>`
+  <tr>
+   <td>${esc(s.item)}</td>
+   <td>${esc(s.projeto)}</td>
+   <td>${esc(s.solicitante)}</td>
+   <td>${esc(s.pedido)}</td>
+   <td><b>${esc(s.desc)}</b></td>
+   <td>${esc(s.material)}</td>
+   <td><span style="color:#be123c;font-weight:800">${s.saldo}</span></td>
+   <td>${s.qtdSaida}</td>
+   <td>${esc(s.dataRec)}</td>
+   <td>${esc(s.dataSaida)}</td>
+   <td>${esc(s.loc)}</td>
+   <td>${esc(s.baia)}</td>
+  </tr>`).join('') : VAZIO;
+}
+
+try{
+ const cacheStk = localStorage.getItem(KC_STK);
+ if(cacheStk) processarDadosEstoque(JSON.parse(cacheStk));
+}catch(e){}
+</script>
+</body>
+</html>
