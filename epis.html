@@ -171,7 +171,7 @@ details.f summary{color:var(--ac,#334155)}
  </div>
 </header>
 <main>
- <!-- ABA 1: ESTOQUE / MOVIMENTAÇÕES -->
+ <!-- ABA 1: MOVIMENTAÇÕES DE EPIS -->
  <section id="s-est">
   <div class="print-head"><span>🪖 Movimentações de EPIs</span><span class="pdt"></span></div>
   <div class="kpis" id="k-est"></div>
@@ -209,7 +209,7 @@ const KC="epis_cache_v4";
 const CORES_GRAFICO=['#2563eb','#059669','#d97706','#dc2626','#7c3aed','#db2777','#0284c7','#65a30d'];
 const $=id=>document.getElementById(id);
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-let EST=[],ABERTURA_EST=[],ABERTURA_COLAB=new Set(),aberto=new Set(),ultimo=0;
+let EST=[],aberto=new Set(),ultimo=0;
 const LK={e:[],d:[]};
 const pct=(a,b)=>b?Math.round(a/b*100):0;
 const soma=a=>a.reduce((s,x)=>s+x,0);
