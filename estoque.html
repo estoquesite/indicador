@@ -156,7 +156,7 @@ tr:hover{background:#f8fafc}
 </main>
 
 <script>
-const KC_STK = "estoque_cache_vale_v2";
+const KC_STK = "estoque_cache_vale_v3";
 const CORES_GRAFICO=['#be123c','#7c3aed','#2563eb','#059669','#d97706','#dc2626','#db2777','#0284c7','#65a30d','#4f46e5'];
 const $=id=>document.getElementById(id);
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -181,7 +181,7 @@ function processarDadosEstoque(rows){
  STK = rows.map(r=>{
   const keys = Object.keys(r);
   
-  // Função flexível que busca exato ou parcial e possui fallback por posição exata baseada na sua foto
+  // Função ultra-tolerante que busca por qualquer pedaço do nome ou cai direto na posição da coluna que você mandou na foto
   const getCol = (names, indexFallback) => {
    for(let n of names) {
     const foundKey = keys.find(k => k.trim().toLowerCase().includes(n.toLowerCase()));
@@ -193,7 +193,7 @@ function processarDadosEstoque(rows){
    return '';
   };
 
-  const item = getCol(['Item', 'Cod', 'Codigo'], 6);
+  const item = getCol(['Item', 'Cod', 'Código'], 6);
   const projeto = getCol(['Projeto'], 3);
   const solicitante = getCol(['Solicitante'], 4);
   const pedido = getCol(['Pedido'], 5);
@@ -203,16 +203,16 @@ function processarDadosEstoque(rows){
   let saldoRaw = getCol(['Saldo', 'Estoque'], 18);
   let saldo = parseFloat(String(saldoRaw).replace(',', '.')) || 0;
 
-  let qtdSaidaRaw = getCol(['Quantidade de saida', 'Saida', 'Qtd Saída'], 16);
+  let qtdSaidaRaw = getCol(['said', 'saíd', 'Qtd'], 16);
   let qtdSaida = parseFloat(String(qtdSaidaRaw).replace(',', '.')) || 0;
 
-  const dataRec = getCol(['Data-Rec', 'Recebimento'], 12);
+  const dataRec = getCol(['Data-Rec', 'Rec'], 12);
   const dataSaida = getCol(['Data de Saida'], 15);
-  const loc = getCol(['Localização', 'IDLocalização', 'ID'], 1);
+  const loc = getCol(['Localização', 'Localizacao', 'ID'], 1);
   const baia = getCol(['Baia', 'Armazenamento'], 2);
 
   return {item, projeto, solicitante, pedido, desc, material, saldo, qtdSaida, dataRec, dataSaida, loc, baia};
- }).filter(x => x.desc || x.material || x.item || x.saldo > 0 || x.qtdSaida > 0);
+ }); // Removemos o filtro restritivo para garantir que absolutamente todas as linhas apareçam!
 
  renderizarTudo();
  $('upd').textContent = 'Atualizado às ' + new Date().toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'});
@@ -229,6 +229,7 @@ function carregarArquivo(event) {
    const workbook = XLSX.read(data, {type: 'array', cellDates: true});
    const firstSheetName = workbook.SheetNames[0];
    const worksheet = workbook.Sheets[firstSheetName];
+   // Lê as linhas como objetos JSON usando a primeira linha como cabeçalho
    const rows = XLSX.utils.sheet_to_json(worksheet, {defval: ""});
 
    if (rows && rows.length > 0) {
@@ -259,16 +260,21 @@ function aba(t){
 }
 
 function renderizarTudo(){
- const disp = STK.filter(x => x.saldo > 0);
- const zer = STK.filter(x => x.saldo <= 0);
+ // Separa com segurança entre saldo > 0 (Disponíveis) e o restante (Zerados)
+ const disp = STK.filter(x => x.saldo > 0 || (x.saldo === 0 && x.qtdSaida === 0));
+ const zer = STK.filter(x => x.saldo <= 0 && x.saldo !== '' && x.saldo !== undefined);
+ if(disp.length === 0 && zer.length === 0 && STK.length > 0) {
+  // Fallback visual total caso os números venham em branco: joga tudo em disponíveis
+  disp.push(...STK);
+ }
 
- const totalUnDisp = soma(disp.map(x => x.saldo));
+ const totalUnDisp = soma(disp.map(x => typeof x.saldo === 'number' ? x.saldo : 1));
  $('k-disp').innerHTML = kpi(disp.length, 'Qtd de itens', 'normal') + kpi(totalUnDisp, 'Total em unidades', 'normal');
 
  const mapDisp = {};
  disp.forEach(x => {
   const d = x.desc ? String(x.desc).substring(0, 15) : 'Outros';
-  mapDisp[d] = (mapDisp[d] || 0) + x.saldo;
+  mapDisp[d] = (mapDisp[d] || 0) + (typeof x.saldo === 'number' ? x.saldo : 1);
  });
  const topDisp = Object.entries(mapDisp).sort((a,b)=>b[1]-a[1]).slice(0,12).map(([l,v],i)=>({l, v, c:CORES_GRAFICO[i%10]}));
  $('dg-disp').innerHTML = box('Estoque por Descrição (Top Itens)', 'Volume em saldo', vb(topDisp));
