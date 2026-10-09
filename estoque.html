@@ -15,7 +15,9 @@ header{display:flex;flex-wrap:wrap;gap:12px;align-items:center;justify-content:s
 .header-left{display:flex;align-items:center;gap:12px;}
 .home-btn{background:#fff;color:var(--teal);border:0;border-radius:6px;padding:8px 12px;font-weight:700;cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;gap:6px;font-size:13px}
 h1{margin:0;font-size:22px;color:#fff}
+.header-right{display:flex;align-items:center;gap:10px;flex-wrap:wrap;}
 .up{background:#fff;color:var(--teal);border:0;border-radius:6px;padding:9px 16px;font-weight:700;cursor:pointer}
+.save-btn{background:#1a2a9c;color:#fff;border:0;border-radius:6px;padding:9px 16px;font-weight:700;cursor:pointer}
 #drop{margin:20px;padding:50px 20px;border:2px dashed var(--teal);border-radius:10px;text-align:center;color:var(--mut);background:var(--card)}
 #drop.o{background:rgba(0,126,122,.1)}#drop b{display:block;font-size:18px;color:var(--teal);margin-bottom:6px}
 main{padding:16px 20px;max-width:1500px;margin:auto}
@@ -45,12 +47,18 @@ tr:nth-child(even) td{background:rgba(128,128,128,.07)}
 </style></head><body>
 <header>
 <div class="header-left">
-    <!-- Botão Casinha (Início) - Altere o 'href' se o seu painel principal tiver outro nome de arquivo, ex: 'index.html' -->
     <a href="index.html" class="home-btn" title="Voltar ao Painel Principal">🏠 Início</a>
     <h1>Gestão de Materiais não Estocáveis</h1>
 </div>
-<div><span id="fn" style="color:#fff;font-size:12px;margin-right:10px">Carregando do Supabase...</span><button class="up" onclick="carregarEstoqueSupabase()">Atualizar Dados</button></div></header>
-<main id="app">
+<div class="header-right">
+    <span id="fn" style="color:#fff;font-size:12px;margin-right:5px">Pronto para carregar</span>
+    <button class="up" onclick="$('f').click()">Carregar arquivo mensal</button>
+    <button class="save-btn" onclick="salvarEstoqueSupabase()">Salvar na Nuvem</button>
+    <input id="f" type="file" accept=".xlsx,.xls,.csv" hidden>
+</div>
+</header>
+<div id="drop"><b>Arraste o estoques.xlsx aqui</b>ou clique em "Carregar arquivo mensal". Você também pode sincronizar com o Supabase.</div>
+<main id="app" hidden>
 <div class="tabs" id="tabs"></div>
 <div class="fl" id="fl"></div>
 <div id="v"></div>
@@ -70,18 +78,49 @@ const num=v=>{v=parseFloat(v);return isNaN(v)?null:v};
 const fd=d=>d?d.toLocaleDateString('pt-BR'):'';const fn=n=>Math.round(n).toLocaleString('pt-BR');
 const dias=(a)=>Math.max(0,Math.floor((Date.now()-a)/864e5));
 
-// Função para buscar os dados direto do Supabase automaticamente
+// Função que processa o arquivo carregado localmente
+function processarDadosRows(rows, fileName){
+  if(!rows.length){alert('Arquivo vazio');return}
+  const map={};Object.keys(rows[0]).forEach(k=>map[nz(k)]=k);
+  const g=(r,k)=>r[map[k]];
+  D=rows.map(r=>{
+   const desc=String(g(r,'descricaodoitem')||'').trim(),rec=dt(g(r,'datarec')),sa=dt(g(r,'datadesaida')),q=num(g(r,'quant'))||0,qs=num(g(r,'quantidadedesaida'));
+   let sl=num(g(r,'saldoemestoque'));if(sl===null)sl=q-(qs||0);
+   const last=sa||rec,d=last?dias(last):null;
+   return{site:map.site?String(g(r,'site')||'SEM SITE').trim().toUpperCase():'CTSS',nf:String(g(r,'nf')||'').trim(),sol:String(g(r,'solicitante')||'').trim(),pr:dt(g(r,'prazoret')),dinv:dt(g(r,'datadoinventario')),emin:num(g(r,'estoqueminimo')),val:dt(g(r,'datadevalidade')),qr:qs||0,loc:String(g(r,'localizacao')||'—').trim().toUpperCase(),baia:String(g(r,'baiaarmazenamento')||'—').trim().toUpperCase(),ped:String(r.pedido||g(r,'pedido')||'').replace(/\.0$/,''),
+    mat:String(g(r,'material')||'').replace(/\.0$/,''),desc,grp:(desc.split(/[\s;,]/)[0]||'—').toUpperCase(),q,um:g(r,'um')||'',rec,sa,qs:qs!==null?qs:(sl<=0?q:0),sl,d,
+    cl:d===null?3:d<=60?0:d<=180?1:d<=365?2:3,dsto:rec&&sa?Math.max(0,Math.floor((sa-rec)/864e5)):''};
+  });
+  $('fn').textContent = fileName + ' • ' + D.length + ' linhas';$('drop').hidden = true;
+  $('app').hidden = false;
+  F={};
+  render(true);
+}
+
+function load(file){
+ const r=new FileReader();
+ r.onload=e=>{
+  const wb=XLSX.read(e.target.result,{type:'array',cellDates:true}),ws=wb.Sheets[wb.SheetNames[0]];
+  const rows=XLSX.utils.sheet_to_json(ws,{defval:null});
+  processarDadosRows(rows, file.name);
+ };
+ r.readAsArrayBuffer(file);
+}
+
+$('f').onchange=e=>e.target.files[0]&&load(e.target.files[0]);
+const dz=$('drop');
+['dragover','dragenter'].forEach(t=>dz.addEventListener(t,e=>{e.preventDefault();dz.classList.add('o')}));
+dz.addEventListener('dragleave',()=>dz.classList.remove('o'));
+dz.addEventListener('drop',e=>{e.preventDefault();dz.classList.remove('o');e.dataTransfer.files[0]&&load(e.dataTransfer.files[0])});
+document.body.addEventListener('dragover',e=>e.preventDefault());
+document.body.addEventListener('drop',e=>{e.preventDefault();e.dataTransfer.files[0]&&load(e.dataTransfer.files[0])});
+
+// Tenta carregar do Supabase sem travar a tela se estiver vazio
 async function carregarEstoqueSupabase(){
-    $('fn').textContent = 'Buscando dados...';
     try {
         const { data, error } = await supabase.from('estoque').select('*');
-        if (error) throw error;
+        if (error || !data || !data.length) return; // Se der erro ou estiver vazio, apenas segue a vida
         
-        if(!data || !data.length){
-            $('fn').textContent = 'Nenhum registro encontrado no Supabase';
-            return;
-        }
-
         D = data.map(r=>{
            const desc=String(r.descricao||'').trim(),rec=dt(r.atualizado_em),sa=dt(r.datadesaida),q=num(r.quantidade)||0,qs=num(r.quantidadedesaida)||0;
            let sl=num(r.saldoemestoque);if(sl===null)sl=q-(qs||0);
@@ -91,12 +130,40 @@ async function carregarEstoqueSupabase(){
             cl:d===null?3:d<=60?0:d<=180?1:d<=365?2:3,dsto:rec&&sa?Math.max(0,Math.floor((sa-rec)/864e5)):''};
         });
 
-        $('fn').textContent = D.length + ' linhas carregadas do Supabase';
-        F={};
-        render(true);
+        if(D.length > 0){
+            $('fn').textContent = D.length + ' linhas (Supabase)';$('drop').hidden = true;
+            $('app').hidden = false;
+            F={};
+            render(true);
+        }
     } catch(err) {
-        console.error('Erro ao carregar do Supabase:', err.message);
-        $('fn').textContent = 'Erro ao conectar ao Supabase';
+        console.log('Supabase vazio ou offline, aguardando carga manual.');
+    }
+}
+
+// Salva os dados atuais na nuvem
+async function salvarEstoqueSupabase(){
+    if(!D.length){
+        alert('Carregue um arquivo primeiro para poder salvar na nuvem.');
+        return;
+    }
+    $('fn').textContent = 'Salvando...';
+    try {
+        const payload = D.map(r => ({
+            codigo_produto: r.mat || r.ped || 'SEM_COD',
+            descricao: r.desc,
+            categoria: r.grp,
+            quantidade: r.q,
+            atualizado_em: new Date()
+        }));
+
+        const { error } = await supabase.from('estoque').upsert(payload, { onConflict: 'codigo_produto' });
+        if(error) throw error;
+
+        $('fn').textContent = D.length + ' linhas salvas no Supabase!';
+        alert('Estoque salvo com sucesso na nuvem!');
+    } catch(err) {
+        alert('Erro ao salvar no Supabase: ' + err.message);
     }
 }
 
