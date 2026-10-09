@@ -119,13 +119,13 @@ header{background:linear-gradient(135deg,#0b1220 0%,#1e3a8a 55%,#2563eb 100%);bo
 .chart-box{border-top:5px solid var(--ac,#2563eb);background:linear-gradient(180deg,color-mix(in srgb,var(--ac,#2563eb) 9%,#fff) 0,#fff 100px)}
 
 /* ==========================================================
-   CONFIGURAÇÃO DE IMPRESSÃO / PDF (OCULTA ABAS, EXPANDE TUDO)
+   CONFIGURAÇÃO DE IMPRESSÃO / PDF (OCULTA ABAS E CABEÇALHO EXCEDENTE)
    ========================================================== */
 @media print {
   * {-webkit-print-color-adjust: exact !important; print-color-adjust: exact !important;}
-  body { background: #fff !important; color: #000 !important; }
-  header { background: #1e3a8a !important; color: #fff !important; }
-  .seg, .toolbar, details.f, .top-btns, #s-dev { display: none !important; }
+  body { background: #fff !important; color: #000 !important; margin: 0 !important; padding: 0 !important; }
+  header { background: #1e3a8a !important; color: #fff !important; position: static !important; box-shadow: none !important; }
+  .seg, .toolbar, details.f, .top-btns, #s-dev, .home-btn { display: none !important; }
   .det-closed, .det { display: grid !important; }
   .cards { grid-template-columns: 1fr 1fr !important; gap: 10px !important; }
   .c { break-inside: avoid; page-break-inside: avoid; }
