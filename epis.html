@@ -90,4 +90,251 @@ input:focus,select:focus{outline:2px solid #93b4f5;border-color:#2563eb}
 .c:hover{box-shadow:var(--sh2);transform:translateY(-2px)}
 .highlight-target{animation:flash-card 1.5s ease}
 @keyframes flash-card{0%{background-color:#dbeafe;transform:scale(1.005)}100%{background-color:#fff;transform:scale(1)}}
-.ch{width:100%;text-align:left;background:none;border:0;padding:14px 16px;
+.ch{width:100%;text-align:left;background:none;border:0;padding:14px 16px;font-family:inherit;color:inherit;display:block;cursor:pointer}
+.row{display:flex;justify-content:space-between;align-items:flex-start;gap:10px}
+.nm{font-weight:800;word-break:break-word;font-size:15.5px;color:#0f172a}
+.tot{background:#e8effd;color:#1e3a8a;border-radius:10px;padding:4px 11px;font-weight:900;font-size:14px;flex-shrink:0}
+.bar{height:7px;background:#eaeef5;border-radius:99px;margin:10px 0 6px}
+.bar i{display:block;height:100%;border-radius:99px;background:linear-gradient(90deg,#3b82f6,#1e3a8a)}
+.chips{display:flex;flex-wrap:wrap;gap:5px;margin-top:6px}
+.ch2{font-size:12px;font-weight:700;padding:3px 9px;border-radius:99px;background:#f1f5f9;color:#475569}
+.r{background:#fee2e2;color:#991b1b}.g{background:#d1fae5;color:#065f46}
+.sub{font-size:12px;color:#64748b;font-weight:600}
+.det{border-top:1px solid var(--line);background:#f7f9fc;padding:14px 18px;display:grid;gap:6px;font-size:13px}
+.det-closed{display:none}
+.it{border-left:3px solid #1e3a8a;padding:8px 12px;background:#fff;border-radius:0 8px 8px 0;margin-bottom:3px;box-shadow:0 1px 2px rgba(15,23,42,.05)}
+.empty{text-align:center;color:var(--mu);padding:30px 10px;font-weight:600}
+.hide{display:none}
+.print-head{display:none}
+
+/* Cores */
+#s-est{--ac:#2563eb}#s-dev{--ac:#ea580c}
+body{background:linear-gradient(180deg,#e6ecfb 0,#f4f6fb 280px)}
+header{background:linear-gradient(135deg,#0b1220 0%,#1e3a8a 55%,#2563eb 100%);border-bottom:4px solid #f59e0b}
+.seg button{color:#475569}
+#b-est.on{background:linear-gradient(135deg,#3b82f6,#1d4ed8);color:#fff;box-shadow:0 4px 14px rgba(37,99,235,.45)}
+#b-dev.on{background:linear-gradient(135deg,#fb923c,#ea580c);color:#fff;box-shadow:0 4px 14px rgba(234,88,12,.45)}
+.kpi{background:linear-gradient(135deg,#fff 40%,color-mix(in srgb,var(--kc,#2563eb) 16%,#fff));border-color:color-mix(in srgb,var(--kc,#2563eb) 30%,#fff)}
+.kpi::before{width:8px}
+.kpi b{color:var(--kc,#1e293b)}
+.kpi span{color:#475569}
+.chart-box{border-top:5px solid var(--ac,#2563eb);background:linear-gradient(180deg,color-mix(in srgb,var(--ac,#2563eb) 9%,#fff) 0,#fff 100px)}
+
+@media(max-width:1300px){.cards{grid-template-columns:repeat(2,1fr)}}
+@media(max-width:1100px){.dashboard-grid{grid-template-columns:1fr}}
+@media(max-width:820px){.cards{grid-template-columns:1fr};.fg{grid-template-columns:1fr 1fr}}
+</style>
+</head>
+<body>
+<header>
+ <div class="top">
+  <div class="title-area">
+   <a href="index.html" class="home-btn" title="Voltar ao Índice">🏠</a>
+   <div><h1>🪖 Painel Corporativo — Gestão de EPIs</h1><div id="upd">Carregando dados…</div></div>
+  </div>
+  <div class="top-btns">
+   <button class="print-btn" onclick="window.print()" title="Imprimir / Salvar PDF">🖨️</button>
+   <button class="rf" id="rf" onclick="atualizar()" aria-label="Atualizar">↻</button>
+  </div>
+ </div>
+ <div class="seg">
+  <button id="b-est" class="on" onclick="aba('est')">📦 Movimentações de EPIs</button>
+  <button id="b-dev" onclick="aba('dev')">👥 Colaboradores & Requisições</button>
+ </div>
+</header>
+<main>
+ <section id="s-est">
+  <div class="kpis" id="k-est"></div>
+  <div class="dashboard-grid" id="dg-est"></div>
+  <details class="f"><summary><span>🔎 Filtros Avançados</span><span id="fe-n" class="sub"></span></summary>
+   <div class="fg">
+    <input class="w" id="e-q" type="search" placeholder="Buscar EPI ou Colaborador" oninput="re()">
+    <select id="e-mes" class="w" onchange="re()"></select>
+    <button class="btn" onclick="limpar('e')">Limpar filtros</button>
+   </div>
+  </details>
+  <div class="toolbar"><button onclick="abrirTudo('e')">▼ Abrir tudo</button><button onclick="fecharTudo('e')">▲ Fechar tudo</button><span class="sub" id="n-e"></span></div>
+  <div id="l-est" class="cards"></div>
+ </section>
+
+ <section id="s-dev" class="hide">
+  <div class="kpis" id="k-dev"></div>
+  <div class="dashboard-grid" id="dg-dev"></div>
+  <details class="f"><summary><span>🔎 Filtros Avançados</span><span id="fd-n" class="sub"></span></summary>
+   <div class="fg"><input class="w" id="d-q" type="search" placeholder="Buscar colaborador" oninput="rd()">
+    <button class="btn" onclick="limpar('d')">Limpar filtros</button></div></details>
+  <div class="toolbar"><button onclick="abrirTudo('d')">▼ Abrir tudo</button><button onclick="fecharTudo('d')">▲ Fechar tudo</button><span class="sub" id="n-dev"></span></div>
+  <div id="l-dev" class="cards"></div>
+ </section>
+</main>
+
+<script>
+// URL separada de forma segura para evitar cortes e erros no editor
+const BASE_URL = "https://docs.google.com/spreadsheets/d/e/";
+const SHEET_ID = "2PACX-1vQVEgArNMWRAxt9I1pomlnmMRqYQ39ZfDDR-G2r7NFkqFSJf0af8t0o8FlSbomI4w";
+const CSV_URL = BASE_URL + SHEET_ID + "/pub?output=csv";
+
+const KC = "epis_cache_papaparse";
+const CORES_GRAFICO=['#2563eb','#059669','#d97706','#dc2626','#7c3aed','#db2777','#0284c7','#65a30d'];
+const $=id=>document.getElementById(id);
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+let EST=[],aberto=new Set();
+const LK={e:[],d:[]};
+const pct=(a,b)=>b?Math.round(a/b*100):0;
+const soma=a=>a.reduce((s,x)=>s+x,0);
+function fId(s,prefix='card-'){return prefix+String(s).toLowerCase().replace(/[^a-z0-9]/g,'_')}
+function rolarPara(id){setTimeout(()=>{const el=$(id);if(el){el.scrollIntoView({behavior:'smooth',block:'center'});el.classList.add('highlight-target');setTimeout(()=>el.classList.remove('highlight-target'),1600)}},80)}
+
+const VAZIO='<div class="empty" style="font-size:12px;padding:15px">Sem dados</div>';
+const kpi=(v,l,c)=>`<div class="kpi" style="--kc:${c||'#2563eb'}"><div><b>${v}</b><span>${l}</span></div></div>`;
+const box=(t,s,b)=>`<div class="chart-box"><div><div class="chart-title">${t}<span class="sub">${s}</span></div>${b}</div></div>`;
+
+function vb(items){
+ if(!items.length)return VAZIO;
+ const mx=Math.max(...items.map(i=>i.v),1);
+ return '<div class="chart-bars">'+items.map(i=>{
+  const h=Math.max(Math.round(i.v/mx*120),i.v>0?8:3);
+  return `<div class="c-bar-group" title="${esc(i.t||i.l)}"${i.a?` data-v="${esc(i.d)}" onclick="${i.a}(this.dataset.v)`:''}><div class="c-bar-val">${i.v}${i.x?`<small>${i.x}</small>`:''}</div><div class="c-bar" style="height:${h}px;background:${i.c}"></div><div class="c-bar-lbl">${esc(i.l)}</div></div>`;
+ }).join('')+'</div>';
+}
+
+function selE(v){$('e-q').value=v;re();rolarPara(fId(v,'card-e-'))}
+function selD(v){$('d-q').value=v;rd();rolarPara(fId(v,'card-d-'))}
+
+function processarDados(results){
+ const rows = results.data;
+ EST = rows.map(r=>{
+  const mes = r['epi Mês'] || '';
+  const nome = r['Texto breve de material EPI'] || '';
+  const qtd = parseFloat(r['QUANTIDADES']) || 0;
+  const valor = r['valor'] || '';
+  const colaborador = r['SolicitanteNome'] || r['NOME'] || '';
+  const data = r['AJUSTE 07/01/2026'] || '';
+  return {mes, nome, qtd, valor, colaborador, data};
+ }).filter(x => x.nome && x.colaborador);
+
+ preencher();
+ re();
+ rd();
+ $('upd').textContent = 'Atualizado às ' + new Date().toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'});
+}
+
+function atualizar(){
+ const b = $('rf'); if(b) b.classList.add('spin');
+ const urlComCacheBuster = CSV_URL + '&_t=' + new Date().getTime();
+ 
+ Papa.parse(urlComCacheBuster, {
+  download: true,
+  header: true,
+  skipEmptyLines: true,
+  complete: function(results) {
+   if(results.data && results.data.length > 0) {
+    localStorage.setItem(KC, JSON.stringify(results.data));
+    processarDados(results);
+   }
+   if(b) b.classList.remove('spin');
+  },
+  error: function(err) {
+   console.error(err);
+   const cache = localStorage.getItem(KC);
+   if(cache) {
+    processarDados({data: JSON.parse(cache)});
+    $('upd').textContent = '⚠️ Usando dados em cache';
+   } else {
+    $('upd').textContent = '⚠️ Erro ao carregar';
+   }
+   if(b) b.classList.remove('spin');
+  }
+ });
+}
+
+function preencher(){
+ const sel=(id,l,vals)=>{const e=$(id),v=e.value;e.innerHTML=`<option value="">${l}</option>`+vals.map(x=>`<option>${esc(x)}</option>`).join('');if(vals.map(String).includes(v))e.value=v};
+ const u=a=>[...new Set(a.filter(Boolean))];
+ sel('e-mes','Todos os meses',u(EST.map(x=>x.mes)).sort());
+}
+
+function aba(t){
+ ['est','dev'].forEach(x=>{
+  $('s-'+x).classList.toggle('hide',x!==t);
+  const btn=$('b-'+x);
+  if(btn) btn.classList.toggle('on',x===t);
+ });
+ scrollTo(0,0);
+}
+
+function limpar(p){
+ if(p==='e'){['e-q','e-mes'].forEach(i=>$(i).value='');re();}
+ else if(p==='d'){$('d-q').value='';rd();}
+}
+
+function tg(k){const x=decodeURIComponent(k);aberto.has(x)?aberto.delete(x):aberto.add(x);re();rd()}
+const kk=k=>encodeURIComponent(k);
+function abrirTudo(p){(p==='e'?LK.e:LK.d).forEach(k=>aberto.add(k));re();rd()}
+function fecharTudo(p){(p==='e'?LK.e:LK.d).forEach(k=>aberto.delete(k));re();rd()}
+
+function re(){
+ const q=$('e-q').value.toLowerCase().trim(),mes=$('e-mes').value;
+ $('fe-n').textContent=[q,mes].filter(Boolean).length?'filtros ativos':'';
+ const f=EST.filter(x=>(!mes||x.mes===mes)&&(!q||(x.nome+' '+x.colaborador).toLowerCase().includes(q)));
+ const totQtd=soma(f.map(x=>x.qtd));
+ const G={};
+ f.forEach(x=>{
+  const g=G[x.nome]??={nome:x.nome,n:0,solics:new Set(),registros:[]};
+  g.n+=x.qtd;g.solics.add(x.colaborador);g.registros.push(x);
+ });
+ const L=Object.values(G).sort((a,b)=>b.n-a.n||a.nome.localeCompare(b.nome));
+ const mx=L[0]?.n||1;
+ LK.e=L.map(g=>'e:'+g.nome);
+ const top8=L.slice(0,8),top10=L.slice(0,10);
+
+ $('k-est').innerHTML=kpi(totQtd,'Total de Itens Requisitados','#2563eb')+kpi(L.length,'Tipos de EPIs distintos','#059669')+kpi(top10[0]?.n||0,'Maior Saída','#d97706');
+ const g1=box('📊 Top EPIs requisitados','Volume total entregue',vb(top8.map((g,i)=>({v:g.n,l:g.nome,c:CORES_GRAFICO[i%8],x:pct(g.n,totQtd)+'%',a:'selE',d:g.nome}))));
+ const g2=box('🏆 Ranking Geral','Top itens',`<div class="top10-list">${top10.length?top10.map((g,i)=>`<div class="top10-row" data-v="${esc(g.nome)}" onclick="selE(this.dataset.v)"><span><b>#${i+1}</b>${esc(g.nome)}</span><span class="ch2 g">${g.n} un.</span></div>`).join(''):VAZIO}</div>`);
+ const M={};
+ f.forEach(x=>{if(x.mes)M[x.mes]=(M[x.mes]||0)+x.qtd});
+ const mArr=Object.entries(M).map(([l,v])=>({l,v,c:'#2563eb'})).sort((a,b)=>a.l.localeCompare(b.l));
+ const g3=box('📅 Requisições por Mês','Volume entregue',vb(mArr));
+
+ $('dg-est').innerHTML=g1+g2+g3;
+ $('n-e').textContent=`${L.length} tipo(s) · ${totQtd} unidade(s)`;
+ $('l-est').innerHTML=L.length?L.map(g=>{
+  const k='e:'+g.nome,o=aberto.has(k);
+  return`<div class="c" id="${fId(g.nome,'card-e-')}"><button class="ch" onclick="tg('${kk(k)}')"><div class="row"><div class="nm">${esc(g.nome)}</div><span class="tot">${g.n} un.</span></div><div class="bar"><i style="width:${g.n/mx*100}%"></i></div><div class="chips"><span class="ch2">Colaboradores: ${g.solics.size}</span><span class="ch2">${o?'▲ ocultar':'▼ ver histórico'}</span></div></button><div class="det ${o?'':'det-closed'}">${g.registros.map(r=>`<div class="it"><b>${esc(r.colaborador)}</b> — ${r.qtd} un. (Mês: ${esc(r.mes)||'N/D'})</div>`).join('')}</div></div>`;
+ }).join(''):'<div class="empty">Nenhum registro encontrado.</div>';
+}
+
+function rd(){
+ const q=$('d-q').value.toLowerCase().trim();$('fd-n').textContent=q?'filtro ativo':'';
+ const f=EST.filter(x=>!q||x.colaborador.toLowerCase().includes(q));
+ const totQtd=soma(f.map(x=>x.qtd));
+ const C={};
+ f.forEach(x=>{
+  const c=C[x.colaborador]??={nome:x.colaborador,n:0,itens:new Set(),registros:[]};
+  c.n+=x.qtd;c.itens.add(x.nome);c.registros.push(x);
+ });
+ const L=Object.values(C).sort((a,b)=>b.n-a.n||a.nome.localeCompare(b.nome));
+ const mx=L[0]?.n||1;
+ LK.d=L.map(c=>'d:'+c.nome);
+ const top10=L.slice(0,10);
+
+ $('k-dev').innerHTML=kpi(L.length,'Colaboradores','#2563eb')+kpi(totQtd,'Total de Itens','#059669')+kpi(top10[0]?.n||0,'Maior Retirada','#d97706');
+ const g1=box('🏆 Top Colaboradores','Maior volume retirado',`<div class="top10-list">${top10.length?top10.map((c,i)=>`<div class="top10-row" data-v="${esc(c.nome)}" onclick="selD(this.dataset.v)"><span><b>#${i+1}</b>${esc(c.nome)}</span><span class="ch2 g">${c.n} un.</span></div>`).join(''):VAZIO}</div>`);
+ $('dg-dev').innerHTML=g1+'<div></div><div></div>';$('n-dev').textContent=`${L.length} colaborador(es)`;
+ $('l-dev').innerHTML=L.length?L.map(c=>{
+  const k='d:'+c.nome,o=aberto.has(k);
+  return`<div class="c" id="${fId(c.nome,'card-d-')}"><button class="ch" onclick="tg('${kk(k)}')"><div class="row"><div class="nm">${esc(c.nome)}</div><span class="tot">${c.n} un.</span></div><div class="bar"><i style="width:${c.n/mx*100}%"></i></div><div class="chips"><span class="ch2">Tipos de EPIs: ${c.itens.size}</span></div></button><div class="det ${o?'':'det-closed'}">${c.registros.map(r=>`<div class="it"><b>${esc(r.nome)}</b> — ${r.qtd} un. (Mês: ${esc(r.mes)||'N/D'})</div>`).join('')}</div></div>`;
+ }).join(''):'<div class="empty">Nenhum colaborador encontrado.</div>';
+}
+
+try{
+ const cache = localStorage.getItem(KC);
+ if(cache){
+  processarDados({data: JSON.parse(cache)});
+ }
+}catch(e){}
+
+atualizar();
+</script>
+</body>
+</html>
