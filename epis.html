@@ -123,26 +123,26 @@ header{background:linear-gradient(135deg,#0b1220 0%,#1e3a8a 55%,#2563eb 100%);bo
 .chart-box{border-top:5px solid var(--ac,#2563eb);background:linear-gradient(180deg,color-mix(in srgb,var(--ac,#2563eb) 9%,#fff) 0,#fff 100px)}
 
 /* ==========================================================
-   IMPRESSÃO OTIMIZADA: TUDO EM 1 PÁGINA COM TOP 10 COMPLETO
+   IMPRESSÃO ALINHADA E ABAIXADA (PERFEITAMENTE EQUILIBRADA)
    ========================================================== */
 @media print {
   * {-webkit-print-color-adjust: exact !important; print-color-adjust: exact !important;}
-  @page { size: A4 landscape; margin: 4mm; }
-  body { background: #fff !important; color: #000 !important; font-size: 9.5px !important; }
-  header { padding: 4px 10px !important; margin-bottom: 3px !important; }
+  @page { size: A4 landscape; margin: 10mm 12mm; }
+  body { background: #fff !important; color: #000 !important; font-size: 11px !important; }
+  header { display: none !important; }
   .seg, .toolbar, details.f, .top-btns, #s-dev, .home-btn, .btn-voltar-filtro { display: none !important; }
-  .print-title-only { display: block !important; font-size: 12px; font-weight: 800; color: #1e3a8a; margin-bottom: 4px; text-transform: uppercase; border-bottom: 2px solid #1e3a8a; padding-bottom: 2px; }
+  .print-title-only { display: block !important; font-size: 15px; font-weight: 900; color: #1e3a8a; margin-bottom: 14px; text-transform: uppercase; border-bottom: 3px solid #1e3a8a; padding-bottom: 6px; }
   .det-closed, .det { display: none !important; }
   .cards { display: none !important; }
-  .dashboard-grid { grid-template-columns: 1.2fr 1fr !important; gap: 8px !important; }
-  .chart-bars { height: 145px !important; }
-  .top10-list { max-height: none !important; overflow: visible !important; gap: 2px !important; }
-  .top10-row { padding: 4px 8px !important; font-size: 11px !important; border-radius: 4px !important; }
-  main { padding: 0 !important; gap: 6px !important; }
-  .kpis { gap: 8px !important; margin-bottom: 6px !important; }
-  .kpi { padding: 6px 10px !important; }
-  .kpi b { font-size: 16px !important; }
-  .chart-box { padding: 10px !important; }
+  .dashboard-grid { grid-template-columns: 1.2fr 1fr !important; gap: 16px !important; align-items: stretch !important; }
+  .chart-box { padding: 18px !important; height: 100% !important; justify-content: flex-start !important; }
+  .chart-bars { height: 260px !important; margin-top: 14px !important; } /* Aumenta a área do gráfico para descer as barras */
+  .top10-list { max-height: none !important; overflow: visible !important; gap: 6px !important; margin-top: 14px !important; }
+  .top10-row { padding: 9px 12px !important; font-size: 12px !important; border-radius: 6px !important; }
+  main { padding: 12px 0 0 0 !important; gap: 16px !important; } /* Desce todo o conteúdo um dedo para baixo */
+  .kpis { gap: 16px !important; margin-bottom: 6px !important; }
+  .kpi { padding: 14px 20px !important; }
+  .kpi b { font-size: 24px !important; }
 }
 
 @media(max-width:1300px){.cards{grid-template-columns:repeat(2,1fr)}}
@@ -169,7 +169,7 @@ header{background:linear-gradient(135deg,#0b1220 0%,#1e3a8a 55%,#2563eb 100%);bo
 </header>
 <main>
  <section id="s-est">
-  <div class="print-title-only">Relatório: Movimentações de EPIs</div>
+  <div class="print-title-only">Relatório Corporativo: Movimentações e Consumo de EPIs</div>
   <div class="kpis" id="k-est"></div>
   <div class="dashboard-grid" id="dg-est"></div>
   <details class="f"><summary><span>🔎 Filtros Avançados</span><span id="fe-n" class="sub"></span></summary>
@@ -210,7 +210,6 @@ const CORES_GRAFICO=['#2563eb','#059669','#d97706','#dc2626','#7c3aed','#db2777'
 const $=id=>document.getElementById(id);
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 
-// Função para abreviar nomes longos de EPIs mantendo limpo e legível
 function abreviarEPI(nome) {
   if (!nome) return '';
   let n = nome.trim();
@@ -238,7 +237,7 @@ function vb(items){
  if(!items.length)return VAZIO;
  const mx=Math.max(...items.map(i=>i.v),1);
  return '<div class="chart-bars">'+items.map(i=>{
-  const h=Math.max(Math.round(i.v/mx*140),i.v>0?8:3);
+  const h=Math.max(Math.round(i.v/mx*160),i.v>0?8:3);
   const nomeCurto = abreviarEPI(i.l);
   return `<div class="c-bar-group" title="${esc(i.t||i.l)}"${i.a?` data-v="${esc(i.d)}" onclick="${i.a}(this.dataset.v)"`:''}><div class="c-bar-val">${i.v}${i.x?`<small>${i.x}</small>`:''}</div><div class="c-bar" style="height:${h}px;background:${i.c}"></div><div class="c-bar-lbl">${esc(nomeCurto)}</div></div>`;
  }).join('')+'</div>';
