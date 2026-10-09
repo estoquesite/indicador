@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#1e3a8a">
-<title>Painel Corporativo - Gestão de Estoque</title>
+<title>Gestão de Materiais não Estocáveis</title>
 <!-- Ícone profissional de Caixa para Estoque -->
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E📦%3C/text%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -14,7 +14,7 @@
 <style>
 :root{--line:#cbd5e1;--tx:#0f172a;--mu:#475569;--pri:#7c3aed;--bd:#e3e8f0;--sh:0 1px 2px rgba(15,23,42,.05),0 4px 14px rgba(15,23,42,.06);--sh2:0 8px 28px rgba(15,23,42,.14)}
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
-body{font-family:Inter,system-ui,-apple-system,sans-serif;background:#f4f6fb;color:var(--tx);font-size:15px;line-height:1.4;padding-bottom:30px;font-feature-settings:"tnum";-webkit-font-smoothing:antialiased}
+body{font-family:Inter,system-ui,-apple-system,sans-serif;background:#f4f6fb;color:var(--tx);font-size:14px;line-height:1.4;padding-bottom:30px;font-feature-settings:"tnum";-webkit-font-smoothing:antialiased}
 
 /* Cabeçalho */
 header{position:sticky;top:0;z-index:30;background:linear-gradient(135deg,#0b1220 0%,#1e1b4b 60%,#7c3aed 100%);color:#fff;padding:14px 28px;box-shadow:0 6px 24px rgba(11,18,32,.35);border-bottom:4px solid #f59e0b}
@@ -29,45 +29,45 @@ h1{font-size:19px;font-weight:900;letter-spacing:-.3px}
 .rf:hover,.print-btn:hover{background:rgba(255,255,255,.2)}
 .rf.spin{animation:sp 1s linear infinite}@keyframes sp{to{transform:rotate(360deg)}}
 
-/* Abas */
-.seg{display:grid;grid-template-columns:repeat(2,1fr);gap:5px;margin:16px 28px 0;background:#ede9fe;padding:5px;border-radius:14px}
-.seg button{background:transparent;color:#6b21a8;border:0;border-radius:10px;min-height:46px;font-weight:800;font-size:14px;font-family:inherit;cursor:pointer;transition:all .2s}
+/* Abas estilo Power BI (Acompanhamento itens disponíveis / zerados) */
+.seg{display:flex;gap:8px;margin:16px 28px 0;background:#ede9fe;padding:5px;border-radius:14px;overflow-x:auto}
+.seg button{background:transparent;color:#6b21a8;border:0;border-radius:10px;padding:10px 20px;font-weight:800;font-size:13.5px;font-family:inherit;cursor:pointer;transition:all .2s;white-space:nowrap}
 .seg button:hover{background:rgba(255,255,255,.6)}
 .seg button.on{background:#fff;color:#7c3aed;box-shadow:0 2px 8px rgba(124,58,237,.18)}
 
 main{max-width:1800px;margin:0 auto;padding:18px 28px;display:grid;gap:18px}
 section{display:grid;gap:18px}
 
-/* KPIs */
-.kpis{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
-.kpi{position:relative;background:#fff;border:1px solid var(--bd);border-radius:16px;padding:16px 22px;box-shadow:var(--sh);overflow:hidden;display:flex;align-items:center}
-.kpi::before{content:"";position:absolute;left:0;top:0;bottom:0;width:5px;background:var(--kc,#7c3aed)}
-.kpi div{display:flex;flex-direction:column;min-width:0}
-.kpi b{font-size:26px;font-weight:900;line-height:1.1;letter-spacing:-1px;color:#1e293b}
-.kpi span{font-size:11.5px;font-weight:800;color:#6b7a90;text-transform:uppercase;letter-spacing:.4px;margin-top:3px}
+/* KPIs em destaque (estilo card vermelho do Power BI) */
+.kpis{display:grid;grid-template-columns:repeat(2,1fr);gap:16px;max-width:500px;margin-left:auto}
+.kpi{position:relative;background:#fff;border:1px solid var(--bd);border-radius:14px;padding:14px 20px;box-shadow:var(--sh);display:flex;justify-content:space-between;align-items:center}
+.kpi.alert{border-top:5px solid #be123c;background:linear-gradient(180deg,#fff1f2 0%,#fff 100%)}
+.kpi.normal{border-top:5px solid #7c3aed;background:linear-gradient(180deg,#f3e8ff 0%,#fff 100%)}
+.kpi div{display:flex;flex-direction:column}
+.kpi b{font-size:24px;font-weight:900;color:#1e293b}
+.kpi span{font-size:11px;font-weight:800;color:#6b7a90;text-transform:uppercase;letter-spacing:.4px}
 
-/* Layout Gráficos */
-.dashboard-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px}
-.chart-box{background:#fff;border:1px solid var(--bd);border-radius:16px;padding:20px;display:flex;flex-direction:column;justify-content:space-between;box-shadow:var(--sh);min-width:0}
-.chart-title{font-size:13px;font-weight:800;color:#1e293b;text-transform:uppercase;letter-spacing:.4px;padding-bottom:10px;margin-bottom:12px;border-bottom:1px solid var(--bd);display:flex;flex-direction:column;gap:2px}
-.chart-title .sub{text-transform:none;letter-spacing:0;font-weight:600}
+/* Layout do Painel */
+.dashboard-grid{display:grid;grid-template-columns:1fr;gap:18px}
+.chart-box{background:#fff;border:1px solid var(--bd);border-radius:16px;padding:20px;display:flex;flex-direction:column;box-shadow:var(--sh);min-width:0}
+.chart-title{font-size:13px;font-weight:800;color:#1e293b;text-transform:uppercase;letter-spacing:.4px;padding-bottom:10px;margin-bottom:12px;border-bottom:1px solid var(--bd);display:flex;justify-content:space-between;align-items:center}
 
-/* Gráfico de Barras */
-.chart-bars{display:flex;align-items:flex-end;justify-content:space-between;gap:6px;height:240px;padding:10px 4px 6px;background:repeating-linear-gradient(to top,transparent 0,transparent 30px,#f1f5f9 30px,#f1f5f9 31px);border-radius:8px;overflow-x:auto}
-.c-bar-group{flex:1;display:flex;flex-direction:column;align-items:center;min-width:32px;max-width:65px;height:100%;justify-content:flex-end;cursor:pointer}
-.c-bar{width:100%;border-radius:6px 6px 0 0;box-shadow:inset 0 -8px 12px rgba(0,0,0,.1);transition:height .5s cubic-bezier(.2,.8,.2,1),filter .2s}
-.c-bar-group:hover .c-bar{filter:brightness(1.1)}
-.c-bar-val{font-size:11px;font-weight:800;margin-bottom:4px;color:#1e293b;text-align:center;line-height:1.1}
-.c-bar-lbl{font-size:9px;font-weight:700;color:#475569;margin-top:6px;text-align:center;line-height:1.15;height:36px;overflow:hidden;width:100%;word-break:break-word;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical}
+/* Gráfico de Barras Estilo Power BI */
+.chart-bars{display:flex;align-items:flex-end;justify-content:space-between;gap:6px;height:220px;padding:10px 4px 6px;background:repeating-linear-gradient(to top,transparent 0,transparent 25px,#f1f5f9 25px,#f1f5f9 26px);border-radius:8px;overflow-x:auto}
+.c-bar-group{flex:1;display:flex;flex-direction:column;align-items:center;min-width:32px;max-width:60px;height:100%;justify-content:flex-end}
+.c-bar{width:100%;border-radius:4px 4px 0 0;box-shadow:inset 0 -6px 10px rgba(0,0,0,.1)}
+.c-bar-val{font-size:10px;font-weight:800;margin-bottom:4px;color:#1e293b;text-align:center}
+.c-bar-lbl{font-size:9px;font-weight:700;color:#475569;margin-top:6px;text-align:center;height:32px;overflow:hidden;width:100%;word-break:break-word;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical}
 
-/* Top 10 Lista Compacta */
-.top10-list{display:grid;gap:4px;max-height:240px;overflow-y:auto;padding-right:4px}
-.top10-row{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:7px 12px;background:#fff;border:1px solid var(--bd);border-radius:8px;font-size:12.5px;font-weight:600;cursor:pointer;transition:all .2s}
-.top10-row span:first-child{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.top10-row:hover{background:#f3e8ff;border-color:#d8b4fe;box-shadow:0 2px 8px rgba(124,58,237,.12)}
-.top10-row b{font-weight:800;color:#0f172a}
+/* Tabela Estilo Power BI */
+.table-container{background:#fff;border:1px solid var(--bd);border-radius:16px;overflow:hidden;box-shadow:var(--sh)}
+.table-header{background:#065f46;color:#fff;padding:12px 18px;font-size:13px;font-weight:800;text-transform:uppercase;letter-spacing:.4px}
+table{width:100%;border-collapse:collapse;font-size:13px}
+th,td{padding:10px 14px;text-align:left;border-bottom:1px solid var(--bd)}
+th{background:#f8fafc;font-weight:800;color:#334155;font-size:11.5px;text-transform:uppercase}
+tr:hover{background:#f8fafc}
 
-/* Filtros e Ferramentas */
+/* Filtros */
 details.f{background:#fff;border:1px solid var(--bd);border-radius:16px;box-shadow:var(--sh)}
 details.f summary{padding:14px 20px;font-weight:800;font-size:15px;cursor:pointer;list-style:none;display:flex;justify-content:space-between;color:#334155}
 details.f summary::-webkit-details-marker{display:none}
@@ -77,47 +77,24 @@ input:focus{outline:2px solid #d8b4fe;border-color:#7c3aed}
 .btn{min-height:42px;border:0;background:#7c3aed;border-radius:10px;font-weight:800;font-family:inherit;color:#fff;cursor:pointer}
 .btn:hover{background:#6d28d9}
 
-.toolbar{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.toolbar{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:10px}
 .toolbar .sub{margin-left:auto;font-size:12.5px;font-weight:600;color:var(--mu)}
-
-/* Cards de Estoque */
-.cards{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;align-items:start}
-.c{background:#fff;border:1px solid var(--bd);border-left:5px solid #7c3aed;border-radius:16px;overflow:hidden;box-shadow:var(--sh);transition:all .3s}
-.c:hover{box-shadow:var(--sh2);transform:translateY(-2px)}
-.row{display:flex;justify-content:space-between;align-items:flex-start;gap:10px}
-.nm{font-weight:800;word-break:break-word;font-size:15px;color:#0f172a}
-.tot{background:#f3e8ff;color:#7c3aed;border-radius:10px;padding:4px 11px;font-weight:900;font-size:14px;flex-shrink:0}
-.chips{display:flex;flex-wrap:wrap;gap:5px;margin-top:10px}
-.ch2{font-size:12px;font-weight:700;padding:3px 9px;border-radius:99px;background:#f1f5f9;color:#475569}
-.g{background:#d1fae5;color:#065f46}
 .empty{text-align:center;color:var(--mu);padding:30px 10px;font-weight:600}
 .hide{display:none}
 .print-title-only { display: none; }
 
 /* ==========================================================
-   IMPRESSÃO DA GESTÃO DE ESTOQUE (1 PÁGINA A4)
+   IMPRESSÃO
    ========================================================== */
 @media print {
   * {-webkit-print-color-adjust: exact !important; print-color-adjust: exact !important;}
   @page { size: A4 landscape; margin: 10mm 12mm; }
-  body { background: #fff !important; color: #000 !important; font-size: 11px !important; }
+  body { background: #fff !important; color: #000 !important; font-size: 10px !important; }
   header { display: none !important; }
-  .seg, .toolbar, details.f, .top-btns, #s-lista, .home-btn { display: none !important; }
-  #s-rel { display: grid !important; }
-  .print-title-only { display: block !important; font-size: 15px; font-weight: 900; color: #7c3aed; margin-bottom: 14px; text-transform: uppercase; border-bottom: 3px solid #7c3aed; padding-bottom: 6px; }
-  .dashboard-grid { grid-template-columns: 1fr 1fr !important; gap: 16px !important; align-items: stretch !important; }
-  .chart-box { padding: 18px !important; height: 100% !important; justify-content: flex-start !important; }
-  .chart-bars { height: 210px !important; margin-top: 14px !important; }
-  .top10-list { max-height: none !important; overflow: visible !important; gap: 6px !important; margin-top: 14px !important; }
-  .top10-row { padding: 9px 12px !important; font-size: 12px !important; border-radius: 6px !important; }
-  main { padding: 12px 0 0 0 !important; gap: 16px !important; }
-  .kpis { gap: 16px !important; margin-bottom: 6px !important; }
-  .kpi { padding: 14px 20px !important; }
-  .kpi b { font-size: 24px !important; }
+  .seg, .toolbar, details.f, .top-btns, .home-btn { display: none !important; }
+  .print-title-only { display: block !important; font-size: 14px; font-weight: 900; color: #7c3aed; margin-bottom: 10px; text-transform: uppercase; border-bottom: 2px solid #7c3aed; padding-bottom: 4px; }
+  main { padding: 4px 0 0 0 !important; gap: 12px !important; }
 }
-
-@media(max-width:1300px){.cards{grid-template-columns:repeat(2,1fr)}}
-@media(max-width:820px){.cards{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
@@ -125,7 +102,7 @@ input:focus{outline:2px solid #d8b4fe;border-color:#7c3aed}
  <div class="top">
   <div class="title-area">
    <a href="index.html" class="home-btn" title="Voltar ao Índice">🏠</a>
-   <div><h1>📦 Painel Corporativo — Gestão de Estoque</h1><div id="upd">Carregando dados…</div></div>
+   <div><h1>📦 Gestão de Materiais não Estocáveis</h1><div id="upd">Carregando dados…</div></div>
   </div>
   <div class="top-btns">
    <button class="print-btn" onclick="window.print()" title="Imprimir / Salvar PDF">🖨️</button>
@@ -133,67 +110,111 @@ input:focus{outline:2px solid #d8b4fe;border-color:#7c3aed}
   </div>
  </div>
  <div class="seg">
-  <button id="b-rel" class="on" onclick="aba('rel')">📊 Painel Executivo de Estoque</button>
-  <button id="b-lista" onclick="aba('lista')">📋 Lista Completa de Materiais</button>
+  <button id="b-disp" class="on" onclick="aba('disp')">📊 Acompanhamento Itens Disponíveis</button>
+  <button id="b-zer" onclick="aba('zer')">⚠️ Acompanhamento Itens Zerados</button>
  </div>
 </header>
 <main>
- <!-- ABA 1: PAINEL EXECUTIVO DE ESTOQUE -->
- <section id="s-rel">
-  <div class="print-title-only">Relatório Corporativo: Gestão de Estoque</div>
-  <div class="kpis" id="k-stk"></div>
-  <div class="dashboard-grid" id="dg-stk"></div>
+ <!-- ABA 1: ITENS DISPONÍVEIS -->
+ <section id="s-disp">
+  <div class="print-title-only">Relatório Corporativo: Gestão de Materiais não Estocáveis (Disponíveis)</div>
+  <div class="kpis" id="k-disp"></div>
+  <div class="dashboard-grid" id="dg-disp"></div>
+  <div class="table-container">
+   <div class="table-header">Tabela Status de Material — Disponíveis</div>
+   <div style="overflow-x:auto">
+    <table>
+     <thead>
+      <tr>
+       <th>Item</th>
+       <th>Pedido</th>
+       <th>Descrição do Item</th>
+       <th>Material</th>
+       <th>Saldo em Estoque</th>
+       <th>Qtd Saída</th>
+       <th>Data-Rec.</th>
+       <th>Data de Saida</th>
+       <th>Localização</th>
+       <th>Baia</th>
+      </tr>
+     </thead>
+     <tbody id="tb-disp"></tbody>
+    </table>
+   </div>
+  </div>
  </section>
 
- <!-- ABA 2: LISTA COMPLETA COM FILTROS -->
- <section id="s-lista" class="hide">
-  <details class="f" open><summary><span>🔎 Filtros de Estoque</span><span id="fst-n" class="sub"></span></summary>
-   <div class="fg">
-    <input class="w" id="stk-q" type="search" placeholder="Buscar por Material, Descrição ou Localização" oninput="rStk()">
-    <button class="btn" onclick="limpar()">Limpar filtros</button>
+ <!-- ABA 2: ITENS ZERADOS -->
+ <section id="s-zer" class="hide">
+  <div class="print-title-only">Relatório Corporativo: Gestão de Materiais não Estocáveis (Zerados)</div>
+  <div class="kpis" id="k-zer"></div>
+  <div class="dashboard-grid" id="dg-zer"></div>
+  <div class="table-container" style="border-color:#be123c">
+   <div class="table-header" style="background:#be123c">Tabela Status de Material — Zerados</div>
+   <div style="overflow-x:auto">
+    <table>
+     <thead>
+      <tr>
+       <th>Item</th>
+       <th>Pedido</th>
+       <th>Descrição do Item</th>
+       <th>Material</th>
+       <th>Saldo em Estoque</th>
+       <th>Qtd Saída</th>
+       <th>Data-Rec.</th>
+       <th>Data de Saida</th>
+       <th>Localização</th>
+       <th>Baia</th>
+      </tr>
+     </thead>
+     <tbody id="tb-zer"></tbody>
+    </table>
    </div>
-  </details>
-  <div class="toolbar"><span class="sub" id="n-stk"></span></div>
-  <div id="l-stk" class="cards"></div>
+  </div>
  </section>
 </main>
 
 <script>
 const CSV_URL_STK = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSwssGdZjM9ONVf2YkxwVlmN9JcK7oylQ2EIwDWWRobg339OveHYIjLoSrt-bi-wG76C0OL8Vp_L4Z8/pub?output=csv";
 const KC_STK = "estoque_cache_papaparse";
-const CORES_GRAFICO=['#7c3aed','#2563eb','#059669','#d97706','#dc2626','#db2777','#0284c7','#65a30d','#4f46e5','#0d9488'];
+const CORES_GRAFICO=['#be123c','#7c3aed','#2563eb','#059669','#d97706','#dc2626','#db2777','#0284c7','#65a30d','#4f46e5'];
 const $=id=>document.getElementById(id);
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const soma=a=>a.reduce((s,x)=>s+x,0);
 
 let STK=[];
 
-const VAZIO='<div class="empty" style="font-size:12px;padding:15px">Sem dados</div>';
-const kpi=(v,l,c)=>`<div class="kpi" style="--kc:${c||'#7c3aed'}"><div><b>${v}</b><span>${l}</span></div></div>`;
+const VAZIO='<tr><td colspan="10" class="empty">Nenhum registro encontrado.</td></tr>';
+const kpi=(v,l,tipo)=>`<div class="kpi ${tipo}"><div><b>${v}</b><span>${l}</span></div></div>`;
 const box=(t,s,b)=>`<div class="chart-box"><div><div class="chart-title">${t}<span class="sub">${s}</span></div>${b}</div></div>`;
 
 function vb(items){
- if(!items.length)return VAZIO;
+ if(!items.length)return '<div class="empty">Sem dados</div>';
  const mx=Math.max(...items.map(i=>i.v),1);
  return '<div class="chart-bars">'+items.map(i=>{
-  const h=Math.max(Math.round(i.v/mx*150),i.v>0?8:3);
-  return `<div class="c-bar-group" title="${esc(i.t||i.l)}"><div class="c-bar-val">${i.v}</div><div class="c-bar" style="height:${h}px;background:${i.c}"></div><div class="c-bar-lbl">${esc(i.l)}</div></div>`;
+  const h=Math.max(Math.round(i.v/mx*160),i.v>0?8:3);
+  return `<div class="c-bar-group" title="${esc(i.l)}: ${i.v}"><div class="c-bar-val">${i.v}</div><div class="c-bar" style="height:${h}px;background:${i.c}"></div><div class="c-bar-lbl">${esc(i.l)}</div></div>`;
  }).join('')+'</div>';
 }
 
 function processarDadosEstoque(results){
  const rows = results.data;
  STK = rows.map(r=>{
-  const material = r['Material'] || '';
-  const desc = r['Descrição do Item'] || '';
-  const saldo = parseFloat(r['Saldo em Estoque']) || 0;
-  const loc = r['Localização'] || '';
-  const baia = r['Baia Armazenamento'] || '';
-  return {material, desc, saldo, loc, baia};
+  return {
+   item: r['Item'] || '',
+   pedido: r['Pedido'] || '',
+   desc: r['Descrição do Item'] || '',
+   material: r['Material'] || '',
+   saldo: parseFloat(r['Saldo em Estoque']) || 0,
+   qtdSaida: parseFloat(r['Quantidade de saida']) || 0,
+   dataRec: r['Data-Rec.'] || '',
+   dataSaida: r['Data de Saida'] || '',
+   loc: r['Localização'] || '',
+   baia: r['Baia Armazenamento'] || ''
+  };
  }).filter(x => x.desc || x.material);
 
- renderizarPainelEstoque();
- rStk();
+ renderizarTudo();
  $('upd').textContent = 'Atualizado às ' + new Date().toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'});
 }
 
@@ -217,7 +238,7 @@ function atualizarEstoque(){
 }
 
 function aba(t){
- ['rel','lista'].forEach(x=>{
+ ['disp','zer'].forEach(x=>{
   $('s-'+x).classList.toggle('hide',x!==t);
   const btn=$('b-'+x);
   if(btn) btn.classList.toggle('on',x===t);
@@ -225,54 +246,63 @@ function aba(t){
  scrollTo(0,0);
 }
 
-function limpar(){
- $('stk-q').value='';
- rStk();
-}
+function renderizarTudo(){
+ // Separar Disponíveis (saldo > 0) e Zerados (saldo <= 0)
+ const disp = STK.filter(x => x.saldo > 0);
+ const zer = STK.filter(x => x.saldo <= 0);
 
-function renderizarPainelEstoque(){
- const totalItensEstoque = STK.length;
- const saldoTotal = soma(STK.map(x=>x.saldo));
- const itensComSaldo = STK.filter(x=>x.saldo > 0).length;
+ // --- DISPONÍVEIS ---
+ const totalUnDisp = soma(disp.map(x => x.saldo));
+ $('k-disp').innerHTML = kpi(disp.length, 'Qtd de itens', 'normal') + kpi(totalUnDisp, 'Total em unidades', 'normal');
 
- $('k-stk').innerHTML=
-  kpi(totalItensEstoque,'Registros em Estoque','#7c3aed')+
-  kpi(itensComSaldo,'Itens com Saldo Positivo','#059669')+
-  kpi(saldoTotal,'Quantidade Total em Saldo','#2563eb');
-
- // Agrupamento por Localização para o Gráfico
- const Locs={};
- STK.forEach(s=>{
-  const l = s.loc || 'N/D';
-  Locs[l] = (Locs[l] || 0) + 1;
+ // Agrupamento por Descrição para o Gráfico de Disponíveis
+ const mapDisp = {};
+ disp.forEach(x => {
+  const d = x.desc ? x.desc.substring(0, 15) : 'Outros';
+  mapDisp[d] = (mapDisp[d] || 0) + x.saldo;
  });
- const topLocs = Object.entries(Locs).sort((a,b)=>b[1]-a[1]).slice(0,8).map(([l,v],i)=>({l, v, c:CORES_GRAFICO[i%10]}));
+ const topDisp = Object.entries(mapDisp).sort((a,b)=>b[1]-a[1]).slice(0,12).map(([l,v],i)=>({l, v, c:CORES_GRAFICO[i%10]}));
+ $('dg-disp').innerHTML = box('Estoque por Descrição (Top Itens)', 'Volume em saldo', vb(topDisp));
 
- // Top 10 Materiais com maior saldo em estoque
- const topSaldo = [...STK].sort((a,b)=>b.saldo - a.saldo).slice(0,10);
+ $('tb-disp').innerHTML = disp.length ? disp.map(s=>`
+  <tr>
+   <td>${esc(s.item)}</td>
+   <td>${esc(s.pedido)}</td>
+   <td><b>${esc(s.desc)}</b></td>
+   <td>${esc(s.material)}</td>
+   <td><span style="color:#059669;font-weight:800">${s.saldo}</span></td>
+   <td>${s.qtdSaida}</td>
+   <td>${esc(s.dataRec)}</td>
+   <td>${esc(s.dataSaida)}</td>
+   <td>${esc(s.loc)}</td>
+   <td>${esc(s.baia)}</td>
+  </tr>`).join('') : VAZIO;
 
- const g1=box('📍 Principais Localizações','Volume de registros por área/local',vb(topLocs));
- const g2=box('📦 Top Materiais em Saldo','Itens com maior quantidade no almoxarifado',`<div class="top10-list">${topSaldo.length?topSaldo.map((s,i)=>`<div class="top10-row"><span><b>#${i+1}</b>${esc(s.desc)}</span><span class="ch2 g">${s.saldo} un.</span></div>`).join(''):VAZIO}</div>`);
+ // --- ZERADOS ---
+ const totalUnZer = soma(zer.map(x => x.qtdSaida || 1));
+ $('k-zer').innerHTML = kpi(zer.length, 'Itens zerados no estoque', 'alert') + kpi(totalUnZer, 'Total de saídas', 'alert');
 
- $('dg-stk').innerHTML=g1+g2;
-}
+ const mapZer = {};
+ zer.forEach(x => {
+  const d = x.desc ? x.desc.substring(0, 15) : 'Outros';
+  mapZer[d] = (mapZer[d] || 0) + 1;
+ });
+ const topZer = Object.entries(mapZer).sort((a,b)=>b[1]-a[1]).slice(0,12).map(([l,v],i)=>({l, v, c:CORES_GRAFICO[i%10]}));
+ $('dg-zer').innerHTML = box('Saída dos Materiais Zerados', 'Itens com saldo zerado', vb(topZer));
 
-function rStk(){
- const q=$('stk-q').value.toLowerCase().trim();$('fst-n').textContent=q?'filtro ativo':'';
- const f=STK.filter(x=>!q||(x.material+' '+x.desc+' '+x.loc+' '+x.baia).toLowerCase().includes(q));
- 
- $('n-stk').textContent=`${f.length} registro(s) encontrado(s)`;
- $('l-stk').innerHTML=f.length?f.map(s=>`
-  <div class="c">
-   <div style="padding:14px 16px;">
-    <div class="row"><div class="nm">${esc(s.desc || 'Material s/ descrição')}</div><span class="tot">${s.saldo} un.</span></div>
-    <div class="chips">
-     <span class="ch2">Mat: ${esc(s.material || 'N/D')}</span>
-     <span class="ch2 g">Loc: ${esc(s.loc || 'N/D')}</span>
-     <span class="ch2">Baia: ${esc(s.baia || 'N/D')}</span>
-    </div>
-   </div>
-  </div>`).join(''):'<div class="empty">Nenhum item encontrado no estoque.</div>';
+ $('tb-zer').innerHTML = zer.length ? zer.map(s=>`
+  <tr>
+   <td>${esc(s.item)}</td>
+   <td>${esc(s.pedido)}</td>
+   <td><b>${esc(s.desc)}</b></td>
+   <td>${esc(s.material)}</td>
+   <td><span style="color:#be123c;font-weight:800">${s.saldo}</span></td>
+   <td>${s.qtdSaida}</td>
+   <td>${esc(s.dataRec)}</td>
+   <td>${esc(s.dataSaida)}</td>
+   <td>${esc(s.loc)}</td>
+   <td>${esc(s.baia)}</td>
+  </tr>`).join('') : VAZIO;
 }
 
 try{
