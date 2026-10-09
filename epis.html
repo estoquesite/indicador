@@ -59,15 +59,6 @@ section{display:grid;gap:18px}
 .c-bar-val small{display:block;font-size:10px;color:#64748b;font-weight:700}
 .c-bar-lbl{font-size:10.5px;font-weight:700;color:#64748b;margin-top:6px;text-align:center;line-height:1.15;height:25px;overflow:hidden;width:100%;word-break:break-word}
 
-/* Barras horizontais */
-.hb{display:grid;grid-template-columns:minmax(70px,34%) 1fr auto;gap:8px;align-items:center;padding:6px 0;font-size:12.5px;font-weight:600}
-.hb[data-v]{cursor:pointer}.hb[data-v]:hover .hb-l{color:#1e3a8a}
-.hb-l{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.hb-t{height:15px;background:#eef1f6;border-radius:99px;overflow:hidden}
-.hb-t i{display:block;height:100%;border-radius:99px}
-.hb-v{font-weight:800;min-width:58px;text-align:right}
-.hb-v small{color:#64748b;font-weight:700;margin-left:4px}
-
 /* Top 10 */
 .top10-list{display:grid;gap:5px;max-height:330px;overflow-y:auto;padding-right:4px}
 .top10-row{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:10px 14px;background:#fff;border:1px solid var(--bd);border-radius:10px;font-size:13px;font-weight:600;cursor:pointer;transition:all .2s}
@@ -201,11 +192,11 @@ details.f summary{color:var(--ac,#334155)}
 </main>
 
 <script>
-// Link CSV publicado da planilha de EPIs
+// Link CSV publicado correto da sua nova planilha do Google Sheets
 const URLS=[
- "https://docs.google.com/spreadsheets/d/e/2PACX-1vTo35odWXfxeP9OhQZRJ36txn6dxH6Y_lOi0l7N0OZV0uOAY51YSVrNFLNHBzawBg/pub?output=csv"
+ "https://docs.google.com/spreadsheets/d/e/2PACX-1vQVEgArNMWRAxt9I1pomlnmMRqYQ39ZfDDR-G2r7NFkqFSJf0af8t0o8FlSbomI4w/pub?output=csv"
 ];
-const KC="epis_cache_v4";
+const KC="epis_cache_v5";
 const CORES_GRAFICO=['#2563eb','#059669','#d97706','#dc2626','#7c3aed','#db2777','#0284c7','#65a30d'];
 const $=id=>document.getElementById(id);
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -227,12 +218,6 @@ function vb(items){
   const h=Math.max(Math.round(i.v/mx*120),i.v>0?8:3);
   return `<div class="c-bar-group" title="${esc(i.t||i.l)}"${i.a?` data-v="${esc(i.d)}" onclick="${i.a}(this.dataset.v)"`:''}><div class="c-bar-val">${i.v}${i.x?`<small>${i.x}</small>`:''}</div><div class="c-bar" style="height:${h}px;background:${i.c}"></div><div class="c-bar-lbl">${esc(i.l)}</div></div>`;
  }).join('')+'</div>';
-}
-
-function hb(items){
- if(!items.length)return VAZIO;
- const mx=Math.max(...items.map(i=>i.v),1),tot=soma(items.map(i=>i.v));
- return items.map(i=>`<div class="hb"><div class="hb-l" title="${esc(i.l)}">${esc(i.l)}</div><div class="hb-t"><i style="width:${i.v>0?Math.max(i.v/mx*100,3):0}%;background:${i.c}"></i></div><div class="hb-v">${i.v}<small>${pct(i.v,tot)}%</small></div></div>`).join('');
 }
 
 function selE(v){$('e-q').value=v;re();rolarPara(fId(v,'card-e-'))}
@@ -276,7 +261,16 @@ async function atualizar(manual){
   const r=await fetch(URLS[0],{cache:'no-store'});if(!r.ok)throw 0;const txt=await r.text();
   localStorage.setItem(KC,JSON.stringify({ts:Date.now(),txt}));ultimo=Date.now();
   processar(txt);$('upd').textContent='Atualizado às '+new Date().toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'});
- }catch(e){$('upd').textContent=EST.length?'⚠️ Sem conexão — dados salvos':'⚠️ Sem conexão e sem dados'}
+ }catch(e){
+  // Se falhar a rede, tenta carregar do cache para nunca sumir
+  const cache=JSON.parse(localStorage.getItem(KC)||'null');
+  if(cache && cache.txt){
+   processar(cache.txt);
+   $('upd').textContent='⚠️ Usando dados salvos em cache';
+  } else {
+   $('upd').textContent='⚠️ Erro ao carregar dados';
+  }
+ }
  b.classList.remove('spin');
 }
 
@@ -386,7 +380,16 @@ function rd(){
 
 window.addEventListener('beforeprint',()=>{document.querySelectorAll('.pdt').forEach(e=>e.textContent='Emitido em '+new Date().toLocaleString('pt-BR'))});
 
-try{const c=JSON.parse(localStorage.getItem(KC)||'null');if(c&&c.txt){processar(c.txt);ultimo=c.ts;$('upd').textContent='Dados salvos de '+new Date(c.ts).toLocaleString('pt-BR',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'})}}catch(e){}
+// Inicialização segura com cache
+try{
+ const c=JSON.parse(localStorage.getItem(KC)||'null');
+ if(c&&c.txt){
+  processar(c.txt);
+  ultimo=c.ts;
+  $('upd').textContent='Dados carregados da memória';
+ }
+}catch(e){}
+
 atualizar();
 setInterval(()=>atualizar(),5*60*1000);
 document.addEventListener('visibilitychange',()=>{if(!document.hidden&&Date.now()-ultimo>2*60*1000)atualizar()});
