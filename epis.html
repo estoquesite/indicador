@@ -169,7 +169,6 @@ header{background:linear-gradient(135deg,#0b1220 0%,#1e3a8a 55%,#2563eb 100%);bo
 </main>
 
 <script>
-// URL separada de forma segura para evitar cortes e erros no editor
 const BASE_URL = "https://docs.google.com/spreadsheets/d/e/";
 const SHEET_ID = "2PACX-1vQVEgArNMWRAxt9I1pomlnmMRqYQ39ZfDDR-G2r7NFkqFSJf0af8t0o8FlSbomI4w";
 const CSV_URL = BASE_URL + SHEET_ID + "/pub?output=csv";
@@ -204,13 +203,14 @@ function selD(v){$('d-q').value=v;rd();rolarPara(fId(v,'card-d-'))}
 function processarDados(results){
  const rows = results.data;
  EST = rows.map(r=>{
-  const mes = r['epi Mês'] || '';
-  const nome = r['Texto breve de material EPI'] || '';
-  const qtd = parseFloat(r['QUANTIDADES']) || 0;
-  const valor = r['valor'] || '';
-  const colaborador = r['SolicitanteNome'] || r['NOME'] || '';
-  const data = r['AJUSTE 07/01/2026'] || '';
-  return {mes, nome, qtd, valor, colaborador, data};
+  const colaborador = r['SolicitanteNome'] || '';
+  const nome = r['ItemNome'] || '';
+  const qtd = parseFloat(r['ItemQuantidade']) || 0;
+  // Extrai o mês da data de criação (ex: "2026-05" ou pega os caracteres do mês)
+  const dataCriacao = r['CriadaEm'] || '';
+  const mes = dataCriacao ? dataCriacao.substring(0, 7) : '';
+  const valor = r['ItemPreco'] || '';
+  return {mes, nome, qtd, valor, colaborador, data: dataCriacao};
  }).filter(x => x.nome && x.colaborador);
 
  preencher();
@@ -286,55 +286,4 @@ function re(){
  const L=Object.values(G).sort((a,b)=>b.n-a.n||a.nome.localeCompare(b.nome));
  const mx=L[0]?.n||1;
  LK.e=L.map(g=>'e:'+g.nome);
- const top8=L.slice(0,8),top10=L.slice(0,10);
-
- $('k-est').innerHTML=kpi(totQtd,'Total de Itens Requisitados','#2563eb')+kpi(L.length,'Tipos de EPIs distintos','#059669')+kpi(top10[0]?.n||0,'Maior Saída','#d97706');
- const g1=box('📊 Top EPIs requisitados','Volume total entregue',vb(top8.map((g,i)=>({v:g.n,l:g.nome,c:CORES_GRAFICO[i%8],x:pct(g.n,totQtd)+'%',a:'selE',d:g.nome}))));
- const g2=box('🏆 Ranking Geral','Top itens',`<div class="top10-list">${top10.length?top10.map((g,i)=>`<div class="top10-row" data-v="${esc(g.nome)}" onclick="selE(this.dataset.v)"><span><b>#${i+1}</b>${esc(g.nome)}</span><span class="ch2 g">${g.n} un.</span></div>`).join(''):VAZIO}</div>`);
- const M={};
- f.forEach(x=>{if(x.mes)M[x.mes]=(M[x.mes]||0)+x.qtd});
- const mArr=Object.entries(M).map(([l,v])=>({l,v,c:'#2563eb'})).sort((a,b)=>a.l.localeCompare(b.l));
- const g3=box('📅 Requisições por Mês','Volume entregue',vb(mArr));
-
- $('dg-est').innerHTML=g1+g2+g3;
- $('n-e').textContent=`${L.length} tipo(s) · ${totQtd} unidade(s)`;
- $('l-est').innerHTML=L.length?L.map(g=>{
-  const k='e:'+g.nome,o=aberto.has(k);
-  return`<div class="c" id="${fId(g.nome,'card-e-')}"><button class="ch" onclick="tg('${kk(k)}')"><div class="row"><div class="nm">${esc(g.nome)}</div><span class="tot">${g.n} un.</span></div><div class="bar"><i style="width:${g.n/mx*100}%"></i></div><div class="chips"><span class="ch2">Colaboradores: ${g.solics.size}</span><span class="ch2">${o?'▲ ocultar':'▼ ver histórico'}</span></div></button><div class="det ${o?'':'det-closed'}">${g.registros.map(r=>`<div class="it"><b>${esc(r.colaborador)}</b> — ${r.qtd} un. (Mês: ${esc(r.mes)||'N/D'})</div>`).join('')}</div></div>`;
- }).join(''):'<div class="empty">Nenhum registro encontrado.</div>';
-}
-
-function rd(){
- const q=$('d-q').value.toLowerCase().trim();$('fd-n').textContent=q?'filtro ativo':'';
- const f=EST.filter(x=>!q||x.colaborador.toLowerCase().includes(q));
- const totQtd=soma(f.map(x=>x.qtd));
- const C={};
- f.forEach(x=>{
-  const c=C[x.colaborador]??={nome:x.colaborador,n:0,itens:new Set(),registros:[]};
-  c.n+=x.qtd;c.itens.add(x.nome);c.registros.push(x);
- });
- const L=Object.values(C).sort((a,b)=>b.n-a.n||a.nome.localeCompare(b.nome));
- const mx=L[0]?.n||1;
- LK.d=L.map(c=>'d:'+c.nome);
- const top10=L.slice(0,10);
-
- $('k-dev').innerHTML=kpi(L.length,'Colaboradores','#2563eb')+kpi(totQtd,'Total de Itens','#059669')+kpi(top10[0]?.n||0,'Maior Retirada','#d97706');
- const g1=box('🏆 Top Colaboradores','Maior volume retirado',`<div class="top10-list">${top10.length?top10.map((c,i)=>`<div class="top10-row" data-v="${esc(c.nome)}" onclick="selD(this.dataset.v)"><span><b>#${i+1}</b>${esc(c.nome)}</span><span class="ch2 g">${c.n} un.</span></div>`).join(''):VAZIO}</div>`);
- $('dg-dev').innerHTML=g1+'<div></div><div></div>';$('n-dev').textContent=`${L.length} colaborador(es)`;
- $('l-dev').innerHTML=L.length?L.map(c=>{
-  const k='d:'+c.nome,o=aberto.has(k);
-  return`<div class="c" id="${fId(c.nome,'card-d-')}"><button class="ch" onclick="tg('${kk(k)}')"><div class="row"><div class="nm">${esc(c.nome)}</div><span class="tot">${c.n} un.</span></div><div class="bar"><i style="width:${c.n/mx*100}%"></i></div><div class="chips"><span class="ch2">Tipos de EPIs: ${c.itens.size}</span></div></button><div class="det ${o?'':'det-closed'}">${c.registros.map(r=>`<div class="it"><b>${esc(r.nome)}</b> — ${r.qtd} un. (Mês: ${esc(r.mes)||'N/D'})</div>`).join('')}</div></div>`;
- }).join(''):'<div class="empty">Nenhum colaborador encontrado.</div>';
-}
-
-try{
- const cache = localStorage.getItem(KC);
- if(cache){
-  processarDados({data: JSON.parse(cache)});
- }
-}catch(e){}
-
-atualizar();
-</script>
-</body>
-</html>
+ const top8=L.slice(0,8),
