@@ -29,9 +29,9 @@ h1{font-size:19px;font-weight:900;letter-spacing:-.3px}
 .rf:hover,.print-btn:hover{background:rgba(255,255,255,.2)}
 .rf.spin{animation:sp 1s linear infinite}@keyframes sp{to{transform:rotate(360deg)}}
 
-/* Abas */
-.seg{display:grid;grid-template-columns:repeat(2,1fr);gap:5px;margin:16px 28px 0;background:#e6eaf3;padding:5px;border-radius:14px}
-.seg button{background:transparent;color:#51607a;border:0;border-radius:10px;min-height:46px;font-weight:800;font-size:15px;font-family:inherit;cursor:pointer;transition:all .2s}
+/* 3 Abas */
+.seg{display:grid;grid-template-columns:repeat(3,1fr);gap:5px;margin:16px 28px 0;background:#e6eaf3;padding:5px;border-radius:14px}
+.seg button{background:transparent;color:#51607a;border:0;border-radius:10px;min-height:46px;font-weight:800;font-size:14px;font-family:inherit;cursor:pointer;transition:all .2s}
 .seg button:hover{background:rgba(255,255,255,.6)}
 .seg button.on{background:#fff;color:#1e3a8a;box-shadow:0 2px 8px rgba(30,58,138,.18)}
 
@@ -40,10 +40,11 @@ section{display:grid;gap:18px}
 
 /* KPIs */
 .kpis{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.kpis-4{grid-template-columns:repeat(4,1fr)!important;}
 .kpi{position:relative;background:#fff;border:1px solid var(--bd);border-radius:16px;padding:16px 22px;box-shadow:var(--sh);overflow:hidden;display:flex;align-items:center}
 .kpi::before{content:"";position:absolute;left:0;top:0;bottom:0;width:5px;background:var(--kc,var(--pri))}
 .kpi div{display:flex;flex-direction:column;min-width:0}
-.kpi b{font-size:28px;font-weight:900;line-height:1.1;letter-spacing:-1px;color:#1e293b}
+.kpi b{font-size:26px;font-weight:900;line-height:1.1;letter-spacing:-1px;color:#1e293b}
 .kpi span{font-size:11.5px;font-weight:800;color:#6b7a90;text-transform:uppercase;letter-spacing:.4px;margin-top:3px}
 
 /* Layout Gráficos */
@@ -111,12 +112,13 @@ input:focus,select:focus{outline:2px solid #93b4f5;border-color:#2563eb}
 .print-title-only { display: none; }
 
 /* Cores e Estilos */
-#s-est{--ac:#2563eb}#s-dev{--ac:#ea580c}
+#s-est{--ac:#2563eb}#s-dev{--ac:#ea580c}#s-rel{--ac:#059669}
 body{background:linear-gradient(180deg,#e6ecfb 0,#f4f6fb 280px)}
 header{background:linear-gradient(135deg,#0b1220 0%,#1e3a8a 55%,#2563eb 100%);border-bottom:4px solid #f59e0b}
 .seg button{color:#475569}
 #b-est.on{background:linear-gradient(135deg,#3b82f6,#1d4ed8);color:#fff;box-shadow:0 4px 14px rgba(37,99,235,.45)}
 #b-dev.on{background:linear-gradient(135deg,#fb923c,#ea580c);color:#fff;box-shadow:0 4px 14px rgba(234,88,12,.45)}
+#b-rel.on{background:linear-gradient(135deg,#059669,#047857);color:#fff;box-shadow:0 4px 14px rgba(5,150,105,.45)}
 .kpi{background:linear-gradient(135deg,#fff 40%,color-mix(in srgb,var(--kc,#2563eb) 16%,#fff));border-color:color-mix(in srgb,var(--kc,#2563eb) 30%,#fff)}
 .kpi::before{width:8px}
 .kpi b{color:var(--kc,#1e293b)}
@@ -124,20 +126,19 @@ header{background:linear-gradient(135deg,#0b1220 0%,#1e3a8a 55%,#2563eb 100%);bo
 .chart-box{border-top:5px solid var(--ac,#2563eb);background:linear-gradient(180deg,color-mix(in srgb,var(--ac,#2563eb) 9%,#fff) 0,#fff 100px)}
 
 /* ==========================================================
-   IMPRESSÃO PERFEITA E ALINHADA
+   IMPRESSÃO DA ABA RELATÓRIO (EXCLUSIVA PARA 1 PÁGINA)
    ========================================================== */
 @media print {
   * {-webkit-print-color-adjust: exact !important; print-color-adjust: exact !important;}
   @page { size: A4 landscape; margin: 10mm 12mm; }
   body { background: #fff !important; color: #000 !important; font-size: 11px !important; }
   header { display: none !important; }
-  .seg, .toolbar, details.f, .top-btns, #s-dev, .home-btn, .btn-voltar-filtro { display: none !important; }
+  .seg, .toolbar, details.f, .top-btns, #s-est, #s-dev, .home-btn, .btn-voltar-filtro { display: none !important; }
+  #s-rel { display: grid !important; }
   .print-title-only { display: block !important; font-size: 15px; font-weight: 900; color: #1e3a8a; margin-bottom: 14px; text-transform: uppercase; border-bottom: 3px solid #1e3a8a; padding-bottom: 6px; }
-  .det-closed, .det { display: none !important; }
-  .cards { display: none !important; }
   .dashboard-grid { grid-template-columns: 1.2fr 1fr !important; gap: 16px !important; align-items: stretch !important; }
   .chart-box { padding: 18px !important; height: 100% !important; justify-content: flex-start !important; }
-  .chart-bars { height: 200px !important; margin-top: 14px !important; }
+  .chart-bars { height: 220px !important; margin-top: 14px !important; }
   .top10-list { max-height: none !important; overflow: visible !important; gap: 6px !important; margin-top: 14px !important; }
   .top10-row { padding: 9px 12px !important; font-size: 12px !important; border-radius: 6px !important; }
   main { padding: 12px 0 0 0 !important; gap: 16px !important; }
@@ -165,12 +166,13 @@ header{background:linear-gradient(135deg,#0b1220 0%,#1e3a8a 55%,#2563eb 100%);bo
  </div>
  <div class="seg">
   <button id="b-est" class="on" onclick="aba('est')">📦 Movimentações de EPIs</button>
-  <button id="b-dev" onclick="aba('dev')">👥 Colaboradores & Requisições</button>
+  <button id="b-dev" onclick="aba('dev')">👥 Colaboradores</button>
+  <button id="b-rel" onclick="aba('rel')">📊 Painel / Relatório Executivo</button>
  </div>
 </header>
 <main>
+ <!-- ABA 1: MOVIMENTAÇÕES DE EPIS -->
  <section id="s-est">
-  <div class="print-title-only">Relatório Corporativo: Movimentações e Consumo de EPIs</div>
   <div class="kpis" id="k-est"></div>
   <div class="dashboard-grid" id="dg-est"></div>
   <details class="f"><summary><span>🔎 Filtros Avançados</span><span id="fe-n" class="sub"></span></summary>
@@ -190,14 +192,25 @@ header{background:linear-gradient(135deg,#0b1220 0%,#1e3a8a 55%,#2563eb 100%);bo
   <div id="l-est" class="cards"></div>
  </section>
 
+ <!-- ABA 2: COLABORADORES -->
  <section id="s-dev" class="hide">
   <div class="kpis" id="k-dev"></div>
   <div class="dashboard-grid" id="dg-dev"></div>
   <details class="f"><summary><span>🔎 Filtros Avançados</span><span id="fd-n" class="sub"></span></summary>
-   <div class="fg"><input class="w" id="d-q" type="search" placeholder="Buscar colaborador" oninput="rd()">
-    <button class="btn" onclick="limpar('d')">Limpar filtros</button></div></details>
+   <div class="fg">
+    <input class="w" id="d-q" type="search" placeholder="Buscar colaborador" oninput="rd()">
+    <button class="btn" onclick="limpar('d')">Limpar filtros</button>
+   </div>
+  </details>
   <div class="toolbar"><button onclick="abrirTudo('d')">▼ Abrir tudo</button><button onclick="fecharTudo('d')">▲ Fechar tudo</button><span class="sub" id="n-dev"></span></div>
   <div id="l-dev" class="cards"></div>
+ </section>
+
+ <!-- ABA 3: PAINEL / RELATÓRIO EXECUTIVO (UNIFICADO PARA IMPRESSÃO) -->
+ <section id="s-rel" class="hide">
+  <div class="print-title-only">Relatório Corporativo: Movimentações e Consumo de EPIs</div>
+  <div class="kpis kpis-4" id="k-rel"></div>
+  <div class="dashboard-grid" id="dg-rel"></div>
  </section>
 </main>
 
@@ -238,22 +251,15 @@ function vb(items){
  if(!items.length)return VAZIO;
  const mx=Math.max(...items.map(i=>i.v),1);
  return '<div class="chart-bars">'+items.map(i=>{
-  const h=Math.max(Math.round(i.v/mx*160),i.v>0?8:3);
+  const h=Math.max(Math.round(i.v/mx*150),i.v>0?8:3);
   const nomeCurto = abreviarEPI(i.l);
   return `<div class="c-bar-group" title="${esc(i.t||i.l)}"${i.a?` data-v="${esc(i.d)}" onclick="${i.a}(this.dataset.v)"`:''}><div class="c-bar-val">${i.v}${i.x?`<small>${i.x}</small>`:''}</div><div class="c-bar" style="height:${h}px;background:${i.c}"></div><div class="c-bar-lbl">${esc(nomeCurto)}</div></div>`;
  }).join('')+'</div>';
 }
 
-function selE(v){
- $('e-q').value=v;
- re();
- rolarPara(fId(v,'card-e-'));
-}
-
-function limparBuscaEPI(){
- $('e-q').value='';
- re();
-}
+function selE(v){$('e-q').value=v;re();rolarPara(fId(v,'card-e-'))}
+function selD(v){$('d-q').value=v;rd();rolarPara(fId(v,'card-d-'))}
+function limparBuscaEPI(){$('e-q').value='';re();}
 
 function processarDados(results){
  const rows = results.data;
@@ -271,6 +277,7 @@ function processarDados(results){
  preencherFiltros();
  re();
  rd();
+ renderizarRelatorio();
  $('upd').textContent = 'Atualizado às ' + new Date().toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'});
 }
 
@@ -325,7 +332,7 @@ function preencherFiltros(){
 }
 
 function aba(t){
- ['est','dev'].forEach(x=>{
+ ['est','dev','rel'].forEach(x=>{
   $('s-'+x).classList.toggle('hide',x!==t);
   const btn=$('b-'+x);
   if(btn) btn.classList.toggle('on',x===t);
@@ -400,6 +407,30 @@ function rd(){
   const k='d:'+c.nome,o=aberto.has(k);
   return `<div class="c" id="${fId(c.nome,'card-d-')}"><button class="ch" onclick="tg('${kk(k)}')"><div class="row"><div class="nm">${esc(c.nome)}</div><span class="tot">${c.n} un.</span></div><div class="bar"><i style="width:${c.n/mx*100}%"></i></div><div class="chips"><span class="ch2">Tipos de EPIs: ${c.itens.size}</span></div></button><div class="det ${o?'':'det-closed'}">${c.registros.map(r=>`<div class="it"><b>${esc(r.nome)}</b> — ${r.qtd} un. (Data:${esc(r.data)||'N/D'})</div>`).join('')}</div></div>`;
  }).join(''):'<div class="empty">Nenhum colaborador encontrado.</div>';
+}
+
+function renderizarRelatorio(){
+ const totQtd=soma(EST.map(x=>x.qtd));
+ const G={}, C={};
+ EST.forEach(x=>{
+  const g=G[x.nome]??={nome:x.nome,n:0}; g.n+=x.qtd;
+  const c=C[x.colaborador]??={nome:x.colaborador,n:0}; c.n+=x.qtd;
+ });
+ const L_EPI=Object.values(G).sort((a,b)=>b.n-a.n);
+ const L_Colab=Object.values(C).sort((a,b)=>b.n-a.n);
+ const top10EPI=L_EPI.slice(0,10);
+ const top10Colab=L_Colab.slice(0,10);
+
+ $('k-rel').innerHTML=
+  kpi(totQtd,'Total de Itens','#2563eb')+
+  kpi(L_EPI.length,'EPIs Distintos','#059669')+
+  kpi(L_Colab.length,'Colaboradores','#d97706')+
+  kpi(top10EPI[0]?.n||0,'Maior Saída','#7c3aed');
+
+ const g1=box('📊 Top 10 EPIs Requisitados','Volume total entregue por material',vb(top10EPI.map((g,i)=>({v:g.n,l:g.nome,c:CORES_GRAFICO[i%10],x:pct(g.n,totQtd)+'%'}))));
+ const g2=box('🏆 Top 10 Colaboradores','Maior volume retirado',`<div class="top10-list">${top10Colab.length?top10Colab.map((c,i)=>`<div class="top10-row"><span><b>#${i+1}</b>${esc(c.nome)}</span><span class="ch2 g">${c.n} un.</span></div>`).join(''):VAZIO}</div>`);
+
+ $('dg-rel').innerHTML=g1+g2;
 }
 
 try{
