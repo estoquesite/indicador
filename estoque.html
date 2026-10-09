@@ -9,8 +9,6 @@
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E📦%3C/text%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
-<!-- Importando o PapaParse para ler CSV do Google Sheets perfeitamente -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
 <style>
 :root{--line:#cbd5e1;--tx:#0f172a;--mu:#475569;--pri:#7c3aed;--bd:#e3e8f0;--sh:0 1px 2px rgba(15,23,42,.05),0 4px 14px rgba(15,23,42,.06);--sh2:0 8px 28px rgba(15,23,42,.14)}
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
@@ -164,8 +162,8 @@ tr:hover{background:#f8fafc}
 </main>
 
 <script>
-const CSV_URL_STK = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSwssGdZjM9ONVf2YkxwVlmN9JcK7oylQ2EIwDWWRobg339OveHYIjLoSrt-bi-wG76C0OL8Vp_L4Z8/pub?output=csv";
-const KC_STK = "estoque_cache_papaparse_v5";
+const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbz-aCncEqyqXZIHvomRO8XYsA-wIjV5iy_dFimEnvnkK__g1UrCi6Gc3miNml1nXuo/exec";
+const KC_STK = "estoque_cache_json_v1";
 const CORES_GRAFICO=['#be123c','#7c3aed','#2563eb','#059669','#d97706','#dc2626','#db2777','#0284c7','#65a30d','#4f46e5'];
 const $=id=>document.getElementById(id);
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -186,8 +184,7 @@ function vb(items){
  }).join('')+'</div>';
 }
 
-function processarDadosEstoque(results){
- const rows = results.data;
+function processarDadosEstoque(rows){
  STK = rows.map(r=>{
   const keys = Object.keys(r);
   
@@ -226,22 +223,21 @@ function processarDadosEstoque(results){
 
 function atualizarEstoque(){
  const b = $('rf'); if(b) b.classList.add('spin');
- Papa.parse(CSV_URL_STK + '&_t=' + new Date().getTime(), {
-  download: true, header: true, skipEmptyLines: true,
-  complete: function(resStk) {
-   if(resStk.data && resStk.data.length > 0) {
-    localStorage.setItem(KC_STK, JSON.stringify(resStk.data));
-    processarDadosEstoque(resStk);
+ fetch(SCRIPT_URL + '?t=' + new Date().getTime())
+  .then(response => response.json())
+  .then(data => {
+   if(Array.isArray(data) && data.length > 0) {
+    localStorage.setItem(KC_STK, JSON.stringify(data));
+    processarDadosEstoque(data);
    }
    if(b) b.classList.remove('spin');
-  },
-  error: function(err) {
-   console.error("Erro ao carregar CSV:", err);
+  })
+  .catch(err => {
+   console.error("Erro ao carregar dados do Apps Script:", err);
    const cache = localStorage.getItem(KC_STK);
-   if(cache) processarDadosEstoque({data: JSON.parse(cache)});
+   if(cache) processarDadosEstoque(JSON.parse(cache));
    if(b) b.classList.remove('spin');
-  }
- });
+  });
 }
 
 function aba(t){
@@ -316,7 +312,7 @@ function renderizarTudo(){
 
 try{
  const cacheStk = localStorage.getItem(KC_STK);
- if(cacheStk) processarDadosEstoque({data: JSON.parse(cacheStk)});
+ if(cacheStk) processarDadosEstoque(JSON.parse(cacheStk));
 }catch(e){}
 
 atualizarEstoque();
