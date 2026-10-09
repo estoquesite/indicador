@@ -3,6 +3,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>Gestão de Materiais não Estocáveis</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<!-- Biblioteca do Supabase -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
 :root{--bg:#f0f0f0;--card:#fff;--tx:#1f2933;--mut:#6b7280;--bd:#d9dde1;--teal:#007e7a;--red:#c0305a;--blue:#1e90ff;--org:#e8703a;--navy:#1a2a9c;--side:#3bb3e6;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
 @media(prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#14181c;--card:#1e242a;--tx:#e6e9ec;--mut:#9aa4ae;--bd:#333c45;--side:#0f5c80}}
@@ -40,14 +42,18 @@ tr:nth-child(even) td{background:rgba(128,128,128,.07)}
 .n{color:var(--mut);font-size:12px;margin:6px 0}
 </style></head><body>
 <header><h1>Gestão de Materiais não Estocáveis</h1>
-<div><span id="fn" style="color:#fff;font-size:12px;margin-right:10px"></span><button class="up" onclick="f.click()">Carregar arquivo mensal</button><input id="f" type="file" accept=".xlsx,.xls,.csv" hidden></div></header>
-<div id="drop"><b>Arraste o estoques.xlsx aqui</b>ou clique em "Carregar arquivo mensal". Tudo é calculado no seu navegador, nada é enviado.</div>
-<main id="app" hidden>
+<div><span id="fn" style="color:#fff;font-size:12px;margin-right:10px">Carregando do Supabase...</span><button class="up" onclick="carregarEstoqueSupabase()">Atualizar Dados</button></div></header>
+<main id="app">
 <div class="tabs" id="tabs"></div>
 <div class="fl" id="fl"></div>
 <div id="v"></div>
 </main>
 <script>
+// --- CONFIGURAÇÃO DO SUPABASE ---
+const SUPABASE_URL = 'SUA_URL_DO_SUPABASE'; // Substitua pela sua URL do Supabase
+const SUPABASE_ANON_KEY = 'SUA_CHAVE_ANON_PUBLICA'; // Substitua pela sua chave Anon/Public
+const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
 const $=id=>document.getElementById(id),MS=['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
 const CL=['1 - Até 2 meses','2 - De 2 a 6 meses','3 - De 6 meses a 1 ano','4 - Mais de 1 ano'],CC=['#1e90ff','#1a2a9c','#e8703a','#c0305a'];
 let D=[],tab='pai',F={},sort={};
@@ -56,30 +62,43 @@ const dt=v=>v instanceof Date&&!isNaN(v)?v:(typeof v==='string'&&v.trim()&&!isNa
 const num=v=>{v=parseFloat(v);return isNaN(v)?null:v};
 const fd=d=>d?d.toLocaleDateString('pt-BR'):'';const fn=n=>Math.round(n).toLocaleString('pt-BR');
 const dias=(a)=>Math.max(0,Math.floor((Date.now()-a)/864e5));
-function load(file){
- const r=new FileReader();r.onload=e=>{
-  const wb=XLSX.read(e.target.result,{type:'array',cellDates:true}),ws=wb.Sheets[wb.SheetNames[0]];
-  const rows=XLSX.utils.sheet_to_json(ws,{defval:null});
-  if(!rows.length){alert('Arquivo vazio');return}
-  const map={};Object.keys(rows[0]).forEach(k=>map[nz(k)]=k);
-  const g=(r,k)=>r[map[k]];
-  D=rows.map(r=>{
-   const desc=String(g(r,'descricaodoitem')||'').trim(),rec=dt(g(r,'datarec')),sa=dt(g(r,'datadesaida')),q=num(g(r,'quant'))||0,qs=num(g(r,'quantidadedesaida'));
-   let sl=num(g(r,'saldoemestoque'));if(sl===null)sl=q-(qs||0);
-   const last=sa||rec,d=last?dias(last):null;
-   return{site:map.site?String(g(r,'site')||'SEM SITE').trim().toUpperCase():'CTSS',nf:String(g(r,'nf')||'').trim(),sol:String(g(r,'solicitante')||'').trim(),pr:dt(g(r,'prazoret')),dinv:dt(g(r,'datadoinventario')),emin:num(g(r,'estoqueminimo')),val:dt(g(r,'datadevalidade')),qr:qs||0,loc:String(g(r,'localizacao')||'—').trim().toUpperCase(),baia:String(g(r,'baiaarmazenamento')||'—').trim().toUpperCase(),ped:String(g(r,'pedido')||'').replace(/\.0$/,''),
-    mat:String(g(r,'material')||'').replace(/\.0$/,''),desc,grp:(desc.split(/[\s;,]/)[0]||'—').toUpperCase(),q,um:g(r,'um')||'',rec,sa,qs:qs!==null?qs:(sl<=0?q:0),sl,d,
-    cl:d===null?3:d<=60?0:d<=180?1:d<=365?2:3,dsto:rec&&sa?Math.max(0,Math.floor((sa-rec)/864e5)):''};
-  });
-  $('fn').textContent=file.name+' • '+D.length+' linhas';$('drop').hidden=true;$('app').hidden=false;F={};render(true);
- };r.readAsArrayBuffer(file)}
-$('f').onchange=e=>e.target.files[0]&&load(e.target.files[0]);
-const dz=$('drop');dz.onclick=()=>$('f').click();
-['dragover','dragenter'].forEach(t=>dz.addEventListener(t,e=>{e.preventDefault();dz.classList.add('o')}));
-dz.addEventListener('dragleave',()=>dz.classList.remove('o'));
-dz.addEventListener('drop',e=>{e.preventDefault();dz.classList.remove('o');e.dataTransfer.files[0]&&load(e.dataTransfer.files[0])});
-document.body.addEventListener('dragover',e=>e.preventDefault());
-document.body.addEventListener('drop',e=>{e.preventDefault();e.dataTransfer.files[0]&&load(e.dataTransfer.files[0])});
+
+// Função para buscar os dados direto do Supabase automaticamente
+async function carregarEstoqueSupabase(){
+    $('fn').textContent = 'Buscando dados...';
+    try {
+        const { data, error } = await supabase.from('estoque').select('*');
+        if (error) throw error;
+        
+        if(!data || !data.length){
+            $('fn').textContent = 'Nenhum registro encontrado no Supabase';
+            return;
+        }
+
+        // Mapeia os dados vindos do banco para o formato que o painel já usa
+        D = data.map(r=>{
+           const desc=String(r.descricao||'').trim(),rec=dt(r.atualizado_em),sa=dt(r.datadesaida),q=num(r.quantidade)||0,qs=num(r.quantidadedesaida)||0;
+           let sl=num(r.saldoemestoque);if(sl===null)sl=q-(qs||0);
+           const last=sa||rec,d=last?dias(last):null;
+           return{site:r.site?String(r.site||'SEM SITE').trim().toUpperCase():'CTSS',nf:String(r.nf||'').trim(),sol:String(r.solicitante||'').trim(),pr:dt(r.prazoret),dinv:dt(r.datadoinventario),emin:num(r.estoqueminimo),val:dt(r.datadevalidade),qr:qs||0,loc:String(r.loc||r.localizacao||'—').trim().toUpperCase(),baia:String(r.baia||r.baiaarmazenamento||'—').trim().toUpperCase(),ped:String(r.pedido||r.codigo_produto||'').replace(/\.0$/,''),
+            mat:String(r.material||r.codigo_produto||'').replace(/\.0$/,''),desc,grp:(desc.split(/[\s;,]/)[0]||'—').toUpperCase(),q,um:r.um||'',rec,sa,qs:qs!==null?qs:(sl<=0?q:0),sl,d,
+            cl:d===null?3:d<=60?0:d<=180?1:d<=365?2:3,dsto:rec&&sa?Math.max(0,Math.floor((sa-rec)/864e5)):''};
+        });
+
+        $('fn').textContent = D.length + ' linhas carregadas do Supabase';
+        F={};
+        render(true);
+    } catch(err) {
+        console.error('Erro ao carregar do Supabase:', err.message);
+        $('fn').textContent = 'Erro ao conectar ao Supabase';
+    }
+}
+
+// Carrega automaticamente assim que a página é aberta em qualquer computador
+document.addEventListener('DOMContentLoaded', () => {
+    carregarEstoqueSupabase();
+});
+
 const TABS={pai:'Painel',est:'Estoques',rot:'Rotatividade',zer:'Zerados',prz:'Prazo de retirada',inv:'Inventário',pen:'Pendências'};
 function dateOf(r){return tab==='zer'?r.sa:r.rec}
 function filt(){
@@ -102,7 +121,7 @@ function render(full){
  }
  const R=filt();$('v').innerHTML=({pai:vPai,est:vEst,rot:vRot,zer:vZer,prz:vPrz,inv:vInv,pen:vPen})[tab](R);
 }
-function sf(k,v,keep){F[k]=v;if(keep){const y=document.activeElement.id,p=document.activeElement.selectionStart;render(false)}else render(false)}
+function sf(k,v,keep){F[k]=v;if(keep){render(false)}else render(false)}
 function agg(R,key,val){const m={};R.forEach(r=>{const k=key(r);if(k!==null)m[k]=(m[k]||0)+val(r)});return Object.entries(m).sort((a,b)=>b[1]-a[1])}
 function bars(title,data,color,n=25){
  const mx=Math.max(1,...data.map(x=>x[1]));
@@ -124,7 +143,6 @@ function vEst(R){
  <div class="g">${bars('Estoque por grupo (unidades)',agg(R,r=>r.grp,r=>r.sl),'var(--org)')}${donut(R)}</div>
  ${tbl(R,[['Item',r=>r.grp],['Pedido',r=>r.ped],['Descrição',r=>r.desc],['Material',r=>r.mat],['Saldo',r=>r.sl],['Qtd. saída',r=>r.qs],['Data-Rec.',r=>r.rec],['Data saída',r=>r.sa],['Localização',r=>r.loc],['Baia',r=>r.baia],['Dias s/ mov.',r=>r.d],['Classificação',r=>CL[r.cl]]])}`}
 function vRot(R0){
-
  const A=D.filter(r=>{const d=r.rec;return(!F.ano||d&&d.getFullYear()==F.ano)&&(F.mes===undefined||F.mes===''||d&&d.getMonth()==F.mes)&&(!F.site||r.site===F.site)&&(!F.loc||r.loc===F.loc)&&(!F.baia||r.baia===F.baia)&&(!F.desc||r.desc.toLowerCase().includes(F.desc.toLowerCase()))&&(!F.mat||r.mat.includes(F.mat))&&(!F.ped||r.ped.includes(F.ped))});
  const rec=A.reduce((a,r)=>a+r.q,0),sai=A.reduce((a,r)=>a+r.qs,0),sem=A.filter(r=>r.sl>0&&!r.sa).length;
  const g={};A.forEach(r=>{const o=g[r.grp]||(g[r.grp]={q:0,qs:0,sl:0});o.q+=r.q;o.qs+=r.qs;o.sl+=r.sl});
@@ -144,7 +162,7 @@ function tbl(R,cols){
  const s=sort[tab],f=CF[tab]||{},k=(c,r)=>{const v=c[1](r);return v instanceof Date?fd(v):v};
  const rows=R.filter(r=>cols.every((c,i)=>!f[i]||String(k(c,r)??'').toLowerCase().includes(f[i].toLowerCase())));
  if(s)rows.sort((a,b)=>{const x=cols[s.i][1](a),y=cols[s.i][1](b),xv=x instanceof Date?+x:x,yv=y instanceof Date?+y:y;return(xv>yv?1:xv<yv?-1:0)*s.d});
- return`<div class='c'><h3>Tabela status de material</h3><div class='tw'><table><tr>${cols.map((c,i)=>`<th onclick='srt(${i})'>${c[0]}${s&&s.i===i?(s.d>0?' ▲':' ▼'):''}</th>`).join('')}</tr><tr>${cols.map((c,i)=>`<th style='top:31px;background:var(--card);padding:2px'><input id='cf${i}' value="${(f[i]||'').replace(/"/g,'&quot;')}" oninput='cf(${i},this.value)' placeholder='filtrar' style='width:100%;min-width:70px;padding:3px;border:1px solid var(--bd);border-radius:4px;background:var(--card);color:var(--tx)'></th>`).join('')}</tr>${rows.slice(0,300).map(r=>'<tr>'+cols.map(c=>{const v=k(c,r);return`<td title="${String(v??'').replace(/"/g,'&quot;')}">${v??''}</td>`}).join('')+'</tr>').join('')}</table></div><div class='n'>Mostrando ${Math.min(300,rows.length)} de ${rows.length} linhas (filtre por coluna ou clique no cabeçalho para ordenar)</div></div>`}
+ return`<div class='c'><h3>Tabela status de material</h3><div class='tw'><table><tr>${cols.map((c,i)=>`<th onclick='srt(${i})'>${c[0]}${s&&s.i===i?(s.d>0?' ▲':' ▼'):''}</th>`).join('')}</tr><tr>${cols.map((c,i)=>`<th style='top:31px;background:var(--card);padding:2px'><input id='cf${i}' value="${(f[i]\vert{}\vert{}'').replace(/"/g,'&quot;')}" oninput='cf(${i},this.value)' placeholder='filtrar' style='width:100%;min-width:70px;padding:3px;border:1px solid var(--bd);border-radius:4px;background:var(--card);color:var(--tx)'></th>`).join('')}</tr>${rows.slice(0,300).map(r=>'<tr>'+cols.map(c=>{const v=k(c,r);return`<td title="${String(v??'').replace(/"/g,'&quot;')}">${v??''}</td>`}).join('')+'</tr>').join('')}</table></div><div class='n'>Mostrando ${Math.min(300,rows.length)} de ${rows.length} linhas (filtre por coluna ou clique no cabeçalho para ordenar)</div></div>`}
 function vPai(R){
  const S=D.filter(r=>!F.site||r.site===F.site),z=S.filter(r=>r.sl<=0).length,rc=S.reduce((a,r)=>a+r.q,0),sa=S.reduce((a,r)=>a+r.qs,0),v=R.filter(r=>ven(r)>0),c=n=>R.filter(r=>ic(r)===n).length,pc=pn(R).filter(r=>r.pn.length).length,mn=R.filter(r=>r.emin!==null&&r.sl<r.emin).length,vl=R.filter(r=>r.val&&r.val<Date.now()+30*864e5).length;
  return`<div class='kp'>${kp('Itens em estoque',fn(R.length))}${kp('Unidades em estoque',fn(R.reduce((a,r)=>a+r.sl,0)))}${kp('Itens zerados',fn(z))}${kp('Giro (saída/recebido)',(rc?sa/rc*100:0).toFixed(1)+'%')}${kp('Parados há +1 ano',fn(R.filter(r=>r.cl===3).length))}</div><div class='kp'>${kp('Prazo de retirada vencido',fn(v.length),1)}${kp('Vencido há +90 dias',fn(v.filter(r=>ven(r)>90).length),1)}${kp('Sem inventário',fn(c(0)),1)}${kp('Inventário há +1 ano',fn(c(3)),1)}${kp('Pendência de cadastro',fn(pc),1)}${kp('Abaixo do estoque mínimo',fn(mn))}${kp('Validade em até 30 dias',fn(vl))}</div><div class='g'>${bars('Estoque por localização (un.)',agg(R,r=>r.loc,r=>r.sl),'var(--org)',15)}${donut(R)}${bars('Prazo vencido por solicitante',agg(v,r=>r.sol||'—',()=>1),'var(--red)',15)}${bars('Itens por site',agg(R,r=>r.site,()=>1),'var(--teal)',6)}</div>`}
