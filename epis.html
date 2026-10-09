@@ -326,7 +326,7 @@ function re(){
  $('n-e').textContent=`${L.length} tipo(s) · ${totQtd} unidade(s)`;
  $('l-est').innerHTML=L.length?L.map(g=>{
   const k='e:'+g.nome,o=aberto.has(k);
-  return`<div class="c" id="${fId(g.nome,'card-e-')}"><button class="ch" onclick="tg('${kk(k)}')"><div class="row"><div class="nm">${esc(g.nome)}</div><span class="tot">${g.n} un.</span></div><div class="bar"><i style="width:${g.n/mx*100}%"></i></div><div class="chips"><span class="ch2">Colaboradores: ${g.solics.size}</span><span class="ch2">${o?'▲ ocultar':'▼ ver histórico'}</span></div></button><div class="det ${o?'':'det-closed'}">${g.registros.map(r=>`<div class="it"><b>${esc(r.colaborador)}</b> — ${r.qtd} un. (Data:${esc(r.data)||'N/D'})</div>`).join('')}</div></div>`;
+  return `<div class="c" id="${fId(g.nome,'card-e-')}"><button class="ch" onclick="tg('${kk(k)}')"><div class="row"><div class="nm">${esc(g.nome)}</div><span class="tot">${g.n} un.</span></div><div class="bar"><i style="width:${g.n/mx*100}%"></i></div><div class="chips"><span class="ch2">Colaboradores: ${g.solics.size}</span><span class="ch2">${o?'▲ ocultar':'▼ ver histórico'}</span></div></button><div class="det ${o?'':'det-closed'}">${g.registros.map(r=>`<div class="it"><b>${esc(r.colaborador)}</b> — ${r.qtd} un. (Data:${esc(r.data)||'N/D'})</div>`).join('')}</div></div>`;
  }).join(''):'<div class="empty">Nenhum registro encontrado.</div>';
 }
 
@@ -349,7 +349,7 @@ function rd(){
  $('dg-dev').innerHTML=g1+'<div></div>';$('n-dev').textContent=`${L.length} colaborador(es)`;
  $('l-dev').innerHTML=L.length?L.map(c=>{
   const k='d:'+c.nome,o=aberto.has(k);
-  return`<div class="c" id="${fId(c.nome,'card-d-')}"><button class="ch" onclick="tg('${kk(k)}')"><div class="row"><div class="nm">${esc(c.nome)}</div><span class="tot">${c.n} un.</span></div><div class="bar"><i style="width:${c.n/mx*100}%"></i></div><div class="chips"><span class="ch2">Tipos de EPIs: ${c.itens.size}</span></div></button><div class="det ${o?'':'det-closed'}">${c.registros.map(r=>`<div class="it"><b>${esc(r.nome)}</b> — ${r.qtd} un. (Data:${esc(r.data)||'N/D'})</div>`).join('')}</div></div>`;
+  return `<div class="c" id="${fId(c.nome,'card-d-')}"><button class="ch" onclick="tg('${kk(k)}')"><div class="row"><div class="nm">${esc(c.nome)}</div><span class="tot">${c.n} un.</span></div><div class="bar"><i style="width:${c.n/mx*100}%"></i></div><div class="chips"><span class="ch2">Tipos de EPIs: ${c.itens.size}</span></div></button><div class="det ${o?'':'det-closed'}">${c.registros.map(r=>`<div class="it"><b>${esc(r.nome)}</b> — ${r.qtd} un. (Data:${esc(r.data)||'N/D'})</div>`).join('')}</div></div>`;
  }).join(''):'<div class="empty">Nenhum colaborador encontrado.</div>';
 }
 
