@@ -217,7 +217,10 @@ function processarDados(results){
 
 function atualizar(){
  const b = $('rf'); if(b) b.classList.add('spin');
- Papa.parse(CSV_URL, {
+ // Adicionando parâmetro randômico (t=...) para forçar o navegador a buscar os dados novos e burlar o cache do Sheets
+ const urlComCacheBuster = CSV_URL + (CSV_URL.includes('?') ? '&' : '?') + '_t=' + new Date().getTime();
+ 
+ Papa.parse(urlComCacheBuster, {
   download: true,
   header: true,
   skipEmptyLines: true,
@@ -230,7 +233,6 @@ function atualizar(){
   },
   error: function(err) {
    console.error(err);
-   // Tenta carregar do cache se houver falha de rede
    const cache = localStorage.getItem(KC);
    if(cache) {
     processarDados({data: JSON.parse(cache)});
@@ -322,7 +324,7 @@ function rd(){
  }).join(''):'<div class="empty">Nenhum colaborador encontrado.</div>';
 }
 
-// Inicializa carregando os dados
+// Inicializa carregando os dados do cache se houver
 try{
  const cache = localStorage.getItem(KC);
  if(cache){
@@ -330,6 +332,7 @@ try{
  }
 }catch(e){}
 
+// Executa a requisição ao carregar a página
 atualizar();
 </script>
 </body>
