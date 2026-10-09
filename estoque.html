@@ -8,15 +8,12 @@
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E📦%3C/text%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
-<!-- Importando PapaParse e SheetJS -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <style>
 :root{--line:#cbd5e1;--tx:#0f172a;--mu:#475569;--pri:#7c3aed;--bd:#e3e8f0;--sh:0 1px 2px rgba(15,23,42,.05),0 4px 14px rgba(15,23,42,.06);--sh2:0 8px 28px rgba(15,23,42,.14)}
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
 body{font-family:Inter,system-ui,-apple-system,sans-serif;background:#f4f6fb;color:var(--tx);font-size:14px;line-height:1.4;padding-bottom:30px;font-feature-settings:"tnum";-webkit-font-smoothing:antialiased}
 
-/* Cabeçalho */
 header{position:sticky;top:0;z-index:30;background:linear-gradient(135deg,#0b1220 0%,#1e1b4b 60%,#7c3aed 100%);color:#fff;padding:14px 28px;box-shadow:0 6px 24px rgba(11,18,32,.35);border-bottom:4px solid #f59e0b}
 .top{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
 .title-area{display:flex;align-items:center;gap:12px}
@@ -25,7 +22,6 @@ header{position:sticky;top:0;z-index:30;background:linear-gradient(135deg,#0b122
 h1{font-size:19px;font-weight:900;letter-spacing:-.3px}
 #upd{font-size:12px;opacity:.75;margin-top:2px}
 
-/* Caixa de Upload Estilizada */
 .upload-box {display:flex;align-items:center;gap:8px;background:rgba(255,255,255,0.12);border:1px dashed rgba(255,255,255,0.4);padding:8px 14px;border-radius:12px;cursor:pointer;transition:all .2s}
 .upload-box:hover {background:rgba(255,255,255,0.2)}
 .upload-box label {cursor:pointer;font-weight:700;font-size:12.5px;color:#fff;display:flex;align-items:center;gap:6px}
@@ -36,7 +32,6 @@ h1{font-size:19px;font-weight:900;letter-spacing:-.3px}
 .rf:hover,.print-btn:hover{background:rgba(255,255,255,.2)}
 .rf.spin{animation:sp 1s linear infinite}@keyframes sp{to{transform:rotate(360deg)}}
 
-/* Abas */
 .seg{display:flex;gap:8px;margin:16px 28px 0;background:#ede9fe;padding:5px;border-radius:14px;overflow-x:auto}
 .seg button{background:transparent;color:#6b21a8;border:0;border-radius:10px;padding:10px 20px;font-weight:800;font-size:13.5px;font-family:inherit;cursor:pointer;transition:all .2s;white-space:nowrap}
 .seg button:hover{background:rgba(255,255,255,.6)}
@@ -45,7 +40,6 @@ h1{font-size:19px;font-weight:900;letter-spacing:-.3px}
 main{max-width:1800px;margin:0 auto;padding:18px 28px;display:grid;gap:18px}
 section{display:grid;gap:18px}
 
-/* KPIs */
 .kpis{display:grid;grid-template-columns:repeat(2,1fr);gap:16px;max-width:500px;margin-left:auto}
 .kpi{position:relative;background:#fff;border:1px solid var(--bd);border-radius:14px;padding:14px 20px;box-shadow:var(--sh);display:flex;justify-content:space-between;align-items:center}
 .kpi.alert{border-top:5px solid #be123c;background:linear-gradient(180deg,#fff1f2 0%,#fff 100%)}
@@ -54,19 +48,16 @@ section{display:grid;gap:18px}
 .kpi b{font-size:24px;font-weight:900;color:#1e293b}
 .kpi span{font-size:11px;font-weight:800;color:#6b7a90;text-transform:uppercase;letter-spacing:.4px}
 
-/* Layout */
 .dashboard-grid{display:grid;grid-template-columns:1fr;gap:18px}
 .chart-box{background:#fff;border:1px solid var(--bd);border-radius:16px;padding:20px;display:flex;flex-direction:column;box-shadow:var(--sh);min-width:0}
 .chart-title{font-size:13px;font-weight:800;color:#1e293b;text-transform:uppercase;letter-spacing:.4px;padding-bottom:10px;margin-bottom:12px;border-bottom:1px solid var(--bd);display:flex;justify-content:space-between;align-items:center}
 
-/* Gráfico de Barras */
 .chart-bars{display:flex;align-items:flex-end;justify-content:space-between;gap:6px;height:220px;padding:10px 4px 6px;background:repeating-linear-gradient(to top,transparent 0,transparent 25px,#f1f5f9 25px,#f1f5f9 26px);border-radius:8px;overflow-x:auto}
 .c-bar-group{flex:1;display:flex;flex-direction:column;align-items:center;min-width:32px;max-width:60px;height:100%;justify-content:flex-end}
 .c-bar{width:100%;border-radius:4px 4px 0 0;box-shadow:inset 0 -6px 10px rgba(0,0,0,.1)}
 .c-bar-val{font-size:10px;font-weight:800;margin-bottom:4px;color:#1e293b;text-align:center}
 .c-bar-lbl{font-size:9px;font-weight:700;color:#475569;margin-top:6px;text-align:center;height:32px;overflow:hidden;width:100%;word-break:break-word;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical}
 
-/* Tabela */
 .table-container{background:#fff;border:1px solid var(--bd);border-radius:16px;overflow:hidden;box-shadow:var(--sh)}
 .table-header{background:#065f46;color:#fff;padding:12px 18px;font-size:13px;font-weight:800;text-transform:uppercase;letter-spacing:.4px}
 table{width:100%;border-collapse:collapse;font-size:13px}
@@ -77,16 +68,6 @@ tr:hover{background:#f8fafc}
 .empty{text-align:center;color:var(--mu);padding:30px 10px;font-weight:600}
 .hide{display:none}
 .print-title-only { display: none; }
-
-@media print {
-  * {-webkit-print-color-adjust: exact !important; print-color-adjust: exact !important;}
-  @page { size: A4 landscape; margin: 10mm 12mm; }
-  body { background: #fff !important; color: #000 !important; font-size: 10px !important; }
-  header { display: none !important; }
-  .seg, .top-btns, .home-btn { display: none !important; }
-  .print-title-only { display: block !important; font-size: 14px; font-weight: 900; color: #7c3aed; margin-bottom: 10px; text-transform: uppercase; border-bottom: 2px solid #7c3aed; padding-bottom: 4px; }
-  main { padding: 4px 0 0 0 !important; gap: 12px !important; }
-}
 </style>
 </head>
 <body>
@@ -101,7 +82,7 @@ tr:hover{background:#f8fafc}
    <label for="fileInput">
     📂 <span>Carregar Arquivo</span>
    </label>
-   <input type="file" id="fileInput" accept=".xml,.xlsx,.xls,.csv,.txt" onchange="carregarArquivo(event)">
+   <input type="file" id="fileInput" accept=".xlsx,.xls,.csv,.txt" onchange="carregarArquivo(event)">
   </div>
 
   <div class="top-btns">
@@ -115,9 +96,7 @@ tr:hover{background:#f8fafc}
  </div>
 </header>
 <main>
- <!-- ABA 1: ITENS DISPONÍVEIS -->
  <section id="s-disp">
-  <div class="print-title-only">Relatório Corporativo: Gestão de Materiais não Estocáveis (Disponíveis)</div>
   <div class="kpis" id="k-disp"></div>
   <div class="dashboard-grid" id="dg-disp"></div>
   <div class="table-container">
@@ -132,7 +111,7 @@ tr:hover{background:#f8fafc}
        <th>Pedido</th>
        <th>Descrição do Item</th>
        <th>Material</th>
-       <th>Saldo em Estocque</th>
+       <th>Saldo em Estoque</th>
        <th>Qtd Saída</th>
        <th>Data-Rec.</th>
        <th>Data de Saida</th>
@@ -146,9 +125,7 @@ tr:hover{background:#f8fafc}
   </div>
  </section>
 
- <!-- ABA 2: ITENS ZERADOS -->
  <section id="s-zer" class="hide">
-  <div class="print-title-only">Relatório Corporativo: Gestão de Materiais não Estocáveis (Zerados)</div>
   <div class="kpis" id="k-zer"></div>
   <div class="dashboard-grid" id="dg-zer"></div>
   <div class="table-container" style="border-color:#be123c">
@@ -179,7 +156,7 @@ tr:hover{background:#f8fafc}
 </main>
 
 <script>
-const KC_STK = "estoque_cache_universal_v6";
+const KC_STK = "estoque_cache_flex_v1";
 const CORES_GRAFICO=['#be123c','#7c3aed','#2563eb','#059669','#d97706','#dc2626','#db2777','#0284c7','#65a30d','#4f46e5'];
 const $=id=>document.getElementById(id);
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -204,34 +181,38 @@ function processarDadosEstoque(rows){
  STK = rows.map(r=>{
   const keys = Object.keys(r);
   
-  const getCol = (terms) => {
+  // Função flexível: busca por nome aproximado ou pega a coluna pelo índice caso venha em formato de array/matriz
+  const getCol = (terms, indexFallback) => {
    for(let t of terms) {
     const found = keys.find(k => k.toLowerCase().replace(/[^a-z0-9]/g, '').includes(t.toLowerCase().replace(/[^a-z0-9]/g, '')));
-    if(found !== undefined && r[found] !== undefined) return r[found];
+    if(found !== undefined && r[found] !== undefined && r[found] !== '') return r[found];
+   }
+   if(indexFallback !== undefined && keys[indexFallback] !== undefined) {
+    return r[keys[indexFallback]];
    }
    return '';
   };
 
-  const item = getCol(['item']);
-  const projeto = getCol(['projeto']);
-  const solicitante = getCol(['solicitante']);
-  const pedido = getCol(['pedido']);
-  const desc = getCol(['descri', 'descrição']);
-  const material = getCol(['material']);
+  const item = getCol(['item', 'codigo', 'cod'], 0);
+  const projeto = getCol(['projeto', 'proj'], 1);
+  const solicitante = getCol(['solicitante', 'solic'], 2);
+  const pedido = getCol(['pedido', 'ordem', 'oc'], 3);
+  const desc = getCol(['descri', 'descrição', 'descricao', 'texto'], 4);
+  const material = getCol(['material', 'mat'], 5);
   
-  let saldoRaw = getCol(['saldo em estoque', 'saldo']);
+  let saldoRaw = getCol(['saldo em estoque', 'saldo', 'quantidade', 'qtd'], 6);
   let saldo = parseFloat(String(saldoRaw).replace(',', '.')) || 0;
 
-  let qtdSaidaRaw = getCol(['quantidade de saida', 'quantidade de saída', 'saida', 'saída']);
+  let qtdSaidaRaw = getCol(['quantidade de saida', 'quantidade de saída', 'saida', 'saída'], 7);
   let qtdSaida = parseFloat(String(qtdSaidaRaw).replace(',', '.')) || 0;
 
-  const dataRec = getCol(['data-rec', 'data rec', 'rec']);
-  const dataSaida = getCol(['data de saida', 'data de saída']);
-  const loc = getCol(['localização', 'localizacao', 'local']);
-  const baia = getCol(['baia', 'armazenamento']);
+  const dataRec = getCol(['data-rec', 'data rec', 'rec', 'datarecebimento'], 8);
+  const dataSaida = getCol(['data de saida', 'data de saída', 'datasaida'], 9);
+  const loc = getCol(['localização', 'localizacao', 'local'], 10);
+  const baia = getCol(['baia', 'armazenamento', 'prateleira'], 11);
 
   return {item, projeto, solicitante, pedido, desc, material, saldo, qtdSaida, dataRec, dataSaida, loc, baia};
- }).filter(x => x.desc || x.material || x.item);
+ }).filter(x => x.desc || x.material || x.item || x.saldo > 0);
 
  renderizarTudo();
  $('upd').textContent = 'Atualizado às ' + new Date().toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'});
@@ -246,79 +227,30 @@ function carregarArquivo(event) {
 
  reader.onload = function(e) {
   try {
-   let rows = [];
-   const content = e.target.result;
-   const fileName = file.name.toLowerCase();
-
-   if (fileName.endsWith('.xml') || (typeof content === 'string' && content.trim().startsWith('<'))) {
-    const parser = new DOMParser();
-    const xmlDoc = parser.parseFromString(content, "text/xml");
-    const allElements = xmlDoc.getElementsByTagName("*");
-    let currentObj = {};
-    
-    for (let i = 0; i < allElements.length; i++) {
-     let el = allElements[i];
-     if (el.children.length === 0 && el.textContent.trim() !== "") {
-      currentObj[el.nodeName] = el.textContent.trim();
-     } else if (Object.keys(currentObj).length > 0) {
-      rows.push(currentObj);
-      currentObj = {};
-     }
-    }
-    if (Object.keys(currentObj).length > 0) rows.push(currentObj);
-   } else if (fileName.endsWith('.csv') || typeof content === 'string') {
-    // Leitura PapaParse robusta para arquivos CSV de sistemas
-    Papa.parse(content, {
-     header: true,
-     skipEmptyLines: true,
-     complete: function(results) {
-      if(results.data && results.data.length > 0) {
-       rows = results.data;
-       finalizarCarga(rows);
-      } else {
-       alert("O arquivo CSV está vazio.");
-       if(b) b.classList.remove('spin');
-      }
-     },
-     error: function(err) {
-      alert("Erro ao ler o CSV.");
-      if(b) b.classList.remove('spin');
-     }
-    });
-    return;
-   } else {
-    // Leitura via SheetJS para Excel (.xlsx)
-    const data = new Uint8Array(content);
-    const workbook = XLSX.read(data, {type: 'array', cellDates: true});
-    const firstSheetName = workbook.SheetNames[0];
-    rows = XLSX.utils.sheet_to_json(workbook.Sheets[firstSheetName], {defval: ""});
-   }
+   const data = new Uint8Array(e.target.result);
+   const workbook = XLSX.read(data, {type: 'array', cellDates: true});
+   const firstSheetName = workbook.SheetNames[0];
+   const worksheet = workbook.Sheets[firstSheetName];
+   // Converte garantindo que a primeira linha seja o cabeçalho e lê dados brutos
+   const rows = XLSX.utils.sheet_to_json(worksheet, {header: 2, defval: ""});
 
    if (rows && rows.length > 0) {
-    finalizarCarga(rows);
+    localStorage.setItem(KC_STK, JSON.stringify(rows));
+    processarDadosEstoque(rows);
+   } else {
+    alert("O arquivo está vazio ou sem dados legíveis.");
    }
   } catch(err) {
    console.error(err);
-   alert("Erro ao processar o arquivo. Salve a planilha como .xlsx padrão do Excel e tente novamente.");
-   if(b) b.classList.remove('spin');
+   alert("Erro ao processar a planilha. Certifique-se de carregar um arquivo .xlsx ou .csv válido.");
   }
- };
-
- function finalizarCarga(rows) {
-  localStorage.setItem(KC_STK, JSON.stringify(rows));
-  processarDadosEstoque(rows);
   if(b) b.classList.remove('spin');
- }
-
- if (file.name.toLowerCase().endsWith('.csv') || file.name.toLowerCase().endsWith('.txt') || file.name.toLowerCase().endsWith('.xml')) {
-  reader.readAsText(file, 'UTF-8');
- } else {
-  reader.readAsArrayBuffer(file);
- }
+ };
+ reader.readAsArrayBuffer(file);
 }
 
 function avisarUpload() {
- alert("Por favor, clique em 'Carregar Arquivo' no topo para selecionar o seu arquivo atualizado.");
+ alert("Clique em 'Carregar Arquivo' no topo para selecionar sua planilha.");
 }
 
 function aba(t){
@@ -334,7 +266,6 @@ function renderizarTudo(){
  const disp = STK.filter(x => x.saldo > 0);
  const zer = STK.filter(x => x.saldo <= 0);
 
- // --- DISPONÍVEIS ---
  const totalUnDisp = soma(disp.map(x => x.saldo));
  $('k-disp').innerHTML = kpi(disp.length, 'Qtd de itens', 'normal') + kpi(totalUnDisp, 'Total em unidades', 'normal');
 
@@ -362,7 +293,6 @@ function renderizarTudo(){
    <td>${esc(s.baia)}</td>
   </tr>`).join('') : VAZIO;
 
- // --- ZERADOS ---
  const totalUnZer = soma(zer.map(x => x.qtdSaida || 1));
  $('k-zer').innerHTML = kpi(zer.length, 'Itens zerados no estoque', 'alert') + kpi(totalUnZer, 'Total de saídas', 'alert');
 
