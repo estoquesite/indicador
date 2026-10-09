@@ -20,6 +20,7 @@ header{position:sticky;top:0;z-index:30;background:linear-gradient(135deg,#0b122
 h1{font-size:19px;font-weight:900;letter-spacing:-.3px}
 #upd{font-size:12px;opacity:.7;margin-top:2px}
 .top-btns{display:flex;gap:8px}
+.fmt{min-height:40px;border-radius:12px;background:rgba(255,255,255,.12);color:#fff;border:1px solid rgba(255,255,255,.25);font-weight:700;font-size:12.5px;padding:0 8px;width:auto}.fmt option{color:#0f172a}
 .rf.spin{animation:sp 1s linear infinite}@keyframes sp{to{transform:rotate(360deg)}}
 .seg{display:grid;grid-template-columns:repeat(3,1fr);gap:5px;margin:16px 28px 0;background:#e6eaf3;padding:5px;border-radius:14px}
 .seg button{background:transparent;color:#475569;border:0;border-radius:10px;min-height:46px;font-weight:800;font-size:13.5px;font-family:inherit;cursor:pointer}
@@ -93,15 +94,23 @@ input:focus,select:focus,button:focus-visible{outline:2px solid #93b4f5;border-c
 .hide{display:none}
 .print-title-only{display:none}
 @media print{
-*{-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important}
 @page{size:A4 landscape;margin:8mm 10mm}
-body{background:#fff!important;font-size:10.5px!important}
-header,.seg,.toolbar,details.f,#s-est,#s-dev,.pf{display:none!important}
-#s-rel{display:grid!important}
-.print-title-only{display:block!important;font-size:14px;font-weight:900;color:#1e3a8a;border-bottom:2px solid #1e3a8a;padding-bottom:4px}
+*{-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important}
+body{background:#fff!important;font-size:10.5px!important;padding:0!important}
+header,.seg,.toolbar,details.f,.pf{display:none!important}
+main{padding:0!important;gap:10px!important;max-width:none!important}
+section,.kpis,.dashboard-grid{gap:10px!important}
+.print-title-only{display:flex!important;justify-content:space-between;align-items:baseline;font-size:14px;font-weight:900;color:#1e3a8a;border-bottom:2px solid #1e3a8a;padding-bottom:4px;text-transform:uppercase}
+.print-title-only span{font-size:10px;color:#64748b;font-weight:600;text-transform:none}
+.chart-box,.kpi,.c,.top10-row,.alert-row{break-inside:avoid;box-shadow:none!important}
 .chart-bars{height:170px!important}
 .kpi{padding:8px 14px!important}.kpi b{font-size:20px!important}
-.chart-box{break-inside:avoid}
+.cards{grid-template-columns:repeat(3,1fr)!important;gap:8px!important}
+.det-closed{display:none!important}
+body.pa3{font-size:12.5px!important}
+body.pa3 .chart-bars{height:230px!important}
+body.pa4 .pg2{break-before:page}
+body.pa3 .pg2t{display:none!important}
 }
 @media(max-width:1300px){.cards{grid-template-columns:repeat(2,1fr)}.kpis-4{grid-template-columns:repeat(2,1fr)}}
 @media(max-width:1100px){.dashboard-grid{grid-template-columns:1fr}}
@@ -109,7 +118,7 @@ header,.seg,.toolbar,details.f,#s-est,#s-dev,.pf{display:none!important}
 @media(prefers-reduced-motion:reduce){*{animation:none!important}}
 </style>
 </head>
-<body>
+<body class="pa4">
 <header>
  <div class="top">
   <div class="title-area">
@@ -118,7 +127,7 @@ header,.seg,.toolbar,details.f,#s-est,#s-dev,.pf{display:none!important}
   </div>
   <div class="top-btns">
    <button class="print-btn" onclick="exportar()" title="Exportar CSV (filtro do painel)">⬇️</button>
-   <button class="print-btn" onclick="window.print()" title="Imprimir / Salvar PDF">🖨️</button>
+   <select id="fmt" class="fmt" title="Formato de impressão"><option value="a4">A4 paisagem</option><option value="a3">A3 retrato</option></select><button class="print-btn" onclick="imprimir()" title="Imprimir / Salvar PDF">🖨️</button>
    <button class="rf" id="rf" onclick="atualizar()" aria-label="Atualizar">↻</button>
   </div>
  </div>
@@ -130,12 +139,15 @@ header,.seg,.toolbar,details.f,#s-est,#s-dev,.pf{display:none!important}
 </div>
 <main>
  <section id="s-rel">
-  <div class="print-title-only">Relatório Corporativo: Movimentações e Consumo de EPIs</div>
+  <div class="print-title-only"><div>Relatório Corporativo: Movimentações e Consumo de EPIs</div><span class="pdt"></span></div>
   <div class="pf"><select id="p-ano" onchange="renderizarRelatorio()"></select><select id="p-mes" onchange="renderizarRelatorio()"></select><span class="sub" id="p-n"></span></div>
   <div class="kpis kpis-4" id="k-rel"></div>
   <div class="dashboard-grid" id="dg-rel"></div>
+  <div class="print-title-only pg2 pg2t"><div>Relatório Corporativo (continuação)</div><span class="pdt"></span></div>
+  <div class="dashboard-grid" id="dg-rel2"></div>
  </section>
  <section id="s-est" class="hide">
+  <div class="print-title-only"><div>Movimentações de EPIs</div><span class="pdt"></span></div>
   <div class="kpis" id="k-est"></div>
   <div class="dashboard-grid" id="dg-est"></div>
   <details class="f"><summary><span>🔎 Filtros Avançados</span><span id="fe-n" class="sub"></span></summary>
@@ -143,6 +155,7 @@ header,.seg,.toolbar,details.f,#s-est,#s-dev,.pf{display:none!important}
     <input class="w" id="e-q" type="search" placeholder="Buscar EPI ou Colaborador" oninput="re()">
     <select id="e-ano" onchange="re()"></select>
     <select id="e-mes" onchange="re()"></select>
+    <select id="e-ord" onchange="re()"><option value="n">Ordenar: maior volume</option><option value="custo">Ordenar: maior custo</option><option value="ult">Ordenar: saída mais recente</option><option value="nome">Ordenar: nome (A–Z)</option></select>
     <button class="btn" onclick="limpar('e')">Limpar filtros</button>
    </div>
   </details>
@@ -155,11 +168,15 @@ header,.seg,.toolbar,details.f,#s-est,#s-dev,.pf{display:none!important}
   <div id="l-est" class="cards"></div>
  </section>
  <section id="s-dev" class="hide">
+  <div class="print-title-only"><div>Colaboradores</div><span class="pdt"></span></div>
   <div class="kpis" id="k-dev"></div>
   <div class="dashboard-grid" id="dg-dev"></div>
   <details class="f"><summary><span>🔎 Filtros Avançados</span><span id="fd-n" class="sub"></span></summary>
    <div class="fg">
     <input class="w" id="d-q" type="search" placeholder="Buscar colaborador" oninput="rd()">
+    <select id="d-ano" onchange="rd()"></select>
+    <select id="d-mes" onchange="rd()"></select>
+    <select id="d-ord" onchange="rd()"><option value="n">Ordenar: maior volume</option><option value="custo">Ordenar: maior custo</option><option value="ult">Ordenar: última retirada</option><option value="nome">Ordenar: nome (A–Z)</option></select>
     <button class="btn" onclick="limpar('d')">Limpar filtros</button>
    </div>
   </details>
@@ -228,7 +245,7 @@ function atualizar(){
 }
 function preencherFiltros(){
  const anos=[...new Set(EST.map(x=>x.ano).filter(Boolean))].sort().reverse();
- ['e','p'].forEach(p=>{
+ ['e','p','d'].forEach(p=>{
   const a=$(p+'-ano'),m=$(p+'-mes'),va=a.value,vm=m.value;
   a.innerHTML='<option value="">Todos os anos</option>'+anos.map(x=>`<option>${x}</option>`).join('');
   m.innerHTML='<option value="">Todos os meses</option>'+MESES.map((l,i)=>`<option value="${String(i+1).padStart(2,'0')}">${l}</option>`).join('');
@@ -236,43 +253,72 @@ function preencherFiltros(){
  });
 }
 function aba(t){['rel','est','dev'].forEach(x=>{$('s-'+x).classList.toggle('hide',x!==t);$('b-'+x).classList.toggle('on',x===t)});scrollTo(0,0)}
-function limpar(p){if(p==='e'){['e-q','e-ano','e-mes'].forEach(i=>$(i).value='');re()}else{$('d-q').value='';rd()}}
+function limpar(p){if(p==='e'){['e-q','e-ano','e-mes'].forEach(i=>$(i).value='');re()}else{['d-q','d-ano','d-mes'].forEach(i=>$(i).value='');rd()}}
 function tg(k){const x=decodeURIComponent(k);aberto.has(x)?aberto.delete(x):aberto.add(x);re();rd()}
 const kk=k=>encodeURIComponent(k);
 function abrirTudo(p){(p==='e'?LK.e:LK.d).forEach(k=>aberto.add(k));re();rd()}
 function fecharTudo(p){(p==='e'?LK.e:LK.d).forEach(k=>aberto.delete(k));re();rd()}
 
+const ordem=v=>({n:(a,b)=>b.n-a.n||a.nome.localeCompare(b.nome),custo:(a,b)=>b.custo-a.custo||b.n-a.n,nome:(a,b)=>a.nome.localeCompare(b.nome),ult:(a,b)=>(b.ult||0)-(a.ult||0)})[v||'n'];
+const dfm=t=>t?new Date(t).toLocaleDateString('pt-BR'):'';
+function mensal(F){const M={};F.forEach(x=>{if(!x.ano)return;const k=x.ano+'-'+x.mes;const m=M[k]??={k,n:0,custo:0,cols:new Set()};m.n+=x.qtd;m.custo+=x.custo;m.cols.add(x.colaborador)});return Object.values(M).sort((a,b)=>a.k.localeCompare(b.k))}
+const rot=m=>m.k.slice(5)+'/'+m.k.slice(2,4);
+function imprimir(){
+ const f=$('fmt').value;try{localStorage.setItem('epis_fmt',f)}catch(e){}
+ let st=$('pgst');if(!st){st=document.createElement('style');st.id='pgst';document.head.appendChild(st)}
+ st.textContent='@page{size:'+(f==='a3'?'A3 portrait':'A4 landscape')+';margin:8mm 10mm}';
+ document.body.classList.toggle('pa3',f==='a3');document.body.classList.toggle('pa4',f!=='a3');
+ const t='Impresso em '+new Date().toLocaleString('pt-BR');document.querySelectorAll('.pdt').forEach(e=>e.textContent=t);
+ window.print();
+}
 function re(){
  const q=$('e-q').value.toLowerCase().trim(),ano=$('e-ano').value,mes=$('e-mes').value;
  $('fe-n').textContent=[q,ano,mes].filter(Boolean).length?'filtros ativos':'';
  $('container-btn-voltar').innerHTML=q?`<button class="btn-voltar-filtro" onclick="limparBuscaEPI()">↩️ Voltar à Visão Geral</button>`:'';
  const f=EST.filter(x=>(!ano||x.ano===ano)&&(!mes||x.mes===mes)&&(!q||(x.nome+' '+x.colaborador).toLowerCase().includes(q)));
  const totQtd=soma(f.map(x=>x.qtd)),G={};
- f.forEach(x=>{const g=G[x.nome]??={nome:x.nome,n:0,custo:0,solics:new Set(),registros:[]};g.n+=x.qtd;g.custo+=x.custo;g.solics.add(x.colaborador);g.registros.push(x)});
- const L=Object.values(G).sort((a,b)=>b.n-a.n||a.nome.localeCompare(b.nome));
+ f.forEach(x=>{const g=G[x.nome]??={nome:x.nome,n:0,custo:0,ult:0,solics:new Set(),registros:[]};g.n+=x.qtd;g.custo+=x.custo;g.ult=Math.max(g.ult,x.dt?+x.dt:0);g.solics.add(x.colaborador);g.registros.push(x)});
+ const L=Object.values(G).sort(ordem($('e-ord').value));
  const mx=L[0]?.n||1,top10=L.slice(0,10);LK.e=L.map(g=>'e:'+g.nome);
  $('k-est').innerHTML=kpi(totQtd,'Total de Itens Requisitados','#2563eb')+kpi(L.length,'Tipos de EPIs distintos','#059669')+kpi(brl(soma(f.map(x=>x.custo))),'Custo no filtro','#d97706');
  const g1=box('📊 Top 10 EPIs Requisitados','Volume total entregue por material',vb(top10.map((g,i)=>({v:g.n,l:g.nome,c:CORES[i%10],x:pct(g.n,totQtd)+'%'}))),'','#2563eb');
  const g2=box('🏆 Ranking Geral (Top 10)','Itens mais solicitados',`<div class="top10-list">${top10.length?top10.map((g,i)=>`<div class="top10-row" data-v="${esc(g.nome)}" onclick="selE(this.dataset.v)"><span><b>#${i+1}</b>${esc(abreviarEPI(g.nome))}</span><span class="ch2 g">${g.n} un.</span></div>`).join(''):VAZIO}</div>`,'','#2563eb');
- $('dg-est').innerHTML=g1+g2;
+ $('dg-est').innerHTML=g1+g2+box('📈 Evolução Mensal (filtro atual)','Unidades retiradas por mês e custo',vb(mensal(f).slice(-12).map(m=>({v:m.n,l:m.k,s:rot(m),c:'#2563eb',x:m.custo?'R$ '+kfmt(m.custo):''}))),'full','#2563eb');
  $('n-e').textContent=`${L.length} tipo(s) · ${totQtd} unidade(s)`;
  $('l-est').innerHTML=L.length?L.map(g=>{
   const k='e:'+g.nome,o=aberto.has(k);
-  return `<div class="c" id="${fId(g.nome,'card-e-')}"><button class="ch" onclick="tg('${kk(k)}')"><div class="row"><div class="nm">${esc(g.nome)}</div><span class="tot">${g.n} un.</span></div><div class="bar"><i style="width:${g.n/mx*100}%"></i></div><div class="chips"><span class="ch2">Colaboradores: ${g.solics.size}</span>${g.custo?`<span class="ch2">${brl(g.custo)}</span>`:''}<span class="ch2">${o?'▲ ocultar':'▼ ver histórico'}</span></div></button><div class="det ${o?'':'det-closed'}">${g.registros.map(r=>`<div class="it"><b>${esc(r.colaborador)}</b> — ${r.qtd} un. (Data: ${esc(r.data)||'N/D'})</div>`).join('')}</div></div>`}).join(''):'<div class="empty">Nenhum registro encontrado.</div>';
+  return `<div class="c" id="${fId(g.nome,'card-e-')}"><button class="ch" onclick="tg('${kk(k)}')"><div class="row"><div class="nm">${esc(g.nome)}</div><span class="tot">${g.n} un.</span></div><div class="bar"><i style="width:${g.n/mx*100}%"></i></div><div class="chips"><span class="ch2">Colaboradores: ${g.solics.size}</span>${g.ult?`<span class="ch2">Última: ${dfm(g.ult)}</span>`:''}${g.custo?`<span class="ch2">${brl(g.custo)}</span>`:''}<span class="ch2">${o?'▲ ocultar':'▼ ver histórico'}</span></div></button><div class="det ${o?'':'det-closed'}">${g.registros.map(r=>`<div class="it"><b>${esc(r.colaborador)}</b> — ${r.qtd} un. (Data: ${esc(r.data)||'N/D'})</div>`).join('')}</div></div>`}).join(''):'<div class="empty">Nenhum registro encontrado.</div>';
 }
 function rd(){
- const q=$('d-q').value.toLowerCase().trim();$('fd-n').textContent=q?'filtro ativo':'';
- const f=EST.filter(x=>!q||x.colaborador.toLowerCase().includes(q));
- const totQtd=soma(f.map(x=>x.qtd)),C={};
- f.forEach(x=>{const c=C[x.colaborador]??={nome:x.colaborador,n:0,custo:0,itens:new Set(),registros:[]};c.n+=x.qtd;c.custo+=x.custo;c.itens.add(x.nome);c.registros.push(x)});
- const L=Object.values(C).sort((a,b)=>b.n-a.n||a.nome.localeCompare(b.nome));
- const mx=L[0]?.n||1,top10=L.slice(0,10);LK.d=L.map(c=>'d:'+c.nome);
- $('k-dev').innerHTML=kpi(L.length,'Colaboradores','#2563eb')+kpi(totQtd,'Total de Itens','#059669')+kpi(top10[0]?.n||0,'Maior Retirada','#d97706');
- $('dg-dev').innerHTML=box('🏆 Top Colaboradores','Maior volume retirado',`<div class="top10-list">${top10.length?top10.map((c,i)=>`<div class="top10-row" data-v="${esc(c.nome)}" onclick="selD(this.dataset.v)"><span><b>#${i+1}</b>${esc(c.nome)}</span><span class="ch2 g">${c.n} un.</span></div>`).join(''):VAZIO}</div>`,'','#ea580c')+'<div></div>';
+ const q=$('d-q').value.toLowerCase().trim(),ano=$('d-ano').value,mes=$('d-mes').value;
+ $('fd-n').textContent=[q,ano,mes].filter(Boolean).length?'filtros ativos':'';
+ const f=EST.filter(x=>(!ano||x.ano===ano)&&(!mes||x.mes===mes)&&(!q||x.colaborador.toLowerCase().includes(q)));
+ const totQtd=soma(f.map(x=>x.qtd)),totCusto=soma(f.map(x=>x.custo)),C={};
+ f.forEach(x=>{const c=C[x.colaborador]??={nome:x.colaborador,n:0,custo:0,ult:0,itens:new Set(),porItem:{},registros:[]};
+  c.n+=x.qtd;c.custo+=x.custo;c.ult=Math.max(c.ult,x.dt?+x.dt:0);c.itens.add(x.nome);c.porItem[x.nome]=(c.porItem[x.nome]||0)+x.qtd;c.registros.push(x)});
+ const L=Object.values(C).sort(ordem($('d-ord').value));
+ const nC=L.length||1,mx=Math.max(...L.map(c=>c.n),1);LK.d=L.map(c=>'d:'+c.nome);
+ const byN=[...L].sort((a,b)=>b.n-a.n),top10=byN.slice(0,10),top=byN[0];
+ const byC=[...L].sort((a,b)=>b.custo-a.custo).slice(0,10);
+ const dias=c=>Math.round((Date.now()-c.ult)/864e5);
+ $('k-dev').innerHTML=kpi(L.length,'Colaboradores','#2563eb')+kpi(totQtd,'Total de Itens','#059669')+kpi(brl(totCusto),'Custo Total','#d97706')
+  +kpi((totQtd/nC).toFixed(1),'Itens por Colaborador','#0d9488')
+  +kpi(top?top.n:0,'Maior Retirada','#7c3aed',top?`<em class="eq">${esc(top.nome)}</em>`:'')
+  +kpi(pct(soma(top10.map(c=>c.n)),totQtd)+'%','Top 10 no volume total','#db2777');
+ const nm=c=>c.nome.split(' ').slice(0,2).join(' ');
+ const row=(c,i,val)=>`<div class="top10-row" data-v="${esc(c.nome)}" onclick="selD(this.dataset.v)"><span><b>#${i+1}</b>${esc(c.nome)}</span><span class="ch2 g">${val}</span></div>`;
+ const g1=box('🏆 Top 10 Colaboradores','Maior volume retirado',vb(top10.map((c,i)=>({v:c.n,l:c.nome,s:nm(c),c:CORES[i%10],x:c.custo?'R$ '+kfmt(c.custo):''}))),'','#ea580c');
+ const fx=[['1 un.',1,1],['2–3',2,3],['4–6',4,6],['7–10',7,10],['11+',11,1e9]];
+ const g2=box('📊 Distribuição por faixa de retirada','Quantos colaboradores em cada faixa de unidades',vb(fx.map(([l,a,b],i)=>{const k=L.filter(c=>c.n>=a&&c.n<=b).length;return{v:k,l:'Faixa '+l,s:l,c:CORES[i],x:pct(k,L.length)+'%'}})),'','#ea580c');
+ const g3=box('💰 Top 10 por Custo','Colaboradores com maior gasto em EPIs',`<div class="top10-list">${totCusto>0?byC.map((c,i)=>row(c,i,brl(c.custo))).join(''):VAZIO}</div>`,'','#ea580c');
+ const sem=L.filter(c=>c.ult).sort((a,b)=>a.ult-b.ult).slice(0,10);
+ const g4=box('🕒 Maior tempo sem retirada','Última retirada de cada colaborador (mais antigas primeiro)',`<div class="top10-list">${sem.length?sem.map((c,i)=>row(c,i,dias(c)+' dias · '+dfm(c.ult))).join(''):VAZIO}</div>`,'','#ea580c');
+ const g5=box('📈 Colaboradores ativos por mês','Quantos colaboradores retiraram EPI em cada mês (unidades abaixo)',vb(mensal(f).slice(-12).map(m=>({v:m.cols.size,l:m.k,s:rot(m),c:'#ea580c',x:m.n+' un.'}))),'full','#ea580c');
+ $('dg-dev').innerHTML=g1+g2+g3+g4+g5;
  $('n-dev').textContent=`${L.length} colaborador(es)`;
  $('l-dev').innerHTML=L.length?L.map(c=>{
-  const k='d:'+c.nome,o=aberto.has(k);
-  return `<div class="c" id="${fId(c.nome,'card-d-')}"><button class="ch" onclick="tg('${kk(k)}')"><div class="row"><div class="nm">${esc(c.nome)}</div><span class="tot">${c.n} un.</span></div><div class="bar"><i style="width:${c.n/mx*100}%"></i></div><div class="chips"><span class="ch2">Tipos de EPIs: ${c.itens.size}</span>${c.custo?`<span class="ch2">${brl(c.custo)}</span>`:''}</div></button><div class="det ${o?'':'det-closed'}">${c.registros.map(r=>`<div class="it"><b>${esc(r.nome)}</b> — ${r.qtd} un. (Data: ${esc(r.data)||'N/D'})</div>`).join('')}</div></div>`}).join(''):'<div class="empty">Nenhum colaborador encontrado.</div>';
+  const k='d:'+c.nome,o=aberto.has(k),pi=Object.entries(c.porItem).sort((a,b)=>b[1]-a[1]);
+  return `<div class="c" id="${fId(c.nome,'card-d-')}"><button class="ch" onclick="tg('${kk(k)}')"><div class="row"><div class="nm">${esc(c.nome)}</div><span class="tot">${c.n} un.</span></div><div class="bar"><i style="width:${c.n/mx*100}%"></i></div><div class="chips"><span class="ch2">Tipos de EPIs: ${c.itens.size}</span>${c.custo?`<span class="ch2">${brl(c.custo)}</span>`:''}${c.ult?`<span class="ch2">Última: ${dfm(c.ult)} (${dias(c)}d)</span>`:''}<span class="ch2">${o?'▲ ocultar':'▼ ver detalhes'}</span></div></button><div class="det ${o?'':'det-closed'}"><div class="sub">Resumo por EPI</div>${pi.map(([n,v])=>`<div class="it"><b>${esc(abreviarEPI(n))}</b> — ${v} un.</div>`).join('')}<div class="sub" style="margin-top:6px">Histórico</div>${c.registros.map(r=>`<div class="it"><b>${esc(r.nome)}</b> — ${r.qtd} un. (Data: ${esc(r.data)||'N/D'})</div>`).join('')}</div></div>`}).join(''):'<div class="empty">Nenhum colaborador encontrado.</div>';
 }
 
 /* ===== PAINEL EXECUTIVO ===== */
@@ -329,7 +375,7 @@ function renderizarRelatorio(){
  const g2=box('🏆 Top 10 Colaboradores','Maior volume retirado',`<div class="top10-list">${L_C.length?L_C.slice(0,10).map((c,i)=>`<div class="top10-row" data-v="${esc(c.nome)}" onclick="selD(this.dataset.v)"><span><b>#${i+1}</b>${esc(c.nome)}</span><span class="ch2 g">${c.n} un.</span></div>`).join(''):VAZIO}</div>`,'','#059669');
  const al=`${outl.slice(0,5).map(c=>`<div class="alert-row r" data-v="${esc(c.nome)}" onclick="selD(this.dataset.v)">🚩<div>${esc(c.nome)}<small>${c.n} un. retiradas — acima do padrão (média ${mu.toFixed(1)}, limite ${lim.toFixed(1)})</small></div></div>`).join('')}${rep.slice(0,6).map(r=>`<div class="alert-row" data-v="${esc(r.c)}" onclick="selD(this.dataset.v)">🔁<div>${esc(r.c)} — ${esc(abreviarEPI(r.n))}<small>nova retirada após ${r.d} dia(s) (${esc(r.data)})</small></div></div>`).join('')}`;
  const alb=box('⚠️ Pontos de Atenção',`Retiradas fora do padrão e reposição antecipada (EPIs duráveis, menos de ${DIAS_REPOSICAO} dias)`,al||'<div class="empty" style="font-size:12px;padding:15px">Nenhum ponto de atenção no período ✔️</div>','full','#dc2626');
- $('dg-rel').innerHTML=evo+abc+g1+g2+alb;
+ $('dg-rel').innerHTML=evo+abc;$('dg-rel2').innerHTML=g1+g2+alb;
 }
 
 function exportar(){
@@ -339,6 +385,7 @@ function exportar(){
  a.download='epis_'+new Date().toISOString().slice(0,10)+'.csv';a.click();
 }
 
+try{const fm=localStorage.getItem('epis_fmt');if(fm)$('fmt').value=fm}catch(e){}
 try{const c=localStorage.getItem(KC);if(c)processarDados({data:JSON.parse(c)})}catch(e){}
 atualizar();
 </script>
