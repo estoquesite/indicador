@@ -51,17 +51,17 @@ section{display:grid;gap:18px}
 .chart-title{font-size:13px;font-weight:800;color:#1e293b;text-transform:uppercase;letter-spacing:.4px;padding-bottom:10px;margin-bottom:12px;border-bottom:1px solid var(--bd);display:flex;flex-direction:column;gap:2px}
 .chart-title .sub{text-transform:none;letter-spacing:0;font-weight:600}
 
-/* Gráfico de Barras Top 10 */
-.chart-bars{display:flex;align-items:flex-end;justify-content:space-between;gap:8px;height:260px;padding:10px 4px 4px;background:repeating-linear-gradient(to top,transparent 0,transparent 35px,#f1f5f9 35px,#f1f5f9 36px);border-radius:8px;overflow-x:auto}
-.c-bar-group{flex:1;display:flex;flex-direction:column;align-items:center;min-width:36px;max-width:65px;height:100%;justify-content:flex-end;cursor:pointer}
+/* Gráfico de Barras Top 10 Ajustado para não cortar nomes */
+.chart-bars{display:flex;align-items:flex-end;justify-content:space-between;gap:6px;height:280px;padding:10px 4px 10px;background:repeating-linear-gradient(to top,transparent 0,transparent 35px,#f1f5f9 35px,#f1f5f9 36px);border-radius:8px;overflow-x:auto}
+.c-bar-group{flex:1;display:flex;flex-direction:column;align-items:center;min-width:38px;max-width:70px;height:100%;justify-content:flex-end;cursor:pointer}
 .c-bar{width:100%;border-radius:6px 6px 0 0;box-shadow:inset 0 -8px 12px rgba(0,0,0,.1);transition:height .5s cubic-bezier(.2,.8,.2,1),filter .2s}
 .c-bar-group:hover .c-bar{filter:brightness(1.1)}
-.c-bar-val{font-size:11.5px;font-weight:800;margin-bottom:4px;color:#1e293b;text-align:center;line-height:1.1}
-.c-bar-val small{display:block;font-size:9px;color:#64748b;font-weight:700}
-.c-bar-lbl{font-size:9.5px;font-weight:700;color:#64748b;margin-top:8px;text-align:center;line-height:1.15;height:35px;overflow:hidden;width:100%;text-overflow:ellipsis;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical}
+.c-bar-val{font-size:11px;font-weight:800;margin-bottom:4px;color:#1e293b;text-align:center;line-height:1.1}
+.c-bar-val small{display:block;font-size:8.5px;color:#64748b;font-weight:700}
+.c-bar-lbl{font-size:9px;font-weight:700;color:#475569;margin-top:6px;text-align:center;line-height:1.15;height:55px;overflow:hidden;width:100%;word-break:break-word;display:-webkit-box;-webkit-line-clamp:4;-webkit-box-orient:vertical}
 
 /* Top 10 Lista */
-.top10-list{display:grid;gap:6px;max-height:270px;overflow-y:auto;padding-right:4px}
+.top10-list{display:grid;gap:6px;max-height:290px;overflow-y:auto;padding-right:4px}
 .top10-row{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:10px 14px;background:#fff;border:1px solid var(--bd);border-radius:10px;font-size:13px;font-weight:600;cursor:pointer;transition:all .2s}
 .top10-row span:first-child{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .top10-row:hover{background:#f1f6ff;border-color:#9bbcf5;box-shadow:0 2px 8px rgba(37,99,235,.12)}
@@ -82,6 +82,9 @@ input:focus,select:focus{outline:2px solid #93b4f5;border-color:#2563eb}
 .toolbar button{min-height:38px;padding:0 16px;border-radius:10px;border:1px solid var(--bd);background:#fff;font-weight:800;font-size:13px;font-family:inherit;color:#1e3a8a;cursor:pointer;box-shadow:var(--sh)}
 .toolbar button:hover{background:#eef3ff}
 .toolbar .sub{margin-left:auto;font-size:12.5px}
+
+.btn-voltar-filtro{background:#d97706;color:#fff;border:0;padding:6px 14px;border-radius:8px;font-weight:800;font-size:12px;cursor:pointer;display:inline-flex;align-items:center;gap:6px;box-shadow:var(--sh);transition:all .2s}
+.btn-voltar-filtro:hover{background:#b45309}
 
 /* Cards */
 .cards{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;align-items:start}
@@ -104,6 +107,7 @@ input:focus,select:focus{outline:2px solid #93b4f5;border-color:#2563eb}
 .it{border-left:3px solid #1e3a8a;padding:8px 12px;background:#fff;border-radius:0 8px 8px 0;margin-bottom:3px;box-shadow:0 1px 2px rgba(15,23,42,.05)}
 .empty{text-align:center;color:var(--mu);padding:30px 10px;font-weight:600}
 .hide{display:none}
+.print-title-only { display: none; }
 
 /* Cores e Estilos */
 #s-est{--ac:#2563eb}#s-dev{--ac:#ea580c}
@@ -119,17 +123,23 @@ header{background:linear-gradient(135deg,#0b1220 0%,#1e3a8a 55%,#2563eb 100%);bo
 .chart-box{border-top:5px solid var(--ac,#2563eb);background:linear-gradient(180deg,color-mix(in srgb,var(--ac,#2563eb) 9%,#fff) 0,#fff 100px)}
 
 /* ==========================================================
-   CONFIGURAÇÃO DE IMPRESSÃO / PDF (OCULTA ABAS E CABEÇALHO EXCEDENTE)
+   IMPRESSÃO OTIMIZADA: TUDO EM 1 FOLHA, COM TÍTULO DE MOVIMENTAÇÃO
    ========================================================== */
 @media print {
   * {-webkit-print-color-adjust: exact !important; print-color-adjust: exact !important;}
-  body { background: #fff !important; color: #000 !important; margin: 0 !important; padding: 0 !important; }
-  header { background: #1e3a8a !important; color: #fff !important; position: static !important; box-shadow: none !important; }
-  .seg, .toolbar, details.f, .top-btns, #s-dev, .home-btn { display: none !important; }
-  .det-closed, .det { display: grid !important; }
-  .cards { grid-template-columns: 1fr 1fr !important; gap: 10px !important; }
-  .c { break-inside: avoid; page-break-inside: avoid; }
-  .top10-list { max-height: none !important; overflow: visible !important; }
+  @page { size: A4 landscape; margin: 10mm; }
+  body { background: #fff !important; color: #000 !important; font-size: 11px !important; }
+  header { padding: 8px 15px !important; margin-bottom: 5px !important; }
+  .seg, .toolbar, details.f, .top-btns, #s-dev, .home-btn, .btn-voltar-filtro { display: none !important; }
+  .print-title-only { display: block !important; font-size: 14px; font-weight: 800; color: #1e3a8a; margin-bottom: 8px; text-transform: uppercase; border-bottom: 2px solid #1e3a8a; padding-bottom: 4px; }
+  .det-closed, .det { display: grid !important; font-size: 10px !important; padding: 6px 10px !important; }
+  .cards { grid-template-columns: repeat(3, 1fr) !important; gap: 8px !important; }
+  .c { break-inside: avoid; page-break-inside: avoid; margin-bottom: 6px; }
+  .top10-list { max-height: 180px !important; overflow: visible !important; }
+  .chart-bars { height: 190px !important; }
+  main { padding: 5px !important; gap: 10px !important; }
+  .kpi { padding: 10px 14px !important; }
+  .kpi b { font-size: 20px !important; }
 }
 
 @media(max-width:1300px){.cards{grid-template-columns:repeat(2,1fr)}}
@@ -156,6 +166,7 @@ header{background:linear-gradient(135deg,#0b1220 0%,#1e3a8a 55%,#2563eb 100%);bo
 </header>
 <main>
  <section id="s-est">
+  <div class="print-title-only">Relatório: Movimentações de EPIs</div>
   <div class="kpis" id="k-est"></div>
   <div class="dashboard-grid" id="dg-est"></div>
   <details class="f"><summary><span>🔎 Filtros Avançados</span><span id="fe-n" class="sub"></span></summary>
@@ -166,7 +177,12 @@ header{background:linear-gradient(135deg,#0b1220 0%,#1e3a8a 55%,#2563eb 100%);bo
     <button class="btn" onclick="limpar('e')">Limpar filtros</button>
    </div>
   </details>
-  <div class="toolbar"><button onclick="abrirTudo('e')">▼ Abrir tudo</button><button onclick="fecharTudo('e')">▲ Fechar tudo</button><span class="sub" id="n-e"></span></div>
+  <div class="toolbar">
+   <button onclick="abrirTudo('e')">▼ Abrir tudo</button>
+   <button onclick="fecharTudo('e')">▲ Fechar tudo</button>
+   <div id="container-btn-voltar"></div>
+   <span class="sub" id="n-e"></span>
+  </div>
   <div id="l-est" class="cards"></div>
  </section>
 
@@ -210,8 +226,16 @@ function vb(items){
  }).join('')+'</div>';
 }
 
-function selE(v){$('e-q').value=v;re();rolarPara(fId(v,'card-e-'))}
-function selD(v){$('d-q').value=v;rd();rolarPara(fId(v,'card-d-'))}
+function selE(v){
+ $('e-q').value=v;
+ re();
+ rolarPara(fId(v,'card-e-'));
+}
+
+function limparBuscaEPI(){
+ $('e-q').value='';
+ re();
+}
 
 function processarDados(results){
  const rows = results.data;
@@ -305,6 +329,13 @@ function re(){
  const q=$('e-q').value.toLowerCase().trim(), ano=$('e-ano').value, mes=$('e-mes').value;
  $('fe-n').textContent=[q,ano,mes].filter(Boolean).length?'filtros ativos':'';
  
+ const containerBtn = $('container-btn-voltar');
+ if(q){
+  containerBtn.innerHTML = `<button class="btn-voltar-filtro" onclick="limparBuscaEPI()">↩️ Voltar à Visão Geral</button>`;
+ } else {
+  containerBtn.innerHTML = '';
+ }
+
  const f=EST.filter(x=>(!ano||x.ano===ano)&&(!mes||x.mes===mes)&&(!q||(x.nome+' '+x.colaborador).toLowerCase().includes(q)));
  const totQtd=soma(f.map(x=>x.qtd));
  const G={};
