@@ -1,332 +1,141 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
-<head>
-<meta charset="UTF-8">
+<html lang="pt-BR"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="theme-color" content="#1e3a8a">
 <title>Gestão de Materiais não Estocáveis</title>
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E📦%3C/text%3E%3C/svg%3E">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <style>
-:root{--line:#cbd5e1;--tx:#0f172a;--mu:#475569;--pri:#7c3aed;--bd:#e3e8f0;--sh:0 1px 2px rgba(15,23,42,.05),0 4px 14px rgba(15,23,42,.06);--sh2:0 8px 28px rgba(15,23,42,.14)}
-*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
-body{font-family:Inter,system-ui,-apple-system,sans-serif;background:#f4f6fb;color:var(--tx);font-size:14px;line-height:1.4;padding-bottom:30px;font-feature-settings:"tnum";-webkit-font-smoothing:antialiased}
-
-header{position:sticky;top:0;z-index:30;background:linear-gradient(135deg,#0b1220 0%,#1e1b4b 60%,#7c3aed 100%);color:#fff;padding:14px 28px;box-shadow:0 6px 24px rgba(11,18,32,.35);border-bottom:4px solid #f59e0b}
-.top{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
-.title-area{display:flex;align-items:center;gap:12px}
-.home-btn{background:rgba(255,255,255,.15);color:#fff;border:1px solid rgba(255,255,255,.3);border-radius:12px;width:40px;height:40px;font-size:18px;display:flex;align-items:center;justify-content:center;cursor:pointer;text-decoration:none;transition:all .2s}
-.home-btn:hover{background:rgba(255,255,255,.3)}
-h1{font-size:19px;font-weight:900;letter-spacing:-.3px}
-#upd{font-size:12px;opacity:.75;margin-top:2px}
-
-.upload-box {display:flex;align-items:center;gap:8px;background:rgba(255,255,255,0.12);border:1px dashed rgba(255,255,255,0.4);padding:8px 14px;border-radius:12px;cursor:pointer;transition:all .2s}
-.upload-box:hover {background:rgba(255,255,255,0.2)}
-.upload-box label {cursor:pointer;font-weight:700;font-size:12.5px;color:#fff;display:flex;align-items:center;gap:6px}
-.upload-box input {display:none}
-
-.top-btns{display:flex;gap:8px}
-.rf,.print-btn{background:rgba(255,255,255,.1);color:#fff;border:1px solid rgba(255,255,255,.2);border-radius:12px;min-width:38px;min-height:38px;font-size:16px;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .2s}
-.rf:hover,.print-btn:hover{background:rgba(255,255,255,.2)}
-.rf.spin{animation:sp 1s linear infinite}@keyframes sp{to{transform:rotate(360deg)}}
-
-.seg{display:flex;gap:8px;margin:16px 28px 0;background:#ede9fe;padding:5px;border-radius:14px;overflow-x:auto}
-.seg button{background:transparent;color:#6b21a8;border:0;border-radius:10px;padding:10px 20px;font-weight:800;font-size:13.5px;font-family:inherit;cursor:pointer;transition:all .2s;white-space:nowrap}
-.seg button:hover{background:rgba(255,255,255,.6)}
-.seg button.on{background:#fff;color:#7c3aed;box-shadow:0 2px 8px rgba(124,58,237,.18)}
-
-main{max-width:1800px;margin:0 auto;padding:18px 28px;display:grid;gap:18px}
-section{display:grid;gap:18px}
-
-.kpis{display:grid;grid-template-columns:repeat(2,1fr);gap:16px;max-width:500px;margin-left:auto}
-.kpi{position:relative;background:#fff;border:1px solid var(--bd);border-radius:14px;padding:14px 20px;box-shadow:var(--sh);display:flex;justify-content:space-between;align-items:center}
-.kpi.alert{border-top:5px solid #be123c;background:linear-gradient(180deg,#fff1f2 0%,#fff 100%)}
-.kpi.normal{border-top:5px solid #7c3aed;background:linear-gradient(180deg,#f3e8ff 0%,#fff 100%)}
-.kpi div{display:flex;flex-direction:column}
-.kpi b{font-size:24px;font-weight:900;color:#1e293b}
-.kpi span{font-size:11px;font-weight:800;color:#6b7a90;text-transform:uppercase;letter-spacing:.4px}
-
-.dashboard-grid{display:grid;grid-template-columns:1fr;gap:18px}
-.chart-box{background:#fff;border:1px solid var(--bd);border-radius:16px;padding:20px;display:flex;flex-direction:column;box-shadow:var(--sh);min-width:0}
-.chart-title{font-size:13px;font-weight:800;color:#1e293b;text-transform:uppercase;letter-spacing:.4px;padding-bottom:10px;margin-bottom:12px;border-bottom:1px solid var(--bd);display:flex;justify-content:space-between;align-items:center}
-
-.chart-bars{display:flex;align-items:flex-end;justify-content:space-between;gap:6px;height:220px;padding:10px 4px 6px;background:repeating-linear-gradient(to top,transparent 0,transparent 25px,#f1f5f9 25px,#f1f5f9 26px);border-radius:8px;overflow-x:auto}
-.c-bar-group{flex:1;display:flex;flex-direction:column;align-items:center;min-width:32px;max-width:60px;height:100%;justify-content:flex-end}
-.c-bar{width:100%;border-radius:4px 4px 0 0;box-shadow:inset 0 -6px 10px rgba(0,0,0,.1)}
-.c-bar-val{font-size:10px;font-weight:800;margin-bottom:4px;color:#1e293b;text-align:center}
-.c-bar-lbl{font-size:9px;font-weight:700;color:#475569;margin-top:6px;text-align:center;height:32px;overflow:hidden;width:100%;word-break:break-word;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical}
-
-.table-container{background:#fff;border:1px solid var(--bd);border-radius:16px;overflow:hidden;box-shadow:var(--sh)}
-.table-header{background:#065f46;color:#fff;padding:12px 18px;font-size:13px;font-weight:800;text-transform:uppercase;letter-spacing:.4px}
-table{width:100%;border-collapse:collapse;font-size:13px}
-th,td{padding:10px 14px;text-align:left;border-bottom:1px solid var(--bd)}
-th{background:#f8fafc;font-weight:800;color:#334155;font-size:11.5px;text-transform:uppercase}
-tr:hover{background:#f8fafc}
-
-.empty{text-align:center;color:var(--mu);padding:30px 10px;font-weight:600}
-.hide{display:none}
-.print-title-only { display: none; }
-</style>
-</head>
-<body>
-<header>
- <div class="top">
-  <div class="title-area">
-   <a href="index.html" class="home-btn" title="Voltar ao Índice">🏠</a>
-   <div><h1>📦 Gestão de Materiais não Estocáveis</h1><div id="upd">Nenhum arquivo carregado ainda</div></div>
-  </div>
-  
-  <div class="upload-box" title="Selecione o arquivo de dados">
-   <label for="fileInput">
-    📂 <span>Carregar Arquivo</span>
-   </label>
-   <input type="file" id="fileInput" accept=".xlsx,.xls,.csv,.txt" onchange="carregarArquivo(event)">
-  </div>
-
-  <div class="top-btns">
-   <button class="print-btn" onclick="window.print()" title="Imprimir / Salvar PDF">🖨️</button>
-   <button class="rf" id="rf" onclick="avisarUpload()" aria-label="Atualizar">↻</button>
-  </div>
- </div>
- <div class="seg">
-  <button id="b-disp" class="on" onclick="aba('disp')">📊 Acompanhamento Itens Disponíveis</button>
-  <button id="b-zer" onclick="aba('zer')">⚠️ Acompanhamento Itens Zerados</button>
- </div>
-</header>
-<main>
- <section id="s-disp">
-  <div class="kpis" id="k-disp"></div>
-  <div class="dashboard-grid" id="dg-disp"></div>
-  <div class="table-container">
-   <div class="table-header">Tabela Status de Material — Disponíveis</div>
-   <div style="overflow-x:auto">
-    <table>
-     <thead>
-      <tr>
-       <th>Item</th>
-       <th>Projeto</th>
-       <th>Solicitante</th>
-       <th>Pedido</th>
-       <th>Descrição do Item</th>
-       <th>Material</th>
-       <th>Saldo em Estoque</th>
-       <th>Qtd Saída</th>
-       <th>Data-Rec.</th>
-       <th>Data de Saida</th>
-       <th>Localização</th>
-       <th>Baia</th>
-      </tr>
-     </thead>
-     <tbody id="tb-disp"></tbody>
-    </table>
-   </div>
-  </div>
- </section>
-
- <section id="s-zer" class="hide">
-  <div class="kpis" id="k-zer"></div>
-  <div class="dashboard-grid" id="dg-zer"></div>
-  <div class="table-container" style="border-color:#be123c">
-   <div class="table-header" style="background:#be123c">Tabela Status de Material — Zerados</div>
-   <div style="overflow-x:auto">
-    <table>
-     <thead>
-      <tr>
-       <th>Item</th>
-       <th>Projeto</th>
-       <th>Solicitante</th>
-       <th>Pedido</th>
-       <th>Descrição do Item</th>
-       <th>Material</th>
-       <th>Saldo em Estoque</th>
-       <th>Qtd Saída</th>
-       <th>Data-Rec.</th>
-       <th>Data de Saida</th>
-       <th>Localização</th>
-       <th>Baia</th>
-      </tr>
-     </thead>
-     <tbody id="tb-zer"></tbody>
-    </table>
-   </div>
-  </div>
- </section>
+:root{--bg:#f0f0f0;--card:#fff;--tx:#1f2933;--mut:#6b7280;--bd:#d9dde1;--teal:#007e7a;--red:#c0305a;--blue:#1e90ff;--org:#e8703a;--navy:#1a2a9c;--side:#3bb3e6;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media(prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#14181c;--card:#1e242a;--tx:#e6e9ec;--mut:#9aa4ae;--bd:#333c45;--side:#0f5c80}}
+:root[data-theme="dark"]{--bg:#14181c;--card:#1e242a;--tx:#e6e9ec;--mut:#9aa4ae;--bd:#333c45;--side:#0f5c80}
+*{box-sizing:border-box}html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--tx);font:14px/1.4 Arial,Helvetica,sans-serif}
+header{display:flex;flex-wrap:wrap;gap:12px;align-items:center;justify-content:space-between;padding:14px 20px;background:var(--side)}
+h1{margin:0;font-size:22px;color:#fff}
+.up{background:#fff;color:var(--teal);border:0;border-radius:6px;padding:9px 16px;font-weight:700;cursor:pointer}
+#drop{margin:20px;padding:50px 20px;border:2px dashed var(--teal);border-radius:10px;text-align:center;color:var(--mut);background:var(--card)}
+#drop.o{background:rgba(0,126,122,.1)}#drop b{display:block;font-size:18px;color:var(--teal);margin-bottom:6px}
+main{padding:16px 20px;max-width:1500px;margin:auto}
+.tabs{display:flex;gap:6px;margin-bottom:12px;flex-wrap:wrap}
+.tabs button{border:1px solid var(--bd);background:var(--card);color:var(--tx);padding:8px 16px;border-radius:6px;cursor:pointer}
+.tabs button.a{background:var(--red);color:#fff;border-color:var(--red)}
+.fl{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:8px;margin-bottom:12px}
+.fl label{font-size:11px;color:var(--mut);display:block}
+.fl select,.fl input{width:100%;padding:6px;border:1px solid var(--bd);border-radius:5px;background:var(--card);color:var(--tx)}
+.kp{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:12px}
+.k{background:var(--card);border:1px solid var(--bd);border-radius:8px;padding:10px 18px;text-align:center;min-width:140px}
+.k.r{background:var(--red);color:#fff;border-color:var(--red)}.k small{display:block;font-size:12px;opacity:.85}.k b{font-size:28px}
+.g{display:grid;grid-template-columns:repeat(auto-fit,minmax(340px,1fr));gap:12px;margin-bottom:12px}
+.c{background:var(--card);border:1px solid var(--bd);border-radius:8px;padding:12px;min-width:0}
+.c h3{margin:0 0 8px;font-size:15px}
+.bs{max-height:340px;overflow:auto}
+.b{display:grid;grid-template-columns:110px 1fr 56px;gap:6px;align-items:center;margin:3px 0;font-size:12px}
+.b span:first-child{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.b i{display:block;height:14px;border-radius:2px}.b em{font-style:normal;text-align:right;font-weight:700}
+.dn{display:flex;gap:14px;align-items:center;flex-wrap:wrap}.lg div{font-size:12px;margin:3px 0}.lg s{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:6px}
+.tw{overflow-x:auto;max-height:480px;overflow-y:auto}
+table{border-collapse:collapse;width:100%;font-size:12px}
+th{position:sticky;top:0;background:var(--teal);color:#fff;padding:7px;text-align:left;cursor:pointer;white-space:nowrap}
+td{padding:5px 7px;border-bottom:1px solid var(--bd);white-space:nowrap;max-width:320px;overflow:hidden;text-overflow:ellipsis}
+tr:nth-child(even) td{background:rgba(128,128,128,.07)}
+.n{color:var(--mut);font-size:12px;margin:6px 0}
+</style></head><body>
+<header><h1>Gestão de Materiais não Estocáveis</h1>
+<div><span id="fn" style="color:#fff;font-size:12px;margin-right:10px"></span><button class="up" onclick="f.click()">Carregar arquivo mensal</button><input id="f" type="file" accept=".xlsx,.xls,.csv" hidden></div></header>
+<div id="drop"><b>Arraste o estoques.xlsx aqui</b>ou clique em "Carregar arquivo mensal". Tudo é calculado no seu navegador, nada é enviado.</div>
+<main id="app" hidden>
+<div class="tabs" id="tabs"></div>
+<div class="fl" id="fl"></div>
+<div id="v"></div>
 </main>
-
 <script>
-const KC_STK = "estoque_cache_vale_v3";
-const CORES_GRAFICO=['#be123c','#7c3aed','#2563eb','#059669','#d97706','#dc2626','#db2777','#0284c7','#65a30d','#4f46e5'];
-const $=id=>document.getElementById(id);
-const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-const soma=a=>a.reduce((s,x)=>s+x,0);
-
-let STK=[];
-
-const VAZIO='<tr><td colspan="12" class="empty">Nenhum registro encontrado. Selecione o arquivo no botão acima.</td></tr>';
-const kpi=(v,l,tipo)=>`<div class="kpi ${tipo}"><div><b>${v}</b><span>${l}</span></div></div>`;
-const box=(t,s,b)=>`<div class="chart-box"><div><div class="chart-title">${t}<span class="sub">${s}</span></div>${b}</div></div>`;
-
-function vb(items){
- if(!items.length)return '<div class="empty">Sem dados</div>';
- const mx=Math.max(...items.map(i=>i.v),1);
- return '<div class="chart-bars">'+items.map(i=>{
-  const h=Math.max(Math.round(i.v/mx*160),i.v>0?8:3);
-  return `<div class="c-bar-group" title="${esc(i.l)}: ${i.v}"><div class="c-bar-val">${i.v}</div><div class="c-bar" style="height:${h}px;background:${i.c}"></div><div class="c-bar-lbl">${esc(i.l)}</div></div>`;
- }).join('')+'</div>';
-}
-
-function processarDadosEstoque(rows){
- STK = rows.map(r=>{
-  const keys = Object.keys(r);
-  
-  // Função ultra-tolerante que busca por qualquer pedaço do nome ou cai direto na posição da coluna que você mandou na foto
-  const getCol = (names, indexFallback) => {
-   for(let n of names) {
-    const foundKey = keys.find(k => k.trim().toLowerCase().includes(n.toLowerCase()));
-    if(foundKey !== undefined && r[foundKey] !== undefined && r[foundKey] !== '') return r[foundKey];
-   }
-   if(indexFallback !== undefined && keys[indexFallback] !== undefined) {
-    return r[keys[indexFallback]];
-   }
-   return '';
-  };
-
-  const item = getCol(['Item', 'Cod', 'Código'], 6);
-  const projeto = getCol(['Projeto'], 3);
-  const solicitante = getCol(['Solicitante'], 4);
-  const pedido = getCol(['Pedido'], 5);
-  const desc = getCol(['Descrição', 'Descricao', 'Item'], 8);
-  const material = getCol(['Material'], 7);
-  
-  let saldoRaw = getCol(['Saldo', 'Estoque'], 18);
-  let saldo = parseFloat(String(saldoRaw).replace(',', '.')) || 0;
-
-  let qtdSaidaRaw = getCol(['said', 'saíd', 'Qtd'], 16);
-  let qtdSaida = parseFloat(String(qtdSaidaRaw).replace(',', '.')) || 0;
-
-  const dataRec = getCol(['Data-Rec', 'Rec'], 12);
-  const dataSaida = getCol(['Data de Saida'], 15);
-  const loc = getCol(['Localização', 'Localizacao', 'ID'], 1);
-  const baia = getCol(['Baia', 'Armazenamento'], 2);
-
-  return {item, projeto, solicitante, pedido, desc, material, saldo, qtdSaida, dataRec, dataSaida, loc, baia};
- }); // Removemos o filtro restritivo para garantir que absolutamente todas as linhas apareçam!
-
- renderizarTudo();
- $('upd').textContent = 'Atualizado às ' + new Date().toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'});
-}
-
-function carregarArquivo(event) {
- const file = event.target.files[0];
- if (!file) return;
-
- const reader = new FileReader();
- reader.onload = function(e) {
-  try {
-   const data = new Uint8Array(e.target.result);
-   const workbook = XLSX.read(data, {type: 'array', cellDates: true});
-   const firstSheetName = workbook.SheetNames[0];
-   const worksheet = workbook.Sheets[firstSheetName];
-   // Lê as linhas como objetos JSON usando a primeira linha como cabeçalho
-   const rows = XLSX.utils.sheet_to_json(worksheet, {defval: ""});
-
-   if (rows && rows.length > 0) {
-    localStorage.setItem(KC_STK, JSON.stringify(rows));
-    processarDadosEstoque(rows);
-   } else {
-    alert("O arquivo está vazio.");
-   }
-  } catch(err) {
-   console.error(err);
-   alert("Erro ao ler o arquivo. Certifique-se de carregar um arquivo .xlsx ou .csv válido.");
-  }
- };
- reader.readAsArrayBuffer(file);
-}
-
-function avisarUpload() {
- alert("Clique em 'Carregar Arquivo' no topo para selecionar sua planilha.");
-}
-
-function aba(t){
- ['disp','zer'].forEach(x=>{
-  $('s-'+x).classList.toggle('hide',x!==t);
-  const btn=$('b-'+x);
-  if(btn) btn.classList.toggle('on',x===t);
- });
- scrollTo(0,0);
-}
-
-function renderizarTudo(){
- // Separa com segurança entre saldo > 0 (Disponíveis) e o restante (Zerados)
- const disp = STK.filter(x => x.saldo > 0 || (x.saldo === 0 && x.qtdSaida === 0));
- const zer = STK.filter(x => x.saldo <= 0 && x.saldo !== '' && x.saldo !== undefined);
- if(disp.length === 0 && zer.length === 0 && STK.length > 0) {
-  // Fallback visual total caso os números venham em branco: joga tudo em disponíveis
-  disp.push(...STK);
+const $=id=>document.getElementById(id),MS=['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
+const CL=['1 - Até 2 meses','2 - De 2 a 6 meses','3 - De 6 meses a 1 ano','4 - Mais de 1 ano'],CC=['#1e90ff','#1a2a9c','#e8703a','#c0305a'];
+let D=[],tab='est',F={},sort={};
+const nz=s=>String(s).normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().replace(/[^a-z]/g,'');
+const dt=v=>v instanceof Date&&!isNaN(v)?v:(typeof v==='string'&&v.trim()&&!isNaN(new Date(v))?new Date(v):null);
+const num=v=>{v=parseFloat(v);return isNaN(v)?null:v};
+const fd=d=>d?d.toLocaleDateString('pt-BR'):'';const fn=n=>Math.round(n).toLocaleString('pt-BR');
+const dias=(a)=>Math.max(0,Math.floor((Date.now()-a)/864e5));
+function load(file){
+ const r=new FileReader();r.onload=e=>{
+  const wb=XLSX.read(e.target.result,{type:'array',cellDates:true}),ws=wb.Sheets[wb.SheetNames[0]];
+  const rows=XLSX.utils.sheet_to_json(ws,{defval:null});
+  if(!rows.length){alert('Arquivo vazio');return}
+  const map={};Object.keys(rows[0]).forEach(k=>map[nz(k)]=k);
+  const g=(r,k)=>r[map[k]];
+  D=rows.map(r=>{
+   const desc=String(g(r,'descricaodoitem')||'').trim(),rec=dt(g(r,'datarec')),sa=dt(g(r,'datadesaida')),q=num(g(r,'quant'))||0,qs=num(g(r,'quantidadedesaida'));
+   let sl=num(g(r,'saldoemestoque'));if(sl===null)sl=q-(qs||0);
+   const last=sa||rec,d=last?dias(last):null;
+   return{loc:String(g(r,'localizacao')||'—').trim().toUpperCase(),baia:String(g(r,'baiaarmazenamento')||'—').trim().toUpperCase(),ped:String(g(r,'pedido')||'').replace(/\.0$/,''),
+    mat:String(g(r,'material')||'').replace(/\.0$/,''),desc,grp:(desc.split(/[\s;,]/)[0]||'—').toUpperCase(),q,um:g(r,'um')||'',rec,sa,qs:qs!==null?qs:(sl<=0?q:0),sl,d,
+    cl:d===null?3:d<=60?0:d<=180?1:d<=365?2:3,dsto:rec&&sa?Math.max(0,Math.floor((sa-rec)/864e5)):''};
+  });
+  $('fn').textContent=file.name+' • '+D.length+' linhas';$('drop').hidden=true;$('app').hidden=false;F={};render(true);
+ };r.readAsArrayBuffer(file)}
+$('f').onchange=e=>e.target.files[0]&&load(e.target.files[0]);
+const dz=$('drop');dz.onclick=()=>$('f').click();
+['dragover','dragenter'].forEach(t=>dz.addEventListener(t,e=>{e.preventDefault();dz.classList.add('o')}));
+dz.addEventListener('dragleave',()=>dz.classList.remove('o'));
+dz.addEventListener('drop',e=>{e.preventDefault();dz.classList.remove('o');e.dataTransfer.files[0]&&load(e.dataTransfer.files[0])});
+document.body.addEventListener('dragover',e=>e.preventDefault());
+document.body.addEventListener('drop',e=>{e.preventDefault();e.dataTransfer.files[0]&&load(e.dataTransfer.files[0])});
+const TABS={est:'Estoques',rot:'Rotatividade',zer:'Zerados'};
+function dateOf(r){return tab==='zer'?r.sa:r.rec}
+function filt(){
+ return D.filter(r=>{
+  const z=r.sl<=0;if(tab==='zer'?!z:z&&tab==='est')return false;
+  const d=dateOf(r);
+  if(F.ano&&(!d||d.getFullYear()!=F.ano))return false;
+  if(F.mes!==undefined&&F.mes!==''&&(!d||d.getMonth()!=F.mes))return false;
+  if(F.loc&&r.loc!==F.loc)return false;if(F.baia&&r.baia!==F.baia)return false;
+  if(F.desc&&!r.desc.toLowerCase().includes(F.desc.toLowerCase()))return false;
+  if(F.mat&&!r.mat.includes(F.mat))return false;if(F.ped&&!r.ped.includes(F.ped))return false;
+  return true})}
+function render(full){
+ $('tabs').innerHTML=Object.entries(TABS).map(([k,v])=>`<button class="${k===tab?'a':''}" onclick="tab='${k}';render(true)">${v}</button>`).join('');
+ if(full){
+  const anos=[...new Set(D.map(r=>dateOf(r)).filter(Boolean).map(d=>d.getFullYear()))].sort(),
+   u=k=>[...new Set(D.map(r=>r[k]))].sort(),sel=(id,l,o)=>`<div><label>${l}</label><select id="${id}" onchange="sf('${id}',this.value)"><option value="">Todos</option>${o.map(x=>`<option value="${x[0]}" ${String(F[id])===String(x[0])?'selected':''}>${x[1]}</option>`).join('')}</select></div>`,
+   inp=(id,l)=>`<div><label>${l}</label><input id="${id}" value="${F[id]||''}" oninput="sf('${id}',this.value,1)"></div>`;
+  $('fl').innerHTML=sel('ano','Ano ('+(tab==='zer'?'data de saída':'data de recebimento')+')',anos.map(a=>[a,a]))+sel('mes','Mês',MS.map((m,i)=>[i,m]))+sel('loc','Localização',u('loc').map(x=>[x,x]))+sel('baia','Baia de armazenamento',u('baia').map(x=>[x,x]))+inp('desc','Descrição do item')+inp('mat','Código (material)')+inp('ped','Pedido');
  }
-
- const totalUnDisp = soma(disp.map(x => typeof x.saldo === 'number' ? x.saldo : 1));
- $('k-disp').innerHTML = kpi(disp.length, 'Qtd de itens', 'normal') + kpi(totalUnDisp, 'Total em unidades', 'normal');
-
- const mapDisp = {};
- disp.forEach(x => {
-  const d = x.desc ? String(x.desc).substring(0, 15) : 'Outros';
-  mapDisp[d] = (mapDisp[d] || 0) + (typeof x.saldo === 'number' ? x.saldo : 1);
- });
- const topDisp = Object.entries(mapDisp).sort((a,b)=>b[1]-a[1]).slice(0,12).map(([l,v],i)=>({l, v, c:CORES_GRAFICO[i%10]}));
- $('dg-disp').innerHTML = box('Estoque por Descrição (Top Itens)', 'Volume em saldo', vb(topDisp));
-
- $('tb-disp').innerHTML = disp.length ? disp.map(s=>`
-  <tr>
-   <td>${esc(s.item)}</td>
-   <td>${esc(s.projeto)}</td>
-   <td>${esc(s.solicitante)}</td>
-   <td>${esc(s.pedido)}</td>
-   <td><b>${esc(s.desc)}</b></td>
-   <td>${esc(s.material)}</td>
-   <td><span style="color:#059669;font-weight:800">${s.saldo}</span></td>
-   <td>${s.qtdSaida}</td>
-   <td>${esc(s.dataRec)}</td>
-   <td>${esc(s.dataSaida)}</td>
-   <td>${esc(s.loc)}</td>
-   <td>${esc(s.baia)}</td>
-  </tr>`).join('') : VAZIO;
-
- const totalUnZer = soma(zer.map(x => x.qtdSaida || 1));
- $('k-zer').innerHTML = kpi(zer.length, 'Itens zerados no estoque', 'alert') + kpi(totalUnZer, 'Total de saídas', 'alert');
-
- const mapZer = {};
- zer.forEach(x => {
-  const d = x.desc ? String(x.desc).substring(0, 15) : 'Outros';
-  mapZer[d] = (mapZer[d] || 0) + 1;
- });
- const topZer = Object.entries(mapZer).sort((a,b)=>b[1]-a[1]).slice(0,12).map(([l,v],i)=>({l, v, c:CORES_GRAFICO[i%10]}));
- $('dg-zer').innerHTML = box('Saída dos Materiais Zerados', 'Itens com saldo zerado', vb(topZer));
-
- $('tb-zer').innerHTML = zer.length ? zer.map(s=>`
-  <tr>
-   <td>${esc(s.item)}</td>
-   <td>${esc(s.projeto)}</td>
-   <td>${esc(s.solicitante)}</td>
-   <td>${esc(s.pedido)}</td>
-   <td><b>${esc(s.desc)}</b></td>
-   <td>${esc(s.material)}</td>
-   <td><span style="color:#be123c;font-weight:800">${s.saldo}</span></td>
-   <td>${s.qtdSaida}</td>
-   <td>${esc(s.dataRec)}</td>
-   <td>${esc(s.dataSaida)}</td>
-   <td>${esc(s.loc)}</td>
-   <td>${esc(s.baia)}</td>
-  </tr>`).join('') : VAZIO;
+ const R=filt();$('v').innerHTML=tab==='est'?vEst(R):tab==='rot'?vRot(R):vZer(R);
 }
+function sf(k,v,keep){F[k]=v;if(keep){const y=document.activeElement.id,p=document.activeElement.selectionStart;render(false)}else render(false)}
+function agg(R,key,val){const m={};R.forEach(r=>{const k=key(r);if(k!==null)m[k]=(m[k]||0)+val(r)});return Object.entries(m).sort((a,b)=>b[1]-a[1])}
+function bars(title,data,color,n=25){
+ const mx=Math.max(1,...data.map(x=>x[1]));
+ return`<div class="c"><h3>${title}</h3><div class="bs">${data.slice(0,n).map(([l,v])=>`<div class="b"><span title="${l}">${l}</span><span><i style="width:${v/mx*100}%;background:${color}"></i></span><em>${fn(v)}</em></div>`).join('')||'<div class="n">Sem dados</div>'}</div></div>`}
+function months(R,val,date){const a=Array(12).fill(0);R.forEach(r=>{const d=date(r);if(d)a[d.getMonth()]+=val(r)});return MS.map((m,i)=>[m,a[i]])}
+function donut(R){
+ const c=[0,0,0,0];R.forEach(r=>c[r.cl]++);const t=c.reduce((a,b)=>a+b,0)||1;let o=0;
+ const arcs=c.map((v,i)=>{const L=v/t*251.3,s=`<circle r="40" cx="60" cy="60" fill="none" stroke="${CC[i]}" stroke-width="22" stroke-dasharray="${L} 251.3" stroke-dashoffset="${-o}" transform="rotate(-90 60 60)"/>`;o+=L;return s}).join('');
+ return`<div class="c"><h3>Dias no estoque sem movimentação</h3><div class="dn"><svg width="170" height="170" viewBox="0 0 120 120">${arcs}</svg><div class="lg">${CL.map((l,i)=>`<div><s style="background:${CC[i]}"></s>${l}: <b>${c[i]}</b></div>`).join('')}</div></div></div>`}
+function tbl(R,cols,id){
+ const s=sort[tab];let rows=R.slice();
+ if(s)rows.sort((a,b)=>{const x=cols[s.i][1](a),y=cols[s.i][1](b),xv=x instanceof Date?+x:x,yv=y instanceof Date?+y:y;return(xv>yv?1:xv<yv?-1:0)*s.d});
+ return`<div class="c"><h3>Tabela status de material</h3><div class="tw"><table><tr>${cols.map((c,i)=>`<th onclick="srt(${i})">${c[0]}${s&&s.i===i?(s.d>0?' ▲':' ▼'):''}</th>`).join('')}</tr>${rows.slice(0,300).map(r=>'<tr>'+cols.map(c=>{let v=c[1](r);if(v instanceof Date)v=fd(v);return`<td title="${v??''}">${v??''}</td>`}).join('')+'</tr>').join('')}</table></div><div class="n">Mostrando ${Math.min(300,R.length)} de ${R.length} linhas (use os filtros ou clique no cabeçalho para ordenar)</div></div>`}
+function srt(i){const s=sort[tab];sort[tab]={i,d:s&&s.i===i?-s.d:1};render(false)}
+const kp=(l,v,r)=>`<div class="k ${r?'r':''}"><small>${l}</small><b>${v}</b></div>`;
+function vEst(R){
+ const t=R.reduce((a,r)=>a+r.sl,0),old=R.filter(r=>r.cl===3).length;
+ return`<div class="kp">${kp('Qtd. de itens',fn(R.length))}${kp('Total em unidades',fn(t),1)}${kp('Parados há +1 ano',fn(old))}</div>
+ <div class="g">${bars('Estoque por grupo (unidades)',agg(R,r=>r.grp,r=>r.sl),'var(--org)')}${donut(R)}</div>
+ ${tbl(R,[['Item',r=>r.grp],['Pedido',r=>r.ped],['Descrição',r=>r.desc],['Material',r=>r.mat],['Saldo',r=>r.sl],['Qtd. saída',r=>r.qs],['Data-Rec.',r=>r.rec],['Data saída',r=>r.sa],['Localização',r=>r.loc],['Baia',r=>r.baia],['Dias s/ mov.',r=>r.d],['Classificação',r=>CL[r.cl]]])}`}
+function vRot(R0){
 
-try{
- const cacheStk = localStorage.getItem(KC_STK);
- if(cacheStk) processarDadosEstoque(JSON.parse(cacheStk));
-}catch(e){}
+ const A=D.filter(r=>{const d=r.rec;return(!F.ano||d&&d.getFullYear()==F.ano)&&(F.mes===undefined||F.mes===''||d&&d.getMonth()==F.mes)&&(!F.loc||r.loc===F.loc)&&(!F.baia||r.baia===F.baia)&&(!F.desc||r.desc.toLowerCase().includes(F.desc.toLowerCase()))&&(!F.mat||r.mat.includes(F.mat))&&(!F.ped||r.ped.includes(F.ped))});
+ const rec=A.reduce((a,r)=>a+r.q,0),sai=A.reduce((a,r)=>a+r.qs,0),sem=A.filter(r=>r.sl>0&&!r.sa).length;
+ const g={};A.forEach(r=>{const o=g[r.grp]||(g[r.grp]={q:0,qs:0,sl:0});o.q+=r.q;o.qs+=r.qs;o.sl+=r.sl});
+ const L=Object.entries(g).map(([k,o])=>({k,...o,giro:o.q?o.qs/o.q*100:0})).sort((a,b)=>b.qs-a.qs);
+ return`<div class="kp">${kp('Recebido (un.)',fn(rec))}${kp('Saída (un.)',fn(sai))}${kp('Giro (saída/recebido)',(rec?sai/rec*100:0).toFixed(1)+'%',1)}${kp('Itens sem nenhuma saída',fn(sem))}</div>
+ <div class="g">${bars('Saída por mês (unidades)',months(A,r=>r.qs,r=>r.sa),'var(--blue)',12)}${bars('Top grupos por saída (unidades)',L.map(x=>[x.k,x.qs]),'var(--teal)')}</div>
+ ${tbl(L,[['Grupo',r=>r.k],['Recebido',r=>r.q],['Saída',r=>r.qs],['Saldo',r=>r.sl],['Giro %',r=>+r.giro.toFixed(1)]])}`}
+function vZer(R){
+ return`<div class="kp">${kp('Itens zerados no estoque',fn(R.length),1)}${kp('Total saído (un.)',fn(R.reduce((a,r)=>a+r.qs,0)))}</div>
+ <div class="g">${bars('Saída dos materiais zerados por grupo',agg(R,r=>r.grp,r=>r.qs),'var(--red)')}${bars('Saída dos materiais zerados por mês',months(R,r=>r.qs,r=>r.sa),'var(--blue)',12)}</div>
+ ${tbl(R,[['Galpão',r=>r.loc],['Material',r=>r.mat],['Descrição',r=>r.desc],['Data-Rec.',r=>r.rec],['Data de saída',r=>r.sa],['Dias no estoque',r=>r.dsto],['Última mov. (dias)',r=>r.sa?dias(r.sa):r.d],['Saldo',r=>r.sl],['Qtd. saída',r=>r.qs]])}`}
 </script>
 </body>
 </html>
