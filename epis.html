@@ -29,9 +29,9 @@ h1{font-size:19px;font-weight:900;letter-spacing:-.3px}
 .rf:hover,.print-btn:hover{background:rgba(255,255,255,.2)}
 .rf.spin{animation:sp 1s linear infinite}@keyframes sp{to{transform:rotate(360deg)}}
 
-/* 3 Abas */
+/* 3 Abas (Painel em 1º) */
 .seg{display:grid;grid-template-columns:repeat(3,1fr);gap:5px;margin:16px 28px 0;background:#e6eaf3;padding:5px;border-radius:14px}
-.seg button{background:transparent;color:#51607a;border:0;border-radius:10px;min-height:46px;font-weight:800;font-size:14px;font-family:inherit;cursor:pointer;transition:all .2s}
+.seg button{background:transparent;color:#51607a;border:0;border-radius:10px;min-height:46px;font-weight:800;font-size:13.5px;font-family:inherit;cursor:pointer;transition:all .2s}
 .seg button:hover{background:rgba(255,255,255,.6)}
 .seg button.on{background:#fff;color:#1e3a8a;box-shadow:0 2px 8px rgba(30,58,138,.18)}
 
@@ -48,22 +48,22 @@ section{display:grid;gap:18px}
 .kpi span{font-size:11.5px;font-weight:800;color:#6b7a90;text-transform:uppercase;letter-spacing:.4px;margin-top:3px}
 
 /* Layout Gráficos */
-.dashboard-grid{display:grid;grid-template-columns:1.2fr 1fr;gap:18px}
+.dashboard-grid{display:grid;grid-template-columns:1fr 1fr;gap:18px}
 .chart-box{background:#fff;border:1px solid var(--bd);border-radius:16px;padding:20px;display:flex;flex-direction:column;justify-content:space-between;box-shadow:var(--sh);min-width:0}
 .chart-title{font-size:13px;font-weight:800;color:#1e293b;text-transform:uppercase;letter-spacing:.4px;padding-bottom:10px;margin-bottom:12px;border-bottom:1px solid var(--bd);display:flex;flex-direction:column;gap:2px}
 .chart-title .sub{text-transform:none;letter-spacing:0;font-weight:600}
 
-/* Gráfico de Barras Top 10 */
+/* Gráfico de Barras */
 .chart-bars{display:flex;align-items:flex-end;justify-content:space-between;gap:6px;height:240px;padding:10px 4px 6px;background:repeating-linear-gradient(to top,transparent 0,transparent 30px,#f1f5f9 30px,#f1f5f9 31px);border-radius:8px;overflow-x:auto}
-.c-bar-group{flex:1;display:flex;flex-direction:column;align-items:center;min-width:36px;max-width:70px;height:100%;justify-content:flex-end;cursor:pointer}
+.c-bar-group{flex:1;display:flex;flex-direction:column;align-items:center;min-width:32px;max-width:65px;height:100%;justify-content:flex-end;cursor:pointer}
 .c-bar{width:100%;border-radius:6px 6px 0 0;box-shadow:inset 0 -8px 12px rgba(0,0,0,.1);transition:height .5s cubic-bezier(.2,.8,.2,1),filter .2s}
 .c-bar-group:hover .c-bar{filter:brightness(1.1)}
 .c-bar-val{font-size:11px;font-weight:800;margin-bottom:4px;color:#1e293b;text-align:center;line-height:1.1}
 .c-bar-val small{display:block;font-size:8.5px;color:#64748b;font-weight:700}
 .c-bar-lbl{font-size:9.5px;font-weight:700;color:#475569;margin-top:6px;text-align:center;line-height:1.15;height:36px;overflow:hidden;width:100%;word-break:break-word;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical}
 
-/* Top 10 Lista Compacta */
-.top10-list{display:grid;gap:4px;max-height:240px;overflow-y:auto;padding-right:4px}
+/* Top 10 Listas Abertas */
+.top10-list{display:grid;gap:4px;padding-right:4px}
 .top10-row{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:7px 12px;background:#fff;border:1px solid var(--bd);border-radius:8px;font-size:12.5px;font-weight:600;cursor:pointer;transition:all .2s}
 .top10-row span:first-child{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .top10-row:hover{background:#f1f6ff;border-color:#9bbcf5;box-shadow:0 2px 8px rgba(37,99,235,.12)}
@@ -111,14 +111,14 @@ input:focus,select:focus{outline:2px solid #93b4f5;border-color:#2563eb}
 .hide{display:none}
 .print-title-only { display: none; }
 
-/* Cores e Estilos */
-#s-est{--ac:#2563eb}#s-dev{--ac:#ea580c}#s-rel{--ac:#059669}
+/* Cores e Estilos das Abas */
+#s-rel{--ac:#059669}#s-est{--ac:#2563eb}#s-dev{--ac:#ea580c}
 body{background:linear-gradient(180deg,#e6ecfb 0,#f4f6fb 280px)}
 header{background:linear-gradient(135deg,#0b1220 0%,#1e3a8a 55%,#2563eb 100%);border-bottom:4px solid #f59e0b}
 .seg button{color:#475569}
+#b-rel.on{background:linear-gradient(135deg,#059669,#047857);color:#fff;box-shadow:0 4px 14px rgba(5,150,105,.45)}
 #b-est.on{background:linear-gradient(135deg,#3b82f6,#1d4ed8);color:#fff;box-shadow:0 4px 14px rgba(37,99,235,.45)}
 #b-dev.on{background:linear-gradient(135deg,#fb923c,#ea580c);color:#fff;box-shadow:0 4px 14px rgba(234,88,12,.45)}
-#b-rel.on{background:linear-gradient(135deg,#059669,#047857);color:#fff;box-shadow:0 4px 14px rgba(5,150,105,.45)}
 .kpi{background:linear-gradient(135deg,#fff 40%,color-mix(in srgb,var(--kc,#2563eb) 16%,#fff));border-color:color-mix(in srgb,var(--kc,#2563eb) 30%,#fff)}
 .kpi::before{width:8px}
 .kpi b{color:var(--kc,#1e293b)}
@@ -126,7 +126,7 @@ header{background:linear-gradient(135deg,#0b1220 0%,#1e3a8a 55%,#2563eb 100%);bo
 .chart-box{border-top:5px solid var(--ac,#2563eb);background:linear-gradient(180deg,color-mix(in srgb,var(--ac,#2563eb) 9%,#fff) 0,#fff 100px)}
 
 /* ==========================================================
-   IMPRESSÃO DA ABA RELATÓRIO (EXCLUSIVA PARA 1 PÁGINA)
+   IMPRESSÃO DA ABA DE PAINEL (1 PÁGINA A4 PAISAGEM)
    ========================================================== */
 @media print {
   * {-webkit-print-color-adjust: exact !important; print-color-adjust: exact !important;}
@@ -136,9 +136,9 @@ header{background:linear-gradient(135deg,#0b1220 0%,#1e3a8a 55%,#2563eb 100%);bo
   .seg, .toolbar, details.f, .top-btns, #s-est, #s-dev, .home-btn, .btn-voltar-filtro { display: none !important; }
   #s-rel { display: grid !important; }
   .print-title-only { display: block !important; font-size: 15px; font-weight: 900; color: #1e3a8a; margin-bottom: 14px; text-transform: uppercase; border-bottom: 3px solid #1e3a8a; padding-bottom: 6px; }
-  .dashboard-grid { grid-template-columns: 1.2fr 1fr !important; gap: 16px !important; align-items: stretch !important; }
+  .dashboard-grid { grid-template-columns: 1fr 1fr !important; gap: 16px !important; align-items: stretch !important; }
   .chart-box { padding: 18px !important; height: 100% !important; justify-content: flex-start !important; }
-  .chart-bars { height: 220px !important; margin-top: 14px !important; }
+  .chart-bars { height: 210px !important; margin-top: 14px !important; }
   .top10-list { max-height: none !important; overflow: visible !important; gap: 6px !important; margin-top: 14px !important; }
   .top10-row { padding: 9px 12px !important; font-size: 12px !important; border-radius: 6px !important; }
   main { padding: 12px 0 0 0 !important; gap: 16px !important; }
@@ -165,14 +165,21 @@ header{background:linear-gradient(135deg,#0b1220 0%,#1e3a8a 55%,#2563eb 100%);bo
   </div>
  </div>
  <div class="seg">
-  <button id="b-est" class="on" onclick="aba('est')">📦 Movimentações de EPIs</button>
+  <button id="b-rel" class="on" onclick="aba('rel')">📊 Painel Executivo</button>
+  <button id="b-est" onclick="aba('est')">📦 Movimentações de EPIs</button>
   <button id="b-dev" onclick="aba('dev')">👥 Colaboradores</button>
-  <button id="b-rel" onclick="aba('rel')">📊 Painel / Relatório Executivo</button>
  </div>
 </header>
 <main>
- <!-- ABA 1: MOVIMENTAÇÕES DE EPIS -->
- <section id="s-est">
+ <!-- ABA 1: PAINEL EXECUTIVO (EM PRIMEIRO) -->
+ <section id="s-rel">
+  <div class="print-title-only">Relatório Corporativo: Movimentações e Consumo de EPIs</div>
+  <div class="kpis kpis-4" id="k-rel"></div>
+  <div class="dashboard-grid" id="dg-rel"></div>
+ </section>
+
+ <!-- ABA 2: MOVIMENTAÇÕES DE EPIS -->
+ <section id="s-est" class="hide">
   <div class="kpis" id="k-est"></div>
   <div class="dashboard-grid" id="dg-est"></div>
   <details class="f"><summary><span>🔎 Filtros Avançados</span><span id="fe-n" class="sub"></span></summary>
@@ -192,7 +199,7 @@ header{background:linear-gradient(135deg,#0b1220 0%,#1e3a8a 55%,#2563eb 100%);bo
   <div id="l-est" class="cards"></div>
  </section>
 
- <!-- ABA 2: COLABORADORES -->
+ <!-- ABA 3: COLABORADORES -->
  <section id="s-dev" class="hide">
   <div class="kpis" id="k-dev"></div>
   <div class="dashboard-grid" id="dg-dev"></div>
@@ -204,13 +211,6 @@ header{background:linear-gradient(135deg,#0b1220 0%,#1e3a8a 55%,#2563eb 100%);bo
   </details>
   <div class="toolbar"><button onclick="abrirTudo('d')">▼ Abrir tudo</button><button onclick="fecharTudo('d')">▲ Fechar tudo</button><span class="sub" id="n-dev"></span></div>
   <div id="l-dev" class="cards"></div>
- </section>
-
- <!-- ABA 3: PAINEL / RELATÓRIO EXECUTIVO (UNIFICADO PARA IMPRESSÃO) -->
- <section id="s-rel" class="hide">
-  <div class="print-title-only">Relatório Corporativo: Movimentações e Consumo de EPIs</div>
-  <div class="kpis kpis-4" id="k-rel"></div>
-  <div class="dashboard-grid" id="dg-rel"></div>
  </section>
 </main>
 
@@ -253,12 +253,12 @@ function vb(items){
  return '<div class="chart-bars">'+items.map(i=>{
   const h=Math.max(Math.round(i.v/mx*150),i.v>0?8:3);
   const nomeCurto = abreviarEPI(i.l);
-  return `<div class="c-bar-group" title="${esc(i.t||i.l)}"${i.a?` data-v="${esc(i.d)}" onclick="${i.a}(this.dataset.v)"`:''}><div class="c-bar-val">${i.v}${i.x?`<small>${i.x}</small>`:''}</div><div class="c-bar" style="height:${h}px;background:${i.c}"></div><div class="c-bar-lbl">${esc(nomeCurto)}</div></div>`;
+  return `<div class="c-bar-group" title="${esc(i.t||i.l)}"><div class="c-bar-val">${i.v}${i.x?`<small>${i.x}</small>`:''}</div><div class="c-bar" style="height:${h}px;background:${i.c}"></div><div class="c-bar-lbl">${esc(nomeCurto)}</div></div>`;
  }).join('')+'</div>';
 }
 
-function selE(v){$('e-q').value=v;re();rolarPara(fId(v,'card-e-'))}
-function selD(v){$('d-q').value=v;rd();rolarPara(fId(v,'card-d-'))}
+function selE(v){$('e-q').value=v;aba('est');re();rolarPara(fId(v,'card-e-'))}
+function selD(v){$('d-q').value=v;aba('dev');rd();rolarPara(fId(v,'card-d-'))}
 function limparBuscaEPI(){$('e-q').value='';re();}
 
 function processarDados(results){
@@ -332,7 +332,7 @@ function preencherFiltros(){
 }
 
 function aba(t){
- ['est','dev','rel'].forEach(x=>{
+ ['rel','est','dev'].forEach(x=>{
   $('s-'+x).classList.toggle('hide',x!==t);
   const btn=$('b-'+x);
   if(btn) btn.classList.toggle('on',x===t);
@@ -428,7 +428,7 @@ function renderizarRelatorio(){
   kpi(top10EPI[0]?.n||0,'Maior Saída','#7c3aed');
 
  const g1=box('📊 Top 10 EPIs Requisitados','Volume total entregue por material',vb(top10EPI.map((g,i)=>({v:g.n,l:g.nome,c:CORES_GRAFICO[i%10],x:pct(g.n,totQtd)+'%'}))));
- const g2=box('🏆 Top 10 Colaboradores','Maior volume retirado',`<div class="top10-list">${top10Colab.length?top10Colab.map((c,i)=>`<div class="top10-row"><span><b>#${i+1}</b>${esc(c.nome)}</span><span class="ch2 g">${c.n} un.</span></div>`).join(''):VAZIO}</div>`);
+ const g2=box('🏆 Top 10 Colaboradores','Maior volume retirado',`<div class="top10-list">${top10Colab.length?top10Colab.map((c,i)=>`<div class="top10-row" onclick="selD('${esc(c.nome)}')"><span><b>#${i+1}</b>${esc(c.nome)}</span><span class="ch2 g">${c.n} un.</span></div>`).join(''):VAZIO}</div>`);
 
  $('dg-rel').innerHTML=g1+g2;
 }
