@@ -4,62 +4,76 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#1e3a8a">
-<title>Painel Corporativo</title>
-<!-- Ícone profissional de Capacete de Segurança Industrial -->
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E⛑️%3C/text%3E%3C/svg%3E">
+<title>Painel Corporativo - Gestão de Estoque</title>
+<!-- Ícone profissional de Caixa / Armazém para Estoque -->
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E📦%3C/text%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<!-- Importando o PapaParse para ler CSV do Google Sheets perfeitamente -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
 <style>
+:root{--line:#cbd5e1;--tx:#0f172a;--mu:#475569;--pri:#2563eb;--red:#dc2626;--amb:#d97706;--grn:#059669;--bd:#e3e8f0;--sh:0 1px 2px rgba(15,23,42,.05),0 4px 14px rgba(15,23,42,.06);--sh2:0 8px 28px rgba(15,23,42,.14)}
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
-body{font-family:Inter,system-ui,-apple-system,sans-serif;background:linear-gradient(180deg,#e6ecfb 0,#f4f6fb 320px);color:#0f172a;min-height:100vh;-webkit-font-smoothing:antialiased}
-header{background:linear-gradient(135deg,#0b1220 0%,#1e3a8a 55%,#2563eb 100%);color:#fff;padding:36px 28px 40px;border-bottom:4px solid #f59e0b;box-shadow:0 6px 24px rgba(11,18,32,.35);text-align:center}
-header h1{font-size:28px;font-weight:900;letter-spacing:-.5px}
-header p{margin-top:6px;font-size:15px;opacity:.75;font-weight:500}
-main{max-width:980px;margin:0 auto;padding:36px 20px;display:grid;grid-template-columns:1fr 1fr;gap:24px}
-.card{display:flex;flex-direction:column;align-items:center;text-align:center;gap:10px;text-decoration:none;color:inherit;background:linear-gradient(180deg,color-mix(in srgb,var(--ac) 12%,#fff) 0,#fff 140px);border:1px solid color-mix(in srgb,var(--ac) 25%,#fff);border-top:7px solid var(--ac);border-radius:22px;padding:44px 24px 36px;box-shadow:0 1px 2px rgba(15,23,42,.05),0 8px 24px rgba(15,23,42,.08);transition:transform .2s,box-shadow .2s}
-.card:hover{transform:translateY(-5px);box-shadow:0 14px 36px rgba(15,23,42,.18)}
-.icon{width:96px;height:96px;border-radius:26px;display:grid;place-items:center;font-size:52px;background:color-mix(in srgb,var(--ac) 16%,#fff)}
-.card h2{font-size:26px;font-weight:900;color:var(--ac);letter-spacing:-.5px}
-.card p{font-size:14.5px;color:#475569;font-weight:600;line-height:1.5;max-width:320px}
-.go{margin-top:8px;background:var(--ac);color:#fff;font-weight:800;font-size:14px;padding:11px 26px;border-radius:12px}
-footer{text-align:center;color:#94a3b8;font-size:12px;font-weight:600;padding:10px 0 30px}
-@media(max-width:700px){main{grid-template-columns:1fr;padding:24px 16px}header h1{font-size:22px}.card{padding:32px 20px 28px}}
-</style>
-</head>
-<body>
-<header>
-  <h1>🏭 Painel Corporativo</h1>
-  <p>Escolha o painel que deseja acessar</p>
-</header>
+body{font-family:Inter,system-ui,-apple-system,sans-serif;background:#f4f6fb;color:var(--tx);font-size:15px;line-height:1.4;padding-bottom:30px;font-feature-settings:"tnum";-webkit-font-smoothing:antialiased}
 
-<main id="menu"></main>
-<footer>Selecione uma das opções acima</footer>
+/* Cabeçalho */
+header{position:sticky;top:0;z-index:30;background:linear-gradient(135deg,#0b1220 0%,#14233f 60%,#1e3a8a 100%);color:#fff;padding:14px 28px;box-shadow:0 6px 24px rgba(11,18,32,.35)}
+.top{display:flex;justify-content:space-between;align-items:center;gap:12px}
+.title-area{display:flex;align-items:center;gap:12px}
+.home-btn{background:rgba(255,255,255,.15);color:#fff;border:1px solid rgba(255,255,255,.3);border-radius:12px;width:40px;height:40px;font-size:18px;display:flex;align-items:center;justify-content:center;cursor:pointer;text-decoration:none;transition:all .2s}
+.home-btn:hover{background:rgba(255,255,255,.3)}
+h1{font-size:19px;font-weight:900;letter-spacing:-.3px}
+#upd{font-size:12px;opacity:.65;margin-top:2px}
+.top-btns{display:flex;gap:8px}
+.rf,.print-btn{background:rgba(255,255,255,.1);color:#fff;border:1px solid rgba(255,255,255,.2);border-radius:12px;min-width:38px;min-height:38px;font-size:16px;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .2s}
+.rf:hover,.print-btn:hover{background:rgba(255,255,255,.2)}
+.rf.spin{animation:sp 1s linear infinite}@keyframes sp{to{transform:rotate(360deg)}}
 
-<script>
-const PAINEIS=[
-  {
-    nome: 'Ferramentas',
-    icone: '🛠️',
-    cor: '#2563eb',
-    link: 'ferramentas.html',
-    info: 'Inventário geral, devoluções e atrasos, e calibração de equipamentos.'
-  },
-  {
-    nome: 'EPIs',
-    icone: '⛑️',
-    cor: '#ea580c',
-    link: 'epis.html',
-    info: 'Estoque de equipamentos de proteção individual, devoluções e validades.'
-  }
-];
+main{max-width:1800px;margin:0 auto;padding:18px 28px;display:grid;gap:18px}
+section{display:grid;gap:18px}
 
-document.getElementById('menu').innerHTML = PAINEIS.map(p => `
-  <a class="card" href="${p.link}" style="--ac:${p.cor}">
-   <div class="icon">${p.icone}</div>
-   <h2>${p.nome}</h2>
-   <p>${p.info}</p>
-   <span class="go">Abrir painel →</span>
-  </a>`).join('');
-</script>
-</body>
-</html>
+/* KPIs */
+.kpis{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.kpi{position:relative;background:#fff;border:1px solid var(--bd);border-radius:16px;padding:16px 22px;box-shadow:var(--sh);overflow:hidden;display:flex;align-items:center}
+.kpi::before{content:"";position:absolute;left:0;top:0;bottom:0;width:5px;background:var(--kc,#7c3aed)}
+.kpi div{display:flex;flex-direction:column;min-width:0}
+.kpi b{font-size:26px;font-weight:900;line-height:1.1;letter-spacing:-1px;color:#1e293b}
+.kpi span{font-size:11.5px;font-weight:800;color:#6b7a90;text-transform:uppercase;letter-spacing:.4px;margin-top:3px}
+
+/* Filtros e Ferramentas */
+details.f{background:#fff;border:1px solid var(--bd);border-radius:16px;box-shadow:var(--sh)}
+details.f summary{padding:14px 20px;font-weight:800;font-size:15px;cursor:pointer;list-style:none;display:flex;justify-content:space-between;color:#334155}
+details.f summary::-webkit-details-marker{display:none}
+.fg{display:grid;gap:10px;padding:0 16px 16px;grid-template-columns:1fr}
+input{width:100%;min-height:42px;padding:8px 12px;border:1px solid #d5dce8;border-radius:10px;font-size:14px;font-family:inherit;background:#fff;color:var(--tx);font-weight:500}
+input:focus{outline:2px solid #93b4f5;border-color:#7c3aed}
+.btn{min-height:42px;border:0;background:#7c3aed;border-radius:10px;font-weight:800;font-family:inherit;color:#fff;cursor:pointer}
+.btn:hover{background:#6d28d9}
+
+.toolbar{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.toolbar .sub{margin-left:auto;font-size:12.5px;font-weight:600;color:var(--mu)}
+
+/* Cards de Estoque */
+.cards{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;align-items:start}
+.c{background:#fff;border:1px solid var(--bd);border-left:5px solid #7c3aed;border-radius:16px;overflow:hidden;box-shadow:var(--sh);transition:all .3s}
+.c:hover{box-shadow:var(--sh2);transform:translateY(-2px)}
+.row{display:flex;justify-content:space-between;align-items:flex-start;gap:10px}
+.nm{font-weight:800;word-break:break-word;font-size:15px;color:#0f172a}
+.tot{background:#f3e8ff;color:#7c3aed;border-radius:10px;padding:4px 11px;font-weight:900;font-size:14px;flex-shrink:0}
+.chips{display:flex;flex-wrap:wrap;gap:5px;margin-top:10px}
+.ch2{font-size:12px;font-weight:700;padding:3px 9px;border-radius:99px;background:#f1f5f9;color:#475569}
+.g{background:#d1fae5;color:#065f46}
+.empty{text-align:center;color:var(--mu);padding:30px 10px;font-weight:600}
+.print-title-only { display: none; }
+
+/* ==========================================================
+   IMPRESSÃO DA GESTÃO DE ESTOQUE
+   ========================================================== */
+@media print {
+  * {-webkit-print-color-adjust: exact !important; print-color-adjust: exact !important;}
+  @page { size: A4 portrait; margin: 10mm 12mm; }
+  body { background: #fff !important; color: #000 !important; font-size: 11px !important; }
+  header { display: none !important; }
+  .toolbar, details.f, .top-btns, .home-btn { display: none !important; }
+  .print-title-only { display: block !important; font-size: 16px; font-weight: 900; color: #7c3aed; margin-bottom: 14px; text-transform: uppercase; border-bottom: 3px solid #7c3aed; padding-bottom: 6px; }
+  .cards { grid-template-columns: repeat(2, 1fr) !important; gap: 10px !important; }
