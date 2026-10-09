@@ -5,11 +5,10 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#1e3a8a">
 <title>Gestão de Materiais não Estocáveis</title>
-<!-- Ícone profissional de Caixa para Estoque -->
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E📦%3C/text%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
-<!-- Importando SheetJS para ler planilhas e PapaParse para CSV -->
+<!-- Importando PapaParse e SheetJS -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <style>
@@ -180,7 +179,7 @@ tr:hover{background:#f8fafc}
 </main>
 
 <script>
-const KC_STK = "estoque_cache_universal_v2";
+const KC_STK = "estoque_cache_universal_v3";
 const CORES_GRAFICO=['#be123c','#7c3aed','#2563eb','#059669','#d97706','#dc2626','#db2777','#0284c7','#65a30d','#4f46e5'];
 const $=id=>document.getElementById(id);
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -243,49 +242,36 @@ function carregarArquivo(event) {
  if (!file) return;
 
  const b = $('rf'); if(b) b.classList.add('spin');
- const fileName = file.name.toLowerCase();
  const reader = new FileReader();
 
  reader.onload = function(e) {
   try {
    let rows = [];
-   if (fileName.endsWith('.xml')) {
+   const content = e.target.result;
+
+   // Se for XML, faz a leitura universal de tags
+   if (file.name.toLowerCase().endsWith('.xml') || (typeof content === 'string' && content.trim().startsWith('<'))) {
     const parser = new DOMParser();
-    const xmlDoc = parser.parseFromString(e.target.result, "text/xml");
-    // Procura por elementos que representem linhas/registros comuns em XML
-    const elementos = xmlDoc.querySelectorAll("row, record, item, dado, node");
+    const xmlDoc = parser.parseFromString(content, "text/xml");
+    const allElements = xmlDoc.getElementsByTagName("*");
     
-    if (elementos.length > 0) {
-     elementos.forEach(el => {
-      let obj = {};
-      let filhos = el.children;
-      if (filhos.length > 0) {
-       for (let f of filhos) {
-        obj[f.tagName] = f.textContent.trim();
-       }
-       rows.push(obj);
-      }
-     });
-    }
+    let tempRows = [];
+    let currentRow = {};
     
-    // Se não achou tags padrão, tenta varrer de forma genérica
-    if (rows.length === 0) {
-     const allNodes = xmlDoc.getElementsByTagName("*");
-     let currentObj = {};
-     for (let i = 0; i < allNodes.length; i++) {
-      let node = allNodes[i];
-      if (node.children.length === 0 && node.textContent.trim() !== "") {
-       currentObj[node.nodeName] = node.textContent.trim();
-      } else if (Object.keys(currentObj).length > 2) {
-       rows.push(currentObj);
-       currentObj = {};
-      }
+    for (let i = 0; i < allElements.length; i++) {
+     let el = allElements[i];
+     if (el.children.length === 0 && el.textContent.trim() !== "") {
+      currentRow[el.nodeName] = el.textContent.trim();
+     } else if (Object.keys(currentRow).length > 0) {
+      tempRows.push(currentRow);
+      currentRow = {};
      }
-     if (Object.keys(currentObj).length > 0) rows.push(currentObj);
     }
+    if (Object.keys(currentRow).length > 0) tempRows.push(currentRow);
+    rows = tempRows;
    } else {
-    // Leitura para Excel / CSV via SheetJS
-    const data = new Uint8Array(e.target.result);
+    // Leitura universal para Excel / CSV via SheetJS
+    const data = new Uint8Array(content);
     const workbook = XLSX.read(data, {type: 'array'});
     const firstSheetName = workbook.SheetNames[0];
     rows = XLSX.utils.sheet_to_json(workbook.Sheets[firstSheetName]);
@@ -295,16 +281,16 @@ function carregarArquivo(event) {
     localStorage.setItem(KC_STK, JSON.stringify(rows));
     processarDadosEstoque(rows);
    } else {
-    alert("Não foi possível extrair dados válidos deste arquivo. Verifique se ele contém linhas de registros.");
+    alert("O arquivo foi lido, mas não encontramos registros válidos.");
    }
   } catch(err) {
    console.error(err);
-   alert("Erro ao ler o arquivo. Certifique-se de que o formato está correto.");
+   alert("Erro ao processar o arquivo. Verifique o formato.");
   }
   if(b) b.classList.remove('spin');
  };
 
- if (fileName.endsWith('.xml')) {
+ if (file.name.toLowerCase().endsWith('.xml')) {
   reader.readAsText(file);
  } else {
   reader.readAsArrayBuffer(file);
