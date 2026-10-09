@@ -97,11 +97,11 @@ tr:hover{background:#f8fafc}
    <div><h1>📦 Gestão de Materiais não Estocáveis</h1><div id="upd">Nenhum arquivo carregado ainda</div></div>
   </div>
   
-  <div class="upload-box" title="Selecione o arquivo XML, XLSX ou CSV">
+  <div class="upload-box" title="Selecione o arquivo de dados">
    <label for="fileInput">
     📂 <span>Carregar Arquivo</span>
    </label>
-   <input type="file" id="fileInput" accept=".xml,.xlsx,.xls,.csv" onchange="carregarArquivo(event)">
+   <input type="file" id="fileInput" accept=".xml,.xlsx,.xls,.csv,.txt" onchange="carregarArquivo(event)">
   </div>
 
   <div class="top-btns">
@@ -179,7 +179,7 @@ tr:hover{background:#f8fafc}
 </main>
 
 <script>
-const KC_STK = "estoque_cache_universal_v3";
+const KC_STK = "estoque_cache_universal_v4";
 const CORES_GRAFICO=['#be123c','#7c3aed','#2563eb','#059669','#d97706','#dc2626','#db2777','#0284c7','#65a30d','#4f46e5'];
 const $=id=>document.getElementById(id);
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -248,29 +248,54 @@ function carregarArquivo(event) {
   try {
    let rows = [];
    const content = e.target.result;
+   const fileName = file.name.toLowerCase();
 
-   // Se for XML, faz a leitura universal de tags
-   if (file.name.toLowerCase().endsWith('.xml') || (typeof content === 'string' && content.trim().startsWith('<'))) {
+   if (fileName.endsWith('.xml') || (typeof content === 'string' && content.trim().startsWith('<'))) {
     const parser = new DOMParser();
     const xmlDoc = parser.parseFromString(content, "text/xml");
-    const allElements = xmlDoc.getElementsByTagName("*");
     
-    let tempRows = [];
-    let currentRow = {};
-    
-    for (let i = 0; i < allElements.length; i++) {
-     let el = allElements[i];
-     if (el.children.length === 0 && el.textContent.trim() !== "") {
-      currentRow[el.nodeName] = el.textContent.trim();
-     } else if (Object.keys(currentRow).length > 0) {
-      tempRows.push(currentRow);
-      currentRow = {};
+    // Varredura recursiva de nós XML para extrair dados tabulares limpos
+    function parseNode(node, parentPath = '') {
+     let data = {};
+     let children = node.children;
+     if (children.length === 0) {
+      if (node.textContent.trim() !== '') {
+       return { [node.nodeName]: node.textContent.trim() };
+      }
+      return null;
+     }
+     let rowObj = {};
+     for (let i = 0; i < children.length; i++) {
+      let childRes = parseNode(children[i]);
+      if (childRes) {
+       Object.assign(rowObj, childRes);
+      }
+     }
+     if (Object.keys(rowObj).length > 0) {
+      rows.push(rowObj);
+     }
+     for (let i = 0; i < children.length; i++) {
+      parseNode(children[i]);
      }
     }
-    if (Object.keys(currentRow).length > 0) tempRows.push(currentRow);
-    rows = tempRows;
+    parseNode(xmlDoc.documentElement);
+
+    if (rows.length === 0) {
+     const allElements = xmlDoc.getElementsByTagName("*");
+     let currentObj = {};
+     for (let i = 0; i < allElements.length; i++) {
+      let el = allElements[i];
+      if (el.children.length === 0 && el.textContent.trim() !== "") {
+       currentObj[el.nodeName] = el.textContent.trim();
+      } else if (Object.keys(currentObj).length > 1) {
+       rows.push(currentObj);
+       currentObj = {};
+      }
+     }
+     if (Object.keys(currentObj).length > 0) rows.push(currentObj);
+    }
    } else {
-    // Leitura universal para Excel / CSV via SheetJS
+    // Leitura universal via SheetJS (funciona para Excel, CSV, etc.)
     const data = new Uint8Array(content);
     const workbook = XLSX.read(data, {type: 'array'});
     const firstSheetName = workbook.SheetNames[0];
@@ -281,11 +306,11 @@ function carregarArquivo(event) {
     localStorage.setItem(KC_STK, JSON.stringify(rows));
     processarDadosEstoque(rows);
    } else {
-    alert("O arquivo foi lido, mas não encontramos registros válidos.");
+    alert("O arquivo foi lido, mas nenhuma linha válida foi encontrada.");
    }
   } catch(err) {
-   console.error(err);
-   alert("Erro ao processar o arquivo. Verifique o formato.");
+   console.error("Detalhe do erro:", err);
+   alert("Não foi possível processar este arquivo. Tente exportar a planilha para o formato .xlsx ou .csv padrão e tente novamente.");
   }
   if(b) b.classList.remove('spin');
  };
