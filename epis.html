@@ -51,18 +51,18 @@ section{display:grid;gap:18px}
 .chart-title{font-size:13px;font-weight:800;color:#1e293b;text-transform:uppercase;letter-spacing:.4px;padding-bottom:10px;margin-bottom:12px;border-bottom:1px solid var(--bd);display:flex;flex-direction:column;gap:2px}
 .chart-title .sub{text-transform:none;letter-spacing:0;font-weight:600}
 
-/* Gráfico de Barras Top 10 Ajustado para não cortar nomes */
-.chart-bars{display:flex;align-items:flex-end;justify-content:space-between;gap:6px;height:280px;padding:10px 4px 10px;background:repeating-linear-gradient(to top,transparent 0,transparent 35px,#f1f5f9 35px,#f1f5f9 36px);border-radius:8px;overflow-x:auto}
-.c-bar-group{flex:1;display:flex;flex-direction:column;align-items:center;min-width:38px;max-width:70px;height:100%;justify-content:flex-end;cursor:pointer}
+/* Gráfico de Barras Top 10 */
+.chart-bars{display:flex;align-items:flex-end;justify-content:space-between;gap:6px;height:240px;padding:10px 4px 6px;background:repeating-linear-gradient(to top,transparent 0,transparent 30px,#f1f5f9 30px,#f1f5f9 31px);border-radius:8px;overflow-x:auto}
+.c-bar-group{flex:1;display:flex;flex-direction:column;align-items:center;min-width:36px;max-width:70px;height:100%;justify-content:flex-end;cursor:pointer}
 .c-bar{width:100%;border-radius:6px 6px 0 0;box-shadow:inset 0 -8px 12px rgba(0,0,0,.1);transition:height .5s cubic-bezier(.2,.8,.2,1),filter .2s}
 .c-bar-group:hover .c-bar{filter:brightness(1.1)}
 .c-bar-val{font-size:11px;font-weight:800;margin-bottom:4px;color:#1e293b;text-align:center;line-height:1.1}
 .c-bar-val small{display:block;font-size:8.5px;color:#64748b;font-weight:700}
-.c-bar-lbl{font-size:9px;font-weight:700;color:#475569;margin-top:6px;text-align:center;line-height:1.15;height:55px;overflow:hidden;width:100%;word-break:break-word;display:-webkit-box;-webkit-line-clamp:4;-webkit-box-orient:vertical}
+.c-bar-lbl{font-size:9.5px;font-weight:700;color:#475569;margin-top:6px;text-align:center;line-height:1.15;height:36px;overflow:hidden;width:100%;word-break:break-word;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical}
 
-/* Top 10 Lista */
-.top10-list{display:grid;gap:6px;max-height:290px;overflow-y:auto;padding-right:4px}
-.top10-row{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:10px 14px;background:#fff;border:1px solid var(--bd);border-radius:10px;font-size:13px;font-weight:600;cursor:pointer;transition:all .2s}
+/* Top 10 Lista Compacta */
+.top10-list{display:grid;gap:4px;max-height:240px;overflow-y:auto;padding-right:4px}
+.top10-row{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:7px 12px;background:#fff;border:1px solid var(--bd);border-radius:8px;font-size:12.5px;font-weight:600;cursor:pointer;transition:all .2s}
 .top10-row span:first-child{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .top10-row:hover{background:#f1f6ff;border-color:#9bbcf5;box-shadow:0 2px 8px rgba(37,99,235,.12)}
 .top10-row b{font-weight:800;color:#0f172a}
@@ -123,23 +123,24 @@ header{background:linear-gradient(135deg,#0b1220 0%,#1e3a8a 55%,#2563eb 100%);bo
 .chart-box{border-top:5px solid var(--ac,#2563eb);background:linear-gradient(180deg,color-mix(in srgb,var(--ac,#2563eb) 9%,#fff) 0,#fff 100px)}
 
 /* ==========================================================
-   IMPRESSÃO OTIMIZADA: TUDO EM 1 FOLHA, COM TÍTULO DE MOVIMENTAÇÃO
+   IMPRESSÃO ULTRA-COMPACTA: GARANTE 1 ÚNICA PÁGINA A4 PAISAGEM
    ========================================================== */
 @media print {
   * {-webkit-print-color-adjust: exact !important; print-color-adjust: exact !important;}
-  @page { size: A4 landscape; margin: 10mm; }
-  body { background: #fff !important; color: #000 !important; font-size: 11px !important; }
-  header { padding: 8px 15px !important; margin-bottom: 5px !important; }
+  @page { size: A4 landscape; margin: 6mm; }
+  body { background: #fff !important; color: #000 !important; font-size: 10px !important; }
+  header { padding: 6px 12px !important; margin-bottom: 4px !important; }
   .seg, .toolbar, details.f, .top-btns, #s-dev, .home-btn, .btn-voltar-filtro { display: none !important; }
-  .print-title-only { display: block !important; font-size: 14px; font-weight: 800; color: #1e3a8a; margin-bottom: 8px; text-transform: uppercase; border-bottom: 2px solid #1e3a8a; padding-bottom: 4px; }
-  .det-closed, .det { display: grid !important; font-size: 10px !important; padding: 6px 10px !important; }
-  .cards { grid-template-columns: repeat(3, 1fr) !important; gap: 8px !important; }
-  .c { break-inside: avoid; page-break-inside: avoid; margin-bottom: 6px; }
-  .top10-list { max-height: 180px !important; overflow: visible !important; }
-  .chart-bars { height: 190px !important; }
-  main { padding: 5px !important; gap: 10px !important; }
-  .kpi { padding: 10px 14px !important; }
-  .kpi b { font-size: 20px !important; }
+  .print-title-only { display: block !important; font-size: 13px; font-weight: 800; color: #1e3a8a; margin-bottom: 6px; text-transform: uppercase; border-bottom: 2px solid #1e3a8a; padding-bottom: 3px; }
+  .det-closed, .det { display: none !important; } /* Oculta detalhes na impressão para economizar espaço e garantir 1 folha */
+  .cards { display: none !important; } /* Foca nos KPIs, gráficos e ranking principal na impressão */
+  .dashboard-grid { grid-template-columns: 1fr 1fr !important; gap: 12px !important; }
+  .chart-bars { height: 160px !important; }
+  .top10-list { max-height: 170px !important; }
+  main { padding: 0 !important; gap: 8px !important; }
+  .kpis { gap: 10px !important; margin-bottom: 8px !important; }
+  .kpi { padding: 8px 12px !important; }
+  .kpi b { font-size: 18px !important; }
 }
 
 @media(max-width:1300px){.cards{grid-template-columns:repeat(2,1fr)}}
@@ -206,6 +207,21 @@ const KC = "epis_cache_papaparse";
 const CORES_GRAFICO=['#2563eb','#059669','#d97706','#dc2626','#7c3aed','#db2777','#0284c7','#65a30d','#4f46e5','#0d9488'];
 const $=id=>document.getElementById(id);
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+
+// Função para abreviar nomes longos de EPIs mantendo o modelo principal limpo e legível
+function abreviarEPI(nome) {
+  if (!nome) return '';
+  let n = nome.trim();
+  // Remove termos genéricos repetitivos para caber bonito no gráfico
+  n = n.replace(/LUVA HYFLEX\/EDGE\/YELING/gi, 'LUVA HYFLEX');
+  n = n.replace(/OCULOS POLIC LENTE ESPRESSA MARROM S3201HS-BR UVEX/gi, 'OCULOS ESPRESSO');
+  n = n.replace(/RESPIRADOR DESCARTAVEL N95 S\/ VALVULA PFF2/gi, 'RESPIRADOR N95');
+  n = n.replace(/BOTINA CADARCO COMPOS MANOBREIRO CPAP/gi, 'BOTINA CPAP');
+  n = n.replace(/OCULOS GRADUADOS OPERACIONAL/gi, 'OCULOS GRADUADOS');
+  n = n.replace(/SUSPENSAO DUPLA COM CATRACA 3M/gi, 'SUSPENSAO 3M');
+  return n;
+}
+
 let EST=[],aberto=new Set();
 const LK={e:[],d:[]};
 const pct=(a,b)=>b?Math.round(a/b*100):0;
@@ -221,8 +237,9 @@ function vb(items){
  if(!items.length)return VAZIO;
  const mx=Math.max(...items.map(i=>i.v),1);
  return '<div class="chart-bars">'+items.map(i=>{
-  const h=Math.max(Math.round(i.v/mx*160),i.v>0?8:3);
-  return `<div class="c-bar-group" title="${esc(i.t||i.l)}"${i.a?` data-v="${esc(i.d)}" onclick="${i.a}(this.dataset.v)"`:''}><div class="c-bar-val">${i.v}${i.x?`<small>${i.x}</small>`:''}</div><div class="c-bar" style="height:${h}px;background:${i.c}"></div><div class="c-bar-lbl">${esc(i.l)}</div></div>`;
+  const h=Math.max(Math.round(i.v/mx*140),i.v>0?8:3);
+  const nomeCurto = abreviarEPI(i.l);
+  return `<div class="c-bar-group" title="${esc(i.t||i.l)}"${i.a?` data-v="${esc(i.d)}" onclick="${i.a}(this.dataset.v)"`:''}><div class="c-bar-val">${i.v}${i.x?`<small>${i.x}</small>`:''}</div><div class="c-bar" style="height:${h}px;background:${i.c}"></div><div class="c-bar-lbl">${esc(nomeCurto)}</div></div>`;
  }).join('')+'</div>';
 }
 
@@ -351,7 +368,7 @@ function re(){
  $('k-est').innerHTML=kpi(totQtd,'Total de Itens Requisitados','#2563eb')+kpi(L.length,'Tipos de EPIs distintos','#059669')+kpi(top10[0]?.n||0,'Maior Saída','#d97706');
  
  const g1=box('📊 Top 10 EPIs Requisitados','Volume total entregue por material',vb(top10.map((g,i)=>({v:g.n,l:g.nome,c:CORES_GRAFICO[i%10],x:pct(g.n,totQtd)+'%',a:'selE',d:g.nome}))));
- const g2=box('🏆 Ranking Geral (Top 10)','Itens mais solicitados',`<div class="top10-list">${top10.length?top10.map((g,i)=>`<div class="top10-row" data-v="${esc(g.nome)}" onclick="selE(this.dataset.v)"><span><b>#${i+1}</b>${esc(g.nome)}</span><span class="ch2 g">${g.n} un.</span></div>`).join(''):VAZIO}</div>`);
+ const g2=box('🏆 Ranking Geral (Top 10)','Itens mais solicitados',`<div class="top10-list">${top10.length?top10.map((g,i)=>`<div class="top10-row" data-v="${esc(g.nome)}" onclick="selE(this.dataset.v)"><span><b>#${i+1}</b>${esc(abreviarEPI(g.nome))}</span><span class="ch2 g">${g.n} un.</span></div>`).join(''):VAZIO}</div>`);
 
  $('dg-est').innerHTML=g1+g2;
  $('n-e').textContent=`${L.length} tipo(s) · ${totQtd} unidade(s)`;
