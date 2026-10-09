@@ -12,6 +12,8 @@
 *{box-sizing:border-box}html{scroll-padding-top:env(safe-area-inset-top,0px)}
 body{margin:0;background:var(--bg);color:var(--tx);font:14px/1.4 Arial,Helvetica,sans-serif}
 header{display:flex;flex-wrap:wrap;gap:12px;align-items:center;justify-content:space-between;padding:14px 20px;background:var(--side)}
+.header-left{display:flex;align-items:center;gap:12px;}
+.home-btn{background:#fff;color:var(--teal);border:0;border-radius:6px;padding:8px 12px;font-weight:700;cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;gap:6px;font-size:13px}
 h1{margin:0;font-size:22px;color:#fff}
 .up{background:#fff;color:var(--teal);border:0;border-radius:6px;padding:9px 16px;font-weight:700;cursor:pointer}
 #drop{margin:20px;padding:50px 20px;border:2px dashed var(--teal);border-radius:10px;text-align:center;color:var(--mut);background:var(--card)}
@@ -41,7 +43,12 @@ td{padding:5px 7px;border-bottom:1px solid var(--bd);white-space:nowrap;max-widt
 tr:nth-child(even) td{background:rgba(128,128,128,.07)}
 .n{color:var(--mut);font-size:12px;margin:6px 0}
 </style></head><body>
-<header><h1>Gestão de Materiais não Estocáveis</h1>
+<header>
+<div class="header-left">
+    <!-- Botão Casinha (Início) - Altere o 'href' se o seu painel principal tiver outro nome de arquivo, ex: 'index.html' -->
+    <a href="index.html" class="home-btn" title="Voltar ao Painel Principal">🏠 Início</a>
+    <h1>Gestão de Materiais não Estocáveis</h1>
+</div>
 <div><span id="fn" style="color:#fff;font-size:12px;margin-right:10px">Carregando do Supabase...</span><button class="up" onclick="carregarEstoqueSupabase()">Atualizar Dados</button></div></header>
 <main id="app">
 <div class="tabs" id="tabs"></div>
@@ -75,7 +82,6 @@ async function carregarEstoqueSupabase(){
             return;
         }
 
-        // Mapeia os dados vindos do banco para o formato que o painel já usa
         D = data.map(r=>{
            const desc=String(r.descricao||'').trim(),rec=dt(r.atualizado_em),sa=dt(r.datadesaida),q=num(r.quantidade)||0,qs=num(r.quantidadedesaida)||0;
            let sl=num(r.saldoemestoque);if(sl===null)sl=q-(qs||0);
@@ -94,7 +100,6 @@ async function carregarEstoqueSupabase(){
     }
 }
 
-// Carrega automaticamente assim que a página é aberta em qualquer computador
 document.addEventListener('DOMContentLoaded', () => {
     carregarEstoqueSupabase();
 });
@@ -121,7 +126,7 @@ function render(full){
  }
  const R=filt();$('v').innerHTML=({pai:vPai,est:vEst,rot:vRot,zer:vZer,prz:vPrz,inv:vInv,pen:vPen})[tab](R);
 }
-function sf(k,v,keep){F[k]=v;if(keep){render(false)}else render(false)}
+function sf(k,v,keep){F[k]=v;render(false)}
 function agg(R,key,val){const m={};R.forEach(r=>{const k=key(r);if(k!==null)m[k]=(m[k]||0)+val(r)});return Object.entries(m).sort((a,b)=>b[1]-a[1])}
 function bars(title,data,color,n=25){
  const mx=Math.max(1,...data.map(x=>x[1]));
