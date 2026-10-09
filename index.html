@@ -4,76 +4,159 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#1e3a8a">
-<title>Painel Corporativo - Gestão de Estoque</title>
-<!-- Ícone profissional de Caixa / Armazém para Estoque -->
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E📦%3C/text%3E%3C/svg%3E">
+<title>Painel Corporativo Unificado</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E🏭%3C/text%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
-<!-- Importando o PapaParse para ler CSV do Google Sheets perfeitamente -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
 <style>
-:root{--line:#cbd5e1;--tx:#0f172a;--mu:#475569;--pri:#2563eb;--red:#dc2626;--amb:#d97706;--grn:#059669;--bd:#e3e8f0;--sh:0 1px 2px rgba(15,23,42,.05),0 4px 14px rgba(15,23,42,.06);--sh2:0 8px 28px rgba(15,23,42,.14)}
+:root{--line:#cbd5e1;--tx:#0f172a;--mu:#475569;--pri:#2563eb;--bd:#e3e8f0;--sh:0 1px 2px rgba(15,23,42,.05),0 4px 14px rgba(15,23,42,.06);--sh2:0 8px 28px rgba(15,23,42,.14)}
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
-body{font-family:Inter,system-ui,-apple-system,sans-serif;background:#f4f6fb;color:var(--tx);font-size:15px;line-height:1.4;padding-bottom:30px;font-feature-settings:"tnum";-webkit-font-smoothing:antialiased}
+body{font-family:Inter,system-ui,-apple-system,sans-serif;background:#f4f6fb;color:var(--tx);font-size:15px;line-height:1.4;display:flex;min-height:100vh;-webkit-font-smoothing:antialiased}
 
-/* Cabeçalho */
-header{position:sticky;top:0;z-index:30;background:linear-gradient(135deg,#0b1220 0%,#14233f 60%,#1e3a8a 100%);color:#fff;padding:14px 28px;box-shadow:0 6px 24px rgba(11,18,32,.35)}
-.top{display:flex;justify-content:space-between;align-items:center;gap:12px}
-.title-area{display:flex;align-items:center;gap:12px}
-.home-btn{background:rgba(255,255,255,.15);color:#fff;border:1px solid rgba(255,255,255,.3);border-radius:12px;width:40px;height:40px;font-size:18px;display:flex;align-items:center;justify-content:center;cursor:pointer;text-decoration:none;transition:all .2s}
-.home-btn:hover{background:rgba(255,255,255,.3)}
-h1{font-size:19px;font-weight:900;letter-spacing:-.3px}
-#upd{font-size:12px;opacity:.65;margin-top:2px}
+/* Barra Lateral (Sidebar) */
+sidebar{width:260px;background:linear-gradient(180deg,#0b1220 0%,#14233f 60%,#1e3a8a 100%);color:#fff;display:flex;flex-direction:column;position:fixed;top:0;bottom:0;left:0;z-index:40;box-shadow:4px 0 20px rgba(11,18,32,.25)}
+.sidebar-header{padding:24px 20px;border-bottom:1px solid rgba(255,255,255,.12);display:flex;align-items:center;gap:12px}
+.sidebar-header h2{font-size:17px;font-weight:900;letter-spacing:-.3px}
+.sidebar-header span{font-size:24px}
+
+.sidebar-menu{padding:20px 14px;display:flex;flex-direction:column;gap:8px;flex:1}
+.nav-item{display:flex;align-items:center;gap:12px;padding:12px 16px;color:#cbd5e1;text-decoration:none;font-weight:700;font-size:14.5px;border-radius:12px;transition:all .2s}
+.nav-item:hover{background:rgba(255,255,255,.1);color:#fff}
+.nav-item.active{background:linear-gradient(135deg,#2563eb,#1d4ed8);color:#fff;box-shadow:0 4px 12px rgba(37,99,235,.35)}
+
+.sidebar-footer{padding:16px 20px;font-size:12px;color:#94a3b8;border-top:1px solid rgba(255,255,255,.12)}
+
+/* Conteúdo Principal à Direita */
+.main-content{margin-left:260px;flex:1;display:flex;flex-direction:column;min-width:0;padding-bottom:40px}
+
+/* Topo Interno do Conteúdo */
+topbar{background:#fff;padding:16px 32px;border-bottom:1px solid var(--bd);display:flex;justify-content:space-between;align-items:center;box-shadow:0 1px 3px rgba(15,23,42,.03);position:sticky;top:0;z-index:30}
+topbar h1{font-size:18px;font-weight:900;color:#0f172a}
+#upd{font-size:12px;color:var(--mu);font-weight:600}
+
 .top-btns{display:flex;gap:8px}
-.rf,.print-btn{background:rgba(255,255,255,.1);color:#fff;border:1px solid rgba(255,255,255,.2);border-radius:12px;min-width:38px;min-height:38px;font-size:16px;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .2s}
-.rf:hover,.print-btn:hover{background:rgba(255,255,255,.2)}
+.rf,.print-btn{background:#f1f5f9;color:var(--tx);border:1px solid var(--bd);border-radius:10px;min-width:38px;min-height:38px;font-size:16px;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .2s}
+.rf:hover,.print-btn:hover{background:#e2e8f0}
 .rf.spin{animation:sp 1s linear infinite}@keyframes sp{to{transform:rotate(360deg)}}
 
-main{max-width:1800px;margin:0 auto;padding:18px 28px;display:grid;gap:18px}
-section{display:grid;gap:18px}
+container{max-width:1600px;margin:0 auto;padding:24px 32px;display:grid;gap:20px;width:100%}
+panel-view{display:grid;gap:18px}
+.hide{display:none}
 
-/* KPIs */
+/* KPIs, Gráficos e Cards (Padrão Corporativo) */
 .kpis{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
 .kpi{position:relative;background:#fff;border:1px solid var(--bd);border-radius:16px;padding:16px 22px;box-shadow:var(--sh);overflow:hidden;display:flex;align-items:center}
-.kpi::before{content:"";position:absolute;left:0;top:0;bottom:0;width:5px;background:var(--kc,#7c3aed)}
+.kpi::before{content:"";position:absolute;left:0;top:0;bottom:0;width:5px;background:var(--kc,#2563eb)}
 .kpi div{display:flex;flex-direction:column;min-width:0}
-.kpi b{font-size:26px;font-weight:900;line-height:1.1;letter-spacing:-1px;color:#1e293b}
-.kpi span{font-size:11.5px;font-weight:800;color:#6b7a90;text-transform:uppercase;letter-spacing:.4px;margin-top:3px}
+.kpi b{font-size:26px;font-weight:900;line-height:1.1;color:#1e293b}
+.kpi span{font-size:11.5px;font-weight:800;color:#6b7a90;text-transform:uppercase;margin-top:3px}
 
-/* Filtros e Ferramentas */
-details.f{background:#fff;border:1px solid var(--bd);border-radius:16px;box-shadow:var(--sh)}
-details.f summary{padding:14px 20px;font-weight:800;font-size:15px;cursor:pointer;list-style:none;display:flex;justify-content:space-between;color:#334155}
-details.f summary::-webkit-details-marker{display:none}
-.fg{display:grid;gap:10px;padding:0 16px 16px;grid-template-columns:1fr}
-input{width:100%;min-height:42px;padding:8px 12px;border:1px solid #d5dce8;border-radius:10px;font-size:14px;font-family:inherit;background:#fff;color:var(--tx);font-weight:500}
-input:focus{outline:2px solid #93b4f5;border-color:#7c3aed}
-.btn{min-height:42px;border:0;background:#7c3aed;border-radius:10px;font-weight:800;font-family:inherit;color:#fff;cursor:pointer}
-.btn:hover{background:#6d28d9}
+@media(max-width:1100px){
+  sidebar{width:70px}
+  sidebar .sidebar-header h2, sidebar .nav-item span, sidebar .sidebar-footer{display:none}
+  .main-content{margin-left:70px}
+  .sidebar-header{justify-content:center;padding:20px 10px}
+  .nav-item{justify-content:center;padding:12px}
+}
+</style>
+</head>
+<body>
 
-.toolbar{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
-.toolbar .sub{margin-left:auto;font-size:12.5px;font-weight:600;color:var(--mu)}
+<!-- BARRA LATERAL FIXA -->
+<sidebar>
+  <div class="sidebar-header">
+    <span>🏭</span>
+    <h2>Painel Corporativo</h2>
+  </div>
+  <div class="sidebar-menu">
+    <a href="#" class="nav-item active" onclick="mudarPainel('epis', this)" id="btn-epis">
+      <span>⛑️</span> <span>EPIs & Relatório</span>
+    </a>
+    <a href="#" class="nav-item" onclick="mudarPainel('estoque', this)" id="btn-estoque">
+      <span>📦</span> <span>Gestão de Estoque</span>
+    </a>
+    <a href="#" class="nav-item" onclick="mudarPainel('ferramentas', this)" id="btn-ferramentas">
+      <span>🛠️</span> <span>Ferramentas</span>
+    </a>
+  </div>
+  <div class="sidebar-footer">
+    Vale • Gestão Integrada
+  </div>
+</sidebar>
 
-/* Cards de Estoque */
-.cards{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;align-items:start}
-.c{background:#fff;border:1px solid var(--bd);border-left:5px solid #7c3aed;border-radius:16px;overflow:hidden;box-shadow:var(--sh);transition:all .3s}
-.c:hover{box-shadow:var(--sh2);transform:translateY(-2px)}
-.row{display:flex;justify-content:space-between;align-items:flex-start;gap:10px}
-.nm{font-weight:800;word-break:break-word;font-size:15px;color:#0f172a}
-.tot{background:#f3e8ff;color:#7c3aed;border-radius:10px;padding:4px 11px;font-weight:900;font-size:14px;flex-shrink:0}
-.chips{display:flex;flex-wrap:wrap;gap:5px;margin-top:10px}
-.ch2{font-size:12px;font-weight:700;padding:3px 9px;border-radius:99px;background:#f1f5f9;color:#475569}
-.g{background:#d1fae5;color:#065f46}
-.empty{text-align:center;color:var(--mu);padding:30px 10px;font-weight:600}
-.print-title-only { display: none; }
+<!-- CONTEÚDO PRINCIPAL -->
+<div class="main-content">
+  <topbar>
+    <div>
+      <h1 id="titulo-pagina">Painel Executivo — Gestão de EPIs</h1>
+      <div id="upd">Carregando dados...</div>
+    </div>
+    <div class="top-btns">
+      <button class="print-btn" onclick="window.print()" title="Imprimir / Salvar PDF">🖨️</button>
+      <button class="rf" id="rf" onclick="atualizar()" title="Atualizar dados">↻</button>
+    </div>
+  </topbar>
 
-/* ==========================================================
-   IMPRESSÃO DA GESTÃO DE ESTOQUE
-   ========================================================== */
-@media print {
-  * {-webkit-print-color-adjust: exact !important; print-color-adjust: exact !important;}
-  @page { size: A4 portrait; margin: 10mm 12mm; }
-  body { background: #fff !important; color: #000 !important; font-size: 11px !important; }
-  header { display: none !important; }
-  .toolbar, details.f, .top-btns, .home-btn { display: none !important; }
-  .print-title-only { display: block !important; font-size: 16px; font-weight: 900; color: #7c3aed; margin-bottom: 14px; text-transform: uppercase; border-bottom: 3px solid #7c3aed; padding-bottom: 6px; }
-  .cards { grid-template-columns: repeat(2, 1fr) !important; gap: 10px !important; }
+  <container>
+    <!-- PAINEL 1: EPIS -->
+    <panel-view id="view-epis">
+      <div class="kpis" id="k-epis"></div>
+      <div style="background:#fff;border:1px solid var(--bd);border-radius:16px;padding:30px;text-align:center;box-shadow:var(--sh);">
+        <h3>Módulo de EPIs e Movimentações carregado com sucesso!</h3>
+        <p style="color:var(--mu);margin-top:8px">Aqui entram os gráficos, rankings e cartões que já construímos.</p>
+      </div>
+    </panel-view>
+
+    <!-- PAINEL 2: ESTOQUE -->
+    <panel-view id="view-estoque" class="hide">
+      <div class="kpis" id="k-estoque"></div>
+      <div style="background:#fff;border:1px solid var(--bd);border-radius:16px;padding:30px;text-align:center;box-shadow:var(--sh);">
+        <h3>Módulo de Gestão de Estoque (Almoxarifado)</h3>
+        <p style="color:var(--mu);margin-top:8px">Aqui entra a listagem de saldos, baias e localizações que puxamos do CSV.</p>
+      </div>
+    </panel-view>
+
+    <!-- PAINEL 3: FERRAMENTAS -->
+    <panel-view id="view-ferramentas" class="hide">
+      <div style="background:#fff;border:1px solid var(--bd);border-radius:16px;padding:30px;text-align:center;box-shadow:var(--sh);">
+        <h3>Módulo de Ferramentas e Calibração</h3>
+        <p style="color:var(--mu);margin-top:8px">Módulo reservado para o inventário de ferramentas.</p>
+      </div>
+    </panel-view>
+  </container>
+</div>
+
+<script>
+function mudarPainel(id, el) {
+  // Oculta todas as views
+  document.querySelectorAll('panel-view').forEach(v => v.classList.add('hide'));
+  // Mostra a selecionada
+  document.getElementById('view-' + id).classList.remove('hide');
+  
+  // Atualiza classe ativa na sidebar
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  el.classList.add('active');
+
+  // Atualiza título do topo
+  const titulos = {
+    'epis': 'Painel Executivo — Gestão de EPIs',
+    'estoque': 'Painel de Controle — Gestão de Estoque',
+    'ferramentas': 'Painel de Inventário — Ferramentas'
+  };
+  document.getElementById('titulo-pagina').textContent = titulos[id];
+}
+
+function atualizar() {
+  const b = document.getElementById('rf');
+  if(b) b.classList.add('spin');
+  setTimeout(() => {
+    if(b) b.classList.remove('spin');
+    document.getElementById('upd').textContent = 'Atualizado às ' + new Date().toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'});
+  }, 800);
+}
+
+atualizar();
+</script>
+</body>
+</html>
