@@ -67,7 +67,7 @@ function load(file){
    const desc=String(g(r,'descricaodoitem')||'').trim(),rec=dt(g(r,'datarec')),sa=dt(g(r,'datadesaida')),q=num(g(r,'quant'))||0,qs=num(g(r,'quantidadedesaida'));
    let sl=num(g(r,'saldoemestoque'));if(sl===null)sl=q-(qs||0);
    const last=sa||rec,d=last?dias(last):null;
-   return{loc:String(g(r,'localizacao')||'—').trim().toUpperCase(),baia:String(g(r,'baiaarmazenamento')||'—').trim().toUpperCase(),ped:String(g(r,'pedido')||'').replace(/\.0$/,''),
+   return{site:String(g(r,'site')||'CTSS').trim().toUpperCase(),loc:String(g(r,'localizacao')||'—').trim().toUpperCase(),baia:String(g(r,'baiaarmazenamento')||'—').trim().toUpperCase(),ped:String(g(r,'pedido')||'').replace(/\.0$/,''),
     mat:String(g(r,'material')||'').replace(/\.0$/,''),desc,grp:(desc.split(/[\s;,]/)[0]||'—').toUpperCase(),q,um:g(r,'um')||'',rec,sa,qs:qs!==null?qs:(sl<=0?q:0),sl,d,
     cl:d===null?3:d<=60?0:d<=180?1:d<=365?2:3,dsto:rec&&sa?Math.max(0,Math.floor((sa-rec)/864e5)):''};
   });
@@ -88,7 +88,7 @@ function filt(){
   const d=dateOf(r);
   if(F.ano&&(!d||d.getFullYear()!=F.ano))return false;
   if(F.mes!==undefined&&F.mes!==''&&(!d||d.getMonth()!=F.mes))return false;
-  if(F.loc&&r.loc!==F.loc)return false;if(F.baia&&r.baia!==F.baia)return false;
+  if(F.site&&r.site!==F.site)return false;if(F.loc&&r.loc!==F.loc)return false;if(F.baia&&r.baia!==F.baia)return false;
   if(F.desc&&!r.desc.toLowerCase().includes(F.desc.toLowerCase()))return false;
   if(F.mat&&!r.mat.includes(F.mat))return false;if(F.ped&&!r.ped.includes(F.ped))return false;
   return true})}
@@ -98,7 +98,7 @@ function render(full){
   const anos=[...new Set(D.map(r=>dateOf(r)).filter(Boolean).map(d=>d.getFullYear()))].sort(),
    u=k=>[...new Set(D.map(r=>r[k]))].sort(),sel=(id,l,o)=>`<div><label>${l}</label><select id="${id}" onchange="sf('${id}',this.value)"><option value="">Todos</option>${o.map(x=>`<option value="${x[0]}" ${String(F[id])===String(x[0])?'selected':''}>${x[1]}</option>`).join('')}</select></div>`,
    inp=(id,l)=>`<div><label>${l}</label><input id="${id}" value="${F[id]||''}" oninput="sf('${id}',this.value,1)"></div>`;
-  $('fl').innerHTML=sel('ano','Ano ('+(tab==='zer'?'data de saída':'data de recebimento')+')',anos.map(a=>[a,a]))+sel('mes','Mês',MS.map((m,i)=>[i,m]))+sel('loc','Localização',u('loc').map(x=>[x,x]))+sel('baia','Baia de armazenamento',u('baia').map(x=>[x,x]))+inp('desc','Descrição do item')+inp('mat','Código (material)')+inp('ped','Pedido');
+  $('fl').innerHTML=sel('site','Site',u('site').map(x=>[x,x]))+sel('ano','Ano ('+(tab==='zer'?'data de saída':'data de recebimento')+')',anos.map(a=>[a,a]))+sel('mes','Mês',MS.map((m,i)=>[i,m]))+sel('loc','Localização',u('loc').map(x=>[x,x]))+sel('baia','Baia de armazenamento',u('baia').map(x=>[x,x]))+inp('desc','Descrição do item')+`<div><label>Código (material)</label><input id="mat" list="dl" placeholder="digite ou escolha" value="${F.mat||''}" oninput="sf('mat',this.value,1)"><datalist id="dl">${u('mat').filter(Boolean).map(x=>`<option value="${x}">`).join('')}</datalist></div>`+inp('ped','Pedido');
  }
  const R=filt();$('v').innerHTML=tab==='est'?vEst(R):tab==='rot'?vRot(R):vZer(R);
 }
@@ -125,7 +125,7 @@ function vEst(R){
  ${tbl(R,[['Item',r=>r.grp],['Pedido',r=>r.ped],['Descrição',r=>r.desc],['Material',r=>r.mat],['Saldo',r=>r.sl],['Qtd. saída',r=>r.qs],['Data-Rec.',r=>r.rec],['Data saída',r=>r.sa],['Localização',r=>r.loc],['Baia',r=>r.baia],['Dias s/ mov.',r=>r.d],['Classificação',r=>CL[r.cl]]])}`}
 function vRot(R0){
 
- const A=D.filter(r=>{const d=r.rec;return(!F.ano||d&&d.getFullYear()==F.ano)&&(F.mes===undefined||F.mes===''||d&&d.getMonth()==F.mes)&&(!F.loc||r.loc===F.loc)&&(!F.baia||r.baia===F.baia)&&(!F.desc||r.desc.toLowerCase().includes(F.desc.toLowerCase()))&&(!F.mat||r.mat.includes(F.mat))&&(!F.ped||r.ped.includes(F.ped))});
+ const A=D.filter(r=>{const d=r.rec;return(!F.ano||d&&d.getFullYear()==F.ano)&&(F.mes===undefined||F.mes===''||d&&d.getMonth()==F.mes)&&(!F.site||r.site===F.site)&&(!F.loc||r.loc===F.loc)&&(!F.baia||r.baia===F.baia)&&(!F.desc||r.desc.toLowerCase().includes(F.desc.toLowerCase()))&&(!F.mat||r.mat.includes(F.mat))&&(!F.ped||r.ped.includes(F.ped))});
  const rec=A.reduce((a,r)=>a+r.q,0),sai=A.reduce((a,r)=>a+r.qs,0),sem=A.filter(r=>r.sl>0&&!r.sa).length;
  const g={};A.forEach(r=>{const o=g[r.grp]||(g[r.grp]={q:0,qs:0,sl:0});o.q+=r.q;o.qs+=r.qs;o.sl+=r.sl});
  const L=Object.entries(g).map(([k,o])=>({k,...o,giro:o.q?o.qs/o.q*100:0})).sort((a,b)=>b.qs-a.qs);
