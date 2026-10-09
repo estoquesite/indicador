@@ -9,7 +9,7 @@
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E📦%3C/text%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
-<!-- Importando PapaParse para CSV e SheetJS (xlsx) para arquivos Excel/XML/Planilhas -->
+<!-- Importando SheetJS para ler planilhas e PapaParse para CSV -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <style>
@@ -26,7 +26,7 @@ header{position:sticky;top:0;z-index:30;background:linear-gradient(135deg,#0b122
 h1{font-size:19px;font-weight:900;letter-spacing:-.3px}
 #upd{font-size:12px;opacity:.75;margin-top:2px}
 
-/* Caixa de Upload Estilizada para XML ou Planilhas */
+/* Caixa de Upload Estilizada */
 .upload-box {display:flex;align-items:center;gap:8px;background:rgba(255,255,255,0.12);border:1px dashed rgba(255,255,255,0.4);padding:8px 14px;border-radius:12px;cursor:pointer;transition:all .2s}
 .upload-box:hover {background:rgba(255,255,255,0.2)}
 .upload-box label {cursor:pointer;font-weight:700;font-size:12.5px;color:#fff;display:flex;align-items:center;gap:6px}
@@ -98,10 +98,9 @@ tr:hover{background:#f8fafc}
    <div><h1>📦 Gestão de Materiais não Estocáveis</h1><div id="upd">Nenhum arquivo carregado ainda</div></div>
   </div>
   
-  <!-- CAIXINHA DE ANEXAR XML OU PLANILHA -->
-  <div class="upload-box" title="Selecione o arquivo XML, XLSX ou CSV da sua planilha">
+  <div class="upload-box" title="Selecione o arquivo XML, XLSX ou CSV">
    <label for="fileInput">
-    📂 <span>Carregar Arquivo (XML / Planilha)</span>
+    📂 <span>Carregar Arquivo</span>
    </label>
    <input type="file" id="fileInput" accept=".xml,.xlsx,.xls,.csv" onchange="carregarArquivo(event)">
   </div>
@@ -181,7 +180,7 @@ tr:hover{background:#f8fafc}
 </main>
 
 <script>
-const KC_STK = "estoque_cache_universal_v1";
+const KC_STK = "estoque_cache_universal_v2";
 const CORES_GRAFICO=['#be123c','#7c3aed','#2563eb','#059669','#d97706','#dc2626','#db2777','#0284c7','#65a30d','#4f46e5'];
 const $=id=>document.getElementById(id);
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -245,66 +244,69 @@ function carregarArquivo(event) {
 
  const b = $('rf'); if(b) b.classList.add('spin');
  const fileName = file.name.toLowerCase();
+ const reader = new FileReader();
 
- if (fileName.endsWith('.xml')) {
-  // Leitor nativo de XML
-  const reader = new FileReader();
-  reader.onload = function(e) {
-   try {
+ reader.onload = function(e) {
+  try {
+   let rows = [];
+   if (fileName.endsWith('.xml')) {
     const parser = new DOMParser();
     const xmlDoc = parser.parseFromString(e.target.result, "text/xml");
-    // Tenta varrer tags comuns de linhas em XML (como row, item, registro)
-    const nodes = xmlDoc.getElementsByTagName("*");
-    let rows = [];
-    let headers = [];
+    // Procura por elementos que representem linhas/registros comuns em XML
+    const elementos = xmlDoc.querySelectorAll("row, record, item, dado, node");
     
-    // Converte nós do XML em objetos estruturados
-    let currentRow = {};
-    for (let i = 0; i < nodes.length; i++) {
-     let node = nodes[i];
-     if (node.children.length === 0 && node.textContent.trim() !== "") {
-      currentRow[node.nodeName] = node.textContent.trim();
-     } else if (Object.keys(currentRow).length > 0) {
-      rows.push(currentRow);
-      currentRow = {};
+    if (elementos.length > 0) {
+     elementos.forEach(el => {
+      let obj = {};
+      let filhos = el.children;
+      if (filhos.length > 0) {
+       for (let f of filhos) {
+        obj[f.tagName] = f.textContent.trim();
+       }
+       rows.push(obj);
+      }
+     });
+    }
+    
+    // Se não achou tags padrão, tenta varrer de forma genérica
+    if (rows.length === 0) {
+     const allNodes = xmlDoc.getElementsByTagName("*");
+     let currentObj = {};
+     for (let i = 0; i < allNodes.length; i++) {
+      let node = allNodes[i];
+      if (node.children.length === 0 && node.textContent.trim() !== "") {
+       currentObj[node.nodeName] = node.textContent.trim();
+      } else if (Object.keys(currentObj).length > 2) {
+       rows.push(currentObj);
+       currentObj = {};
+      }
      }
+     if (Object.keys(currentObj).length > 0) rows.push(currentObj);
     }
-    if(Object.keys(currentRow).length > 0) rows.push(currentRow);
-
-    if(rows.length > 0) {
-     localStorage.setItem(KC_STK, JSON.stringify(rows));
-     processarDadosEstoque(rows);
-    } else {
-     alert("Não foi possível extrair dados estruturados deste XML.");
-    }
-   } catch(err) {
-    alert("Erro ao processar o arquivo XML.");
-   }
-   if(b) b.classList.remove('spin');
-  };
-  reader.readAsText(file);
- } else {
-  // Leitor para XLSX / XLS / CSV usando SheetJS
-  const reader = new FileReader();
-  reader.onload = function(e) {
-   try {
+   } else {
+    // Leitura para Excel / CSV via SheetJS
     const data = new Uint8Array(e.target.result);
     const workbook = XLSX.read(data, {type: 'array'});
     const firstSheetName = workbook.SheetNames[0];
-    const worksheet = workbook.Sheets[firstSheetName];
-    const json = XLSX.utils.sheet_to_json(worksheet);
-    
-    if(json && json.length > 0) {
-     localStorage.setItem(KC_STK, JSON.stringify(json));
-     processarDadosEstoque(json);
-    } else {
-     alert("O arquivo está vazio ou em formato incompatível.");
-    }
-   } catch(err) {
-    alert("Erro ao ler a planilha.");
+    rows = XLSX.utils.sheet_to_json(workbook.Sheets[firstSheetName]);
    }
-   if(b) b.classList.remove('spin');
-  };
+
+   if (rows && rows.length > 0) {
+    localStorage.setItem(KC_STK, JSON.stringify(rows));
+    processarDadosEstoque(rows);
+   } else {
+    alert("Não foi possível extrair dados válidos deste arquivo. Verifique se ele contém linhas de registros.");
+   }
+  } catch(err) {
+   console.error(err);
+   alert("Erro ao ler o arquivo. Certifique-se de que o formato está correto.");
+  }
+  if(b) b.classList.remove('spin');
+ };
+
+ if (fileName.endsWith('.xml')) {
+  reader.readAsText(file);
+ } else {
   reader.readAsArrayBuffer(file);
  }
 }
