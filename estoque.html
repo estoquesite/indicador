@@ -161,7 +161,7 @@ tr:hover{background:#f8fafc}
 
 <script>
 const CSV_URL_STK = "https://docs.google.com/spreadsheets/d/e/2PACX-1vSwssGdZjM9ONVf2YkxwVlmN9JcK7oylQ2EIwDWWRobg339OveHYIjLoSrt-bi-wG76C0OL8Vp_L4Z8/pub?output=csv";
-const KC_STK = "estoque_cache_papaparse_v4";
+const KC_STK = "estoque_cache_papaparse_v5";
 const CORES_GRAFICO=['#be123c','#7c3aed','#2563eb','#059669','#d97706','#dc2626','#db2777','#0284c7','#65a30d','#4f46e5'];
 const $=id=>document.getElementById(id);
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -186,32 +186,34 @@ function processarDadosEstoque(results){
  const rows = results.data;
  STK = rows.map(r=>{
   const keys = Object.keys(r);
-  const findVal = (terms) => {
+  
+  // Função para pegar o valor de qualquer coluna que contenha o termo
+  const getCol = (terms) => {
    for(let t of terms) {
     const found = keys.find(k => k.toLowerCase().includes(t.toLowerCase()));
-    if(found !== undefined && r[found] !== undefined && r[found] !== '') return r[found];
+    if(found !== undefined && r[found] !== undefined) return r[found];
    }
    return '';
   };
 
-  const item = findVal(['item']);
-  const pedido = findVal(['pedido']);
-  const desc = findVal(['descri', 'item']);
-  const material = findVal(['material']);
+  const item = getCol(['item']);
+  const pedido = getCol(['pedido']);
+  const desc = getCol(['descri', 'descrição']);
+  const material = getCol(['material']);
   
-  let saldoRaw = findVal(['saldo', 'estoque']);
+  let saldoRaw = getCol(['saldo']);
   let saldo = parseFloat(String(saldoRaw).replace(',', '.')) || 0;
 
-  let qtdSaidaRaw = findVal(['quantidade de saida', 'quantidade de saída', 'saida', 'saída']);
+  let qtdSaidaRaw = getCol(['quantidade de saida', 'quantidade de saída', 'saida', 'saída']);
   let qtdSaida = parseFloat(String(qtdSaidaRaw).replace(',', '.')) || 0;
 
-  const dataRec = findVal(['data-rec', 'rec']);
-  const dataSaida = findVal(['data de saida', 'data de saída']);
-  const loc = findVal(['localiza', 'local']);
-  const baia = findVal(['baia', 'armazenamento']);
+  const dataRec = getCol(['data-rec', 'rec']);
+  const dataSaida = getCol(['data de saida', 'data de saída']);
+  const loc = getCol(['localiza', 'local']);
+  const baia = getCol(['baia', 'armazenamento']);
 
   return {item, pedido, desc, material, saldo, qtdSaida, dataRec, dataSaida, loc, baia};
- }).filter(x => x.desc || x.material || x.item || x.saldo !== 0);
+ }).filter(x => x.desc || x.material || x.item); // Aceita todas as linhas que tiverem pelo menos um identificador
 
  renderizarTudo();
  $('upd').textContent = 'Atualizado às ' + new Date().toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'});
