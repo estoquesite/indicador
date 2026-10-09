@@ -9,8 +9,9 @@
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E📦%3C/text%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
-<!-- Importando o PapaParse para ler arquivos CSV locais perfeitamente -->
+<!-- Importando PapaParse para CSV e SheetJS (xlsx) para arquivos Excel/XML/Planilhas -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <style>
 :root{--line:#cbd5e1;--tx:#0f172a;--mu:#475569;--pri:#7c3aed;--bd:#e3e8f0;--sh:0 1px 2px rgba(15,23,42,.05),0 4px 14px rgba(15,23,42,.06);--sh2:0 8px 28px rgba(15,23,42,.14)}
 *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
@@ -25,7 +26,7 @@ header{position:sticky;top:0;z-index:30;background:linear-gradient(135deg,#0b122
 h1{font-size:19px;font-weight:900;letter-spacing:-.3px}
 #upd{font-size:12px;opacity:.75;margin-top:2px}
 
-/* Caixa de Upload Estilizada */
+/* Caixa de Upload Estilizada para XML ou Planilhas */
 .upload-box {display:flex;align-items:center;gap:8px;background:rgba(255,255,255,0.12);border:1px dashed rgba(255,255,255,0.4);padding:8px 14px;border-radius:12px;cursor:pointer;transition:all .2s}
 .upload-box:hover {background:rgba(255,255,255,0.2)}
 .upload-box label {cursor:pointer;font-weight:700;font-size:12.5px;color:#fff;display:flex;align-items:center;gap:6px}
@@ -97,12 +98,12 @@ tr:hover{background:#f8fafc}
    <div><h1>📦 Gestão de Materiais não Estocáveis</h1><div id="upd">Nenhum arquivo carregado ainda</div></div>
   </div>
   
-  <!-- CAIXINHA DE ANEXAR ARQUIVO NO CABEÇALHO -->
-  <div class="upload-box" title="Selecione o arquivo CSV da sua planilha">
-   <label for="csvFileInput">
-    📂 <span>Carregar Planilha</span>
+  <!-- CAIXINHA DE ANEXAR XML OU PLANILHA -->
+  <div class="upload-box" title="Selecione o arquivo XML, XLSX ou CSV da sua planilha">
+   <label for="fileInput">
+    📂 <span>Carregar Arquivo (XML / Planilha)</span>
    </label>
-   <input type="file" id="csvFileInput" accept=".csv" onchange="carregarArquivoLocal(event)">
+   <input type="file" id="fileInput" accept=".xml,.xlsx,.xls,.csv" onchange="carregarArquivo(event)">
   </div>
 
   <div class="top-btns">
@@ -180,7 +181,7 @@ tr:hover{background:#f8fafc}
 </main>
 
 <script>
-const KC_STK = "estoque_cache_local_v1";
+const KC_STK = "estoque_cache_universal_v1";
 const CORES_GRAFICO=['#be123c','#7c3aed','#2563eb','#059669','#d97706','#dc2626','#db2777','#0284c7','#65a30d','#4f46e5'];
 const $=id=>document.getElementById(id);
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -188,7 +189,7 @@ const soma=a=>a.reduce((s,x)=>s+x,0);
 
 let STK=[];
 
-const VAZIO='<tr><td colspan="12" class="empty">Nenhum registro encontrado. Carregue uma planilha no botão acima.</td></tr>';
+const VAZIO='<tr><td colspan="12" class="empty">Nenhum registro encontrado. Selecione o arquivo no botão acima.</td></tr>';
 const kpi=(v,l,tipo)=>`<div class="kpi ${tipo}"><div><b>${v}</b><span>${l}</span></div></div>`;
 const box=(t,s,b)=>`<div class="chart-box"><div><div class="chart-title">${t}<span class="sub">${s}</span></div>${b}</div></div>`;
 
@@ -238,30 +239,78 @@ function processarDadosEstoque(rows){
  $('upd').textContent = 'Atualizado às ' + new Date().toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'});
 }
 
-function carregarArquivoLocal(event) {
+function carregarArquivo(event) {
  const file = event.target.files[0];
  if (!file) return;
 
  const b = $('rf'); if(b) b.classList.add('spin');
- Papa.parse(file, {
-  header: true,
-  skipEmptyLines: true,
-  complete: function(results) {
-   if(results.data && results.data.length > 0) {
-    localStorage.setItem(KC_STK, JSON.stringify(results.data));
-    processarDadosEstoque(results.data);
+ const fileName = file.name.toLowerCase();
+
+ if (fileName.endsWith('.xml')) {
+  // Leitor nativo de XML
+  const reader = new FileReader();
+  reader.onload = function(e) {
+   try {
+    const parser = new DOMParser();
+    const xmlDoc = parser.parseFromString(e.target.result, "text/xml");
+    // Tenta varrer tags comuns de linhas em XML (como row, item, registro)
+    const nodes = xmlDoc.getElementsByTagName("*");
+    let rows = [];
+    let headers = [];
+    
+    // Converte nós do XML em objetos estruturados
+    let currentRow = {};
+    for (let i = 0; i < nodes.length; i++) {
+     let node = nodes[i];
+     if (node.children.length === 0 && node.textContent.trim() !== "") {
+      currentRow[node.nodeName] = node.textContent.trim();
+     } else if (Object.keys(currentRow).length > 0) {
+      rows.push(currentRow);
+      currentRow = {};
+     }
+    }
+    if(Object.keys(currentRow).length > 0) rows.push(currentRow);
+
+    if(rows.length > 0) {
+     localStorage.setItem(KC_STK, JSON.stringify(rows));
+     processarDadosEstoque(rows);
+    } else {
+     alert("Não foi possível extrair dados estruturados deste XML.");
+    }
+   } catch(err) {
+    alert("Erro ao processar o arquivo XML.");
    }
    if(b) b.classList.remove('spin');
-  },
-  error: function(err) {
-   alert("Erro ao ler o arquivo CSV.");
+  };
+  reader.readAsText(file);
+ } else {
+  // Leitor para XLSX / XLS / CSV usando SheetJS
+  const reader = new FileReader();
+  reader.onload = function(e) {
+   try {
+    const data = new Uint8Array(e.target.result);
+    const workbook = XLSX.read(data, {type: 'array'});
+    const firstSheetName = workbook.SheetNames[0];
+    const worksheet = workbook.Sheets[firstSheetName];
+    const json = XLSX.utils.sheet_to_json(worksheet);
+    
+    if(json && json.length > 0) {
+     localStorage.setItem(KC_STK, JSON.stringify(json));
+     processarDadosEstoque(json);
+    } else {
+     alert("O arquivo está vazio ou em formato incompatível.");
+    }
+   } catch(err) {
+    alert("Erro ao ler a planilha.");
+   }
    if(b) b.classList.remove('spin');
-  }
- });
+  };
+  reader.readAsArrayBuffer(file);
+ }
 }
 
 function avisarUpload() {
- alert("Por favor, clique em 'Carregar Planilha' no topo para selecionar o seu arquivo CSV atualizado.");
+ alert("Por favor, clique em 'Carregar Arquivo' no topo para selecionar o seu arquivo atualizado.");
 }
 
 function aba(t){
