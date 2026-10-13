@@ -21,9 +21,11 @@ h1{margin:0;font-size:22px;color:#fff}
 .up{background:#fff;color:var(--teal);border:0;border-radius:6px;padding:9px 16px;font-weight:700;cursor:pointer}
 .save-btn{background:#1a2a9c;color:#fff;border:0;border-radius:6px;padding:9px 16px;font-weight:700;cursor:pointer}
 .export-btn{background:#e8703a;color:#fff;border:0;border-radius:6px;padding:9px 16px;font-weight:700;cursor:pointer}
+.print-btn{background:#fff;color:#1f2933;border:0;border-radius:6px;padding:9px 16px;font-weight:700;cursor:pointer}
 #drop{margin:20px;padding:50px 20px;border:2px dashed var(--teal);border-radius:10px;text-align:center;color:var(--mut);background:var(--card)}
 #drop.o{background:rgba(0,126,122,.1)}#drop b{display:block;font-size:18px;color:var(--teal);margin-bottom:6px}
 main{padding:16px 20px;max-width:1500px;margin:auto}
+.pt{display:none}
 .tabs{display:flex;gap:6px;margin-bottom:12px;flex-wrap:wrap}
 .tabs button{border:1px solid var(--bd);background:var(--card);color:var(--tx);padding:8px 16px;border-radius:6px;cursor:pointer}
 .tabs button.a{background:var(--red);color:#fff;border-color:var(--red)}
@@ -47,6 +49,35 @@ th{position:sticky;top:0;background:var(--teal);color:#fff;padding:7px;text-alig
 td{padding:5px 7px;border-bottom:1px solid var(--bd);white-space:nowrap;max-width:320px;overflow:hidden;text-overflow:ellipsis}
 tr:nth-child(even) td{background:rgba(128,128,128,.07)}
 .n{color:var(--mut);font-size:12px;margin:6px 0}
+
+/* ===== IMPRESSÃO ===== */
+@media print{
+@page{size:A4 landscape;margin:8mm 10mm}
+*{-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important}
+/* força tema claro mesmo se o aparelho estiver em modo escuro */
+:root,:root:not([data-theme="light"]),:root[data-theme="dark"]{--bg:#fff;--card:#fff;--tx:#1f2933;--mut:#6b7280;--bd:#d9dde1;--side:#fff;padding:0}
+body{background:#fff!important;color:#1f2933!important;font-size:10.5px}
+#drop,.tabs,.fl,.header-right,.home-btn{display:none!important}
+header{background:#fff!important;padding:0 0 4px!important;border-bottom:2px solid var(--teal)}
+h1{color:var(--teal)!important;font-size:16px}
+main{padding:0!important;max-width:none!important}
+.pt{display:block;font-size:12px;font-weight:700;color:var(--mut);margin:4px 0 8px}
+.kp{gap:6px;margin-bottom:8px}
+.k{padding:5px 10px;min-width:100px;break-inside:avoid}
+.k b{font-size:18px}.k small{font-size:10px}
+.g{grid-template-columns:1fr 1fr!important;gap:8px;margin-bottom:8px}
+.c{break-inside:avoid;padding:8px;box-shadow:none}
+.c h3{font-size:12px;margin-bottom:5px}
+.bs{max-height:none!important;overflow:visible!important}
+.b{font-size:10px;margin:2px 0}
+.tw{max-height:none!important;overflow:visible!important}
+.c:has(table){break-inside:auto}
+table{font-size:8.5px}
+th{position:static!important;padding:4px;white-space:normal}
+td{white-space:normal!important;max-width:none!important;overflow:visible!important;text-overflow:clip!important;word-break:break-word;padding:3px 4px}
+table tr:nth-child(2){display:none!important}
+tr{break-inside:avoid}
+}
 </style>
 </head>
 <body>
@@ -61,10 +92,12 @@ tr:nth-child(even) td{background:rgba(128,128,128,.07)}
     <input id="f" type="file" accept=".xlsx,.xls,.csv" style="display:none">
     <button class="save-btn" onclick="salvarLocalmente()">💾 Salvar (Navegador)</button>
     <button class="export-btn" onclick="baixarArquivoExcel()" title="Baixar planilha para levar a outro PC">📤 Exportar Backup</button>
+    <button class="print-btn" onclick="window.print()" title="Imprimir / Salvar PDF">🖨️ Imprimir</button>
 </div>
 </header>
 <div id="drop"><b>Arraste o estoques.xlsx aqui</b>ou clique em "Carregar arquivo mensal" no topo. Seus dados salvos localmente reaparecem automaticamente.</div>
 <main id="app" hidden>
+<div class="pt" id="pt"></div>
 <div class="tabs" id="tabs"></div>
 <div class="fl" id="fl"></div>
 <div id="v"></div>
@@ -87,7 +120,7 @@ try {
 
 const $=id=>document.getElementById(id),MS=['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
 const CL=['1 - Até 2 meses','2 - De 2 a 6 meses','3 - De 6 meses a 1 ano','4 - Mais de 1 ano'],CC=['#1e90ff','#1a2a9c','#e8703a','#c0305a'];
-let D=[],tab='pai',F={},sort={};
+let D=[],tab='pai',F={},sort={},PRINTING=false;
 const nz=s=>String(s).normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase().replace(/[^a-z]/g,'');
 const dt=v=>v instanceof Date&&!isNaN(v)?v:(typeof v==='string'&&v.trim()&&!isNaN(new Date(v))?new Date(v):null);
 const num=v=>{v=parseFloat(v);return isNaN(v)?null:v};
@@ -212,6 +245,10 @@ document.addEventListener('DOMContentLoaded', () => {
     carregarLocalmente();
 });
 
+// Na impressão, mostra todas as linhas das tabelas (não só as 300 da tela)
+window.addEventListener('beforeprint',()=>{if(D.length){PRINTING=true;render(false)}});
+window.addEventListener('afterprint',()=>{if(D.length){PRINTING=false;render(false)}});
+
 const TABS={pai:'Painel',est:'Estoques',rot:'Rotatividade',zer:'Zerados',prz:'Prazo de retirada',inv:'Inventário',pen:'Pendências'};
 function dateOf(r){return tab==='zer'?r.sa:r.rec}
 function filt(){
@@ -227,6 +264,7 @@ function filt(){
 
 function render(full){
  $('tabs').innerHTML=Object.entries(TABS).map(([k,v])=>`<button class="${k===tab?'a':''}" onclick="tab='${k}';render(true)">${v}</button>`).join('');
+ $('pt').textContent=TABS[tab]+' · '+new Date().toLocaleDateString('pt-BR');
  if(full){
   const anos=[...new Set(D.map(r=>dateOf(r)).filter(Boolean).map(d=>d.getFullYear()))].sort(),
    u=k=>[...new Set(D.map(r=>r[k]))].sort(),sel=(id,l,o)=>`<div><label>${l}</label><select id="${id}" onchange="sf('${id}',this.value)"><option value="">Todos</option>${o.map(x=>`<option value="${x[0]}" ${String(F[id])===String(x[0])?'selected':''}>${x[1]}</option>`).join('')}</select></div>`,
@@ -277,7 +315,8 @@ function tbl(R,cols){
  const s=sort[tab],f=CF[tab]||{},k=(c,r)=>{const v=c[1](r);return v instanceof Date?fd(v):v};
  const rows=R.filter(r=>cols.every((c,i)=>!f[i]||String(k(c,r)??'').toLowerCase().includes(f[i].toLowerCase())));
  if(s)rows.sort((a,b)=>{const x=cols[s.i][1](a),y=cols[s.i][1](b),xv=x instanceof Date?+x:x,yv=y instanceof Date?+y:y;return(xv>yv?1:xv<yv?-1:0)*s.d});
- return`<div class='c'><h3>Tabela status de material</h3><div class='tw'><table><tr>${cols.map((c,i)=>`<th onclick='srt(${i})'>${c[0]}${s&&s.i===i?(s.d>0?' ▲':' ▼'):''}</th>`).join('')}</tr><tr>${cols.map((c,i)=>`<th style='top:31px;background:var(--card);padding:2px'><input id='cf${i}' value="${(f[i]||'').replace(/"/g,'&quot;')}" oninput='cf(${i},this.value)' placeholder='filtrar' style='width:100%;min-width:70px;padding:3px;border:1px solid var(--bd);border-radius:4px;background:var(--card);color:var(--tx)'></th>`).join('')}</tr>${rows.slice(0,300).map(r=>'<tr>'+cols.map(c=>{const v=k(c,r);return`<td title="${String(v??'').replace(/"/g,'&quot;')}">${v??''}</td>`}).join('')+'</tr>').join('')}</table></div><div class='n'>Mostrando ${Math.min(300,rows.length)} de ${rows.length} linhas (filtre por coluna ou clique no cabeçalho para ordenar)</div></div>`}
+ const lim=PRINTING?3000:300;
+ return`<div class='c'><h3>Tabela status de material</h3><div class='tw'><table><tr>${cols.map((c,i)=>`<th onclick='srt(${i})'>${c[0]}${s&&s.i===i?(s.d>0?' ▲':' ▼'):''}</th>`).join('')}</tr><tr>${cols.map((c,i)=>`<th style='top:31px;background:var(--card);padding:2px'><input id='cf${i}' value="${(f[i]||'').replace(/"/g,'&quot;')}" oninput='cf(${i},this.value)' placeholder='filtrar' style='width:100%;min-width:70px;padding:3px;border:1px solid var(--bd);border-radius:4px;background:var(--card);color:var(--tx)'></th>`).join('')}</tr>${rows.slice(0,lim).map(r=>'<tr>'+cols.map(c=>{const v=k(c,r);return`<td title="${String(v??'').replace(/"/g,'&quot;')}">${v??''}</td>`}).join('')+'</tr>').join('')}</table></div><div class='n'>Mostrando ${Math.min(lim,rows.length)} de ${rows.length} linhas (filtre por coluna ou clique no cabeçalho para ordenar)</div></div>`}
 
 function vPai(R){
  const S=D.filter(r=>!F.site||r.site===F.site),z=S.filter(r=>r.sl<=0).length,rc=S.reduce((a,r)=>a+r.q,0),sa=S.reduce((a,r)=>a+r.qs,0),v=R.filter(r=>ven(r)>0),c=n=>R.filter(r=>ic(r)===n).length,pc=pn(R).filter(r=>r.pn.length).length,mn=R.filter(r=>r.emin!==null&&r.sl<r.emin).length,vl=R.filter(r=>r.val&&r.val<Date.now()+30*864e5).length;
