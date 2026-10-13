@@ -71,12 +71,12 @@ main{padding:0!important;max-width:none!important}
 .bs{max-height:none!important;overflow:visible!important}
 .b{font-size:10px;margin:2px 0}
 .tw{max-height:none!important;overflow:visible!important}
-.c:has(table){break-inside:auto}
-table{font-size:8.5px}
-th{position:static!important;padding:4px;white-space:normal}
-td{white-space:normal!important;max-width:none!important;overflow:visible!important;text-overflow:clip!important;word-break:break-word;padding:3px 4px}
-table tr:nth-child(2){display:none!important}
-tr{break-inside:avoid}
+/* só indicadores + gráficos: tabelas não saem na impressão */
+.ct{display:none!important}
+.kp{break-inside:avoid}
+.bs{break-inside:avoid}
+.b{grid-template-columns:100px 1fr 44px}
+.dn svg{width:120px;height:120px}
 }
 </style>
 </head>
@@ -245,9 +245,6 @@ document.addEventListener('DOMContentLoaded', () => {
     carregarLocalmente();
 });
 
-// Na impressão, mostra todas as linhas das tabelas (não só as 300 da tela)
-window.addEventListener('beforeprint',()=>{if(D.length){PRINTING=true;render(false)}});
-window.addEventListener('afterprint',()=>{if(D.length){PRINTING=false;render(false)}});
 
 const TABS={pai:'Painel',est:'Estoques',rot:'Rotatividade',zer:'Zerados',prz:'Prazo de retirada',inv:'Inventário',pen:'Pendências'};
 function dateOf(r){return tab==='zer'?r.sa:r.rec}
@@ -316,7 +313,7 @@ function tbl(R,cols){
  const rows=R.filter(r=>cols.every((c,i)=>!f[i]||String(k(c,r)??'').toLowerCase().includes(f[i].toLowerCase())));
  if(s)rows.sort((a,b)=>{const x=cols[s.i][1](a),y=cols[s.i][1](b),xv=x instanceof Date?+x:x,yv=y instanceof Date?+y:y;return(xv>yv?1:xv<yv?-1:0)*s.d});
  const lim=PRINTING?3000:300;
- return`<div class='c'><h3>Tabela status de material</h3><div class='tw'><table><tr>${cols.map((c,i)=>`<th onclick='srt(${i})'>${c[0]}${s&&s.i===i?(s.d>0?' ▲':' ▼'):''}</th>`).join('')}</tr><tr>${cols.map((c,i)=>`<th style='top:31px;background:var(--card);padding:2px'><input id='cf${i}' value="${(f[i]||'').replace(/"/g,'&quot;')}" oninput='cf(${i},this.value)' placeholder='filtrar' style='width:100%;min-width:70px;padding:3px;border:1px solid var(--bd);border-radius:4px;background:var(--card);color:var(--tx)'></th>`).join('')}</tr>${rows.slice(0,lim).map(r=>'<tr>'+cols.map(c=>{const v=k(c,r);return`<td title="${String(v??'').replace(/"/g,'&quot;')}">${v??''}</td>`}).join('')+'</tr>').join('')}</table></div><div class='n'>Mostrando ${Math.min(lim,rows.length)} de ${rows.length} linhas (filtre por coluna ou clique no cabeçalho para ordenar)</div></div>`}
+ return`<div class='c ct'><h3>Tabela status de material</h3><div class='tw'><table><tr>${cols.map((c,i)=>`<th onclick='srt(${i})'>${c[0]}${s&&s.i===i?(s.d>0?' ▲':' ▼'):''}</th>`).join('')}</tr><tr>${cols.map((c,i)=>`<th style='top:31px;background:var(--card);padding:2px'><input id='cf${i}' value="${(f[i]||'').replace(/"/g,'&quot;')}" oninput='cf(${i},this.value)' placeholder='filtrar' style='width:100%;min-width:70px;padding:3px;border:1px solid var(--bd);border-radius:4px;background:var(--card);color:var(--tx)'></th>`).join('')}</tr>${rows.slice(0,lim).map(r=>'<tr>'+cols.map(c=>{const v=k(c,r);return`<td title="${String(v??'').replace(/"/g,'&quot;')}">${v??''}</td>`}).join('')+'</tr>').join('')}</table></div><div class='n'>Mostrando ${Math.min(lim,rows.length)} de ${rows.length} linhas (filtre por coluna ou clique no cabeçalho para ordenar)</div></div>`}
 
 function vPai(R){
  const S=D.filter(r=>!F.site||r.site===F.site),z=S.filter(r=>r.sl<=0).length,rc=S.reduce((a,r)=>a+r.q,0),sa=S.reduce((a,r)=>a+r.qs,0),v=R.filter(r=>ven(r)>0),c=n=>R.filter(r=>ic(r)===n).length,pc=pn(R).filter(r=>r.pn.length).length,mn=R.filter(r=>r.emin!==null&&r.sl<r.emin).length,vl=R.filter(r=>r.val&&r.val<Date.now()+30*864e5).length;
