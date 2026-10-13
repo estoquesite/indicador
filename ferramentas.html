@@ -208,6 +208,10 @@ details.f summary{color:var(--ac,#334155)}
 
 /* ===== IMPRESSÃO: só indicadores + gráficos, 1 aba por folha ===== */
 @media print{
+ /* sem fundo azul/colorido: folha totalmente branca */
+ html,body{background:#fff!important;background-image:none!important}
+ .chart-box{background:#fff!important}
+ .kpi{background:#fff!important}
  .cards,.toolbar{display:none!important}
  .print-head{font-size:18px;margin-bottom:12px}
  .kpis{gap:10px!important;margin-bottom:12px!important}
