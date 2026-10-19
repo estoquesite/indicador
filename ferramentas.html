@@ -6,6 +6,7 @@
 <meta name="theme-color" content="#1d4ed8">
 <title>Painel Corporativo - Ferramentaria & Calibração</title>
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E🛠️%3C/text%3E%3C/svg%3E">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
 <style>
@@ -131,6 +132,7 @@ input:focus,select:focus{outline:2px solid #93b4f5;border-color:#2563eb}
 .empty{text-align:center;color:var(--mu);padding:30px 10px;font-weight:600}
 .hide{display:none}
 .print-head{display:none}
+[hidden]{display:none!important}
 
 /* Responsivo */
 @media(max-width:1300px){.cards{grid-template-columns:repeat(2,1fr)}}
@@ -243,6 +245,8 @@ details.f summary{color:var(--ac,#334155)}
    <div><h1>🛠️ Painel Corporativo — Ferramentaria & Calibração</h1><div id="upd">Carregando…</div></div>
   </div>
   <div class="top-btns">
+   <button class="print-btn" onclick="escolherPasta()" title="Escolher a pasta do computador com os Excel">📁</button>
+   <button class="print-btn" id="btnWeb" onclick="voltarWeb()" hidden title="Voltar a usar as planilhas online">🌐</button>
    <button class="print-btn" onclick="window.print()" title="Imprimir / Salvar PDF">🖨️</button>
    <button class="rf" id="rf" onclick="atualizar(true)" aria-label="Atualizar">↻</button>
   </div>
@@ -429,6 +433,7 @@ function preencher(){
 }
 
 async function atualizar(manual){
+ if(modoPasta&&pastaH){if(manual)await atualizarDaPasta();return}
  const b=$('rf');b.classList.add('spin');
  try{
   const [a,c]=await Promise.all(URLS.map(u=>fetch(u,{cache:'no-store'}).then(r=>{if(!r.ok)throw 0;return r.text()})));
@@ -675,11 +680,82 @@ function ri(){
  }).join(''):'<div class="empty">Nenhum equipamento encontrado.</div>';
 }
 
+/* ---------- PASTA DO COMPUTADOR (Chrome / Edge) ---------- */
+/* Escolha uma pasta uma vez; o painel lê o Excel/CSV mais recente de cada tipo
+   (devoluções e calibração/inventário), reconhecendo pelos títulos das colunas. */
+let pastaH=null,modoPasta=false;
+const EXT=/\.(xlsx|xls|csv)$/i;
+const IDB={
+ open(){return new Promise((res,rej)=>{const r=indexedDB.open('ferramentaria_pasta',1);r.onupgradeneeded=()=>r.result.createObjectStore('h');r.onsuccess=()=>res(r.result);r.onerror=()=>rej(r.error)})},
+ async get(){try{const db=await this.open();return await new Promise(res=>{const q=db.transaction('h').objectStore('h').get('dir');q.onsuccess=()=>res(q.result||null);q.onerror=()=>res(null)})}catch(e){return null}},
+ async set(v){try{const db=await this.open();return await new Promise(res=>{const t=db.transaction('h','readwrite');t.objectStore('h').put(v,'dir');t.oncomplete=()=>res();t.onerror=()=>res()})}catch(e){}}
+};
+function mostrarPasta(){$('btnWeb').hidden=!modoPasta}
+async function arquivoParaCsv(f){
+ if(/\.csv$/i.test(f.name))return(await f.text()).replace(/^\ufeff/,'');
+ const wb=XLSX.read(await f.arrayBuffer(),{type:'array',cellDates:true});
+ return XLSX.utils.sheet_to_csv(wb.Sheets[wb.SheetNames[0]],{dateNF:'dd/mm/yyyy',blankrows:false});
+}
+async function lerPasta(dir){
+ const arqs=[];
+ try{for await(const [nome,h] of dir.entries()){if(h.kind!=='file'||!EXT.test(nome)||nome.startsWith('~$'))continue;arqs.push(await h.getFile())}}
+ catch(e){alert('Não consegui ler a pasta: '+e.message);return false}
+ if(!arqs.length){alert('Nenhum arquivo Excel/CSV encontrado na pasta "'+dir.name+'".');return false}
+ arqs.sort((a,b)=>b.lastModified-a.lastModified);
+ let dev=null,inv=null;
+ for(const f of arqs){
+  let txt;try{txt=await arquivoParaCsv(f)}catch(e){continue}
+  const h=csv(txt).h.join(' ').toLowerCase();
+  if(/solicitante|atraso/.test(h)){if(!dev)dev={txt,nome:f.name}}
+  else if(/manuten|vencimento|calibra/.test(h)){if(!inv)inv={txt,nome:f.name}}
+  if(dev&&inv)break;
+ }
+ if(!dev||!inv){alert('Preciso de 2 arquivos na pasta "'+dir.name+'":\n• Devoluções (colunas Solicitante / Atraso)\n• Calibração (colunas Vencimento / Data próxima manutenção)\n\nEncontrei: '+(dev?'devoluções ✔️':'devoluções ✖️')+' · '+(inv?'calibração ✔️':'calibração ✖️'));return false}
+ processar(dev.txt,inv.txt);
+ try{localStorage.setItem(KC,JSON.stringify({t:Date.now(),a:dev.txt,c:inv.txt}))}catch(e){}
+ ultimo=Date.now();
+ $('upd').textContent='📁 '+dir.name+' · '+dev.nome+' + '+inv.nome;
+ return true;
+}
+async function escolherPasta(){
+ if(!window.showDirectoryPicker){alert('Este navegador não permite escolher pasta. Use o Chrome ou o Edge no computador.');return}
+ try{
+  const d=await window.showDirectoryPicker({mode:'read'});
+  pastaH=d;await IDB.set(d);modoPasta=true;
+  try{localStorage.setItem('ferr_modo','pasta')}catch(e){}
+  mostrarPasta();await lerPasta(d);
+ }catch(e){if(e.name!=='AbortError')alert('Não foi possível abrir a pasta: '+e.message)}
+}
+async function atualizarDaPasta(){
+ const b=$('rf');b.classList.add('spin');
+ try{
+  let p=await pastaH.queryPermission({mode:'read'});
+  if(p!=='granted')p=await pastaH.requestPermission({mode:'read'});
+  if(p!=='granted')alert('Permissão negada para ler a pasta.');
+  else await lerPasta(pastaH);
+ }catch(e){alert('Erro ao atualizar da pasta: '+e.message)}
+ b.classList.remove('spin');
+}
+function voltarWeb(){
+ modoPasta=false;try{localStorage.setItem('ferr_modo','web')}catch(e){}
+ mostrarPasta();atualizar(true);
+}
+
 /* impressão: carimbo de data */
 window.addEventListener('beforeprint',()=>{document.querySelectorAll('.pdt').forEach(e=>e.textContent='Emitido em '+new Date().toLocaleString('pt-BR'))});
 
 try{const c=JSON.parse(localStorage.getItem(KC)||'null');if(c){processar(c.a,c.c);ultimo=c.t;$('upd').textContent='Dados salvos de '+new Date(c.t).toLocaleString('pt-BR',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'})}}catch(e){}
-atualizar();
+(async()=>{
+ pastaH=await IDB.get();
+ modoPasta=!!pastaH&&(()=>{try{return localStorage.getItem('ferr_modo')==='pasta'}catch(e){return false}})();
+ mostrarPasta();
+ if(modoPasta){
+  try{const p=await pastaH.queryPermission({mode:'read'});if(p==='granted'){await lerPasta(pastaH);return}}catch(e){}
+  $('upd').textContent='📁 Clique em ↻ para liberar e ler a pasta';
+  return;
+ }
+ atualizar();
+})();
 setInterval(()=>atualizar(),5*60*1000);
 document.addEventListener('visibilitychange',()=>{if(!document.hidden&&Date.now()-ultimo>2*60*1000)atualizar()});
 </script>
