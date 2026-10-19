@@ -22,6 +22,8 @@ h1{margin:0;font-size:22px;color:#fff}
 .save-btn{background:#1a2a9c;color:#fff;border:0;border-radius:6px;padding:9px 16px;font-weight:700;cursor:pointer}
 .export-btn{background:#e8703a;color:#fff;border:0;border-radius:6px;padding:9px 16px;font-weight:700;cursor:pointer}
 .print-btn{background:#fff;color:#1f2933;border:0;border-radius:6px;padding:9px 16px;font-weight:700;cursor:pointer}
+.folder-btn{background:#0b6b3a;color:#fff;border:0;border-radius:6px;padding:9px 16px;font-weight:700;cursor:pointer}
+.refresh-btn{background:#ffd166;color:#1f2933;border:0;border-radius:6px;padding:9px 16px;font-weight:700;cursor:pointer}
 #drop{margin:20px;padding:50px 20px;border:2px dashed var(--teal);border-radius:10px;text-align:center;color:var(--mut);background:var(--card)}
 #drop.o{background:rgba(0,126,122,.1)}#drop b{display:block;font-size:18px;color:var(--teal);margin-bottom:6px}
 main{padding:16px 20px;max-width:1500px;margin:auto}
@@ -102,6 +104,8 @@ h1{font-size:16px}
 </div>
 <div class="header-right">
     <span id="fn" style="color:#fff;font-size:12px;margin-right:5px">Pronto para carregar</span>
+    <button class="folder-btn" onclick="escolherPasta()" title="Escolha uma pasta do computador onde você coloca o Excel mensal">📁 Escolher pasta</button>
+    <button class="refresh-btn" id="btnAtualizaPasta" onclick="atualizarDaPasta()" hidden title="Ler de novo o Excel mais recente da pasta">🔄 Atualizar da pasta</button>
     <label for="f" class="up" style="display:inline-block;cursor:pointer;margin:0;">Carregar arquivo mensal</label>
     <input id="f" type="file" accept=".xlsx,.xls,.csv" style="display:none">
     <button class="save-btn" onclick="salvarLocalmente()">💾 Salvar (Navegador)</button>
@@ -109,7 +113,7 @@ h1{font-size:16px}
     <button class="print-btn" onclick="window.print()" title="Imprimir / Salvar PDF">🖨️ Imprimir</button>
 </div>
 </header>
-<div id="drop"><b>Arraste o estoques.xlsx aqui</b>ou clique em "Carregar arquivo mensal" no topo. Seus dados salvos localmente reaparecem automaticamente.</div>
+<div id="drop"><b>Arraste o estoques.xlsx aqui</b>ou use <b style="display:inline;font-size:14px">📁 Escolher pasta</b>: coloque o Excel mensal nessa pasta e o painel lê sempre o arquivo mais recente. Também dá para clicar em "Carregar arquivo mensal". Seus dados salvos localmente reaparecem automaticamente.</div>
 <main id="app" hidden>
 <div class="pt" id="pt"></div>
 <div class="tabs" id="tabs"></div>
@@ -160,29 +164,97 @@ function processarDadosRows(rows, fileName){
   render(true);
 }
 
-function load(file){
- const r=new FileReader();
- r.onload=e=>{
+function lerBuffer(buf, nome){
   try{
-   const wb=XLSX.read(e.target.result,{type:'array',cellDates:true}),ws=wb.Sheets[wb.SheetNames[0]];
-   const rows=XLSX.utils.sheet_to_json(ws,{defval:null});
-   processarDadosRows(rows, file.name);
+    const wb=XLSX.read(buf,{type:'array',cellDates:true}),ws=wb.Sheets[wb.SheetNames[0]];
+    const rows=XLSX.utils.sheet_to_json(ws,{defval:null});
+    processarDadosRows(rows, nome);
+    return true;
   }catch(err){
-   console.error(err);
-   alert('Erro ao ler o arquivo: '+err.message);
+    console.error(err);
+    alert('Erro ao ler o arquivo: '+err.message);
+    return false;
   }
- };
+}
+
+function load(file,label){
+ const r=new FileReader();
+ r.onload=e=>lerBuffer(e.target.result,label||file.name);
  r.readAsArrayBuffer(file);
 }
 
 $('f').onchange=e=>{if(e.target.files[0]){load(e.target.files[0]);e.target.value=''}};
 const dz=$('drop');
-dz.onclick=()=>$('f').click();
+dz.onclick=e=>{if(e.target.closest&&e.target.closest('button'))return;$('f').click()};
 ['dragover','dragenter'].forEach(t=>dz.addEventListener(t,e=>{e.preventDefault();dz.classList.add('o')}));
 dz.addEventListener('dragleave',()=>dz.classList.remove('o'));
 dz.addEventListener('drop',e=>{e.preventDefault();dz.classList.remove('o');e.dataTransfer.files[0]&&load(e.dataTransfer.files[0])});
 document.body.addEventListener('dragover',e=>e.preventDefault());
 document.body.addEventListener('drop',e=>{e.preventDefault();e.dataTransfer.files[0]&&load(e.dataTransfer.files[0])});
+
+// --- PASTA DO COMPUTADOR (Chrome / Edge) ---
+// O painel guarda a pasta escolhida e lê sempre o Excel mais recente dentro dela.
+let pastaH=null;
+const EXT=/\.(xlsx|xls|csv)$/i;
+const IDB={
+ open(){return new Promise((res,rej)=>{const r=indexedDB.open('estoque_pasta',1);r.onupgradeneeded=()=>r.result.createObjectStore('h');r.onsuccess=()=>res(r.result);r.onerror=()=>rej(r.error)})},
+ async get(){try{const db=await this.open();return await new Promise(res=>{const q=db.transaction('h').objectStore('h').get('dir');q.onsuccess=()=>res(q.result||null);q.onerror=()=>res(null)})}catch(e){return null}},
+ async set(v){try{const db=await this.open();return await new Promise(res=>{const t=db.transaction('h','readwrite');t.objectStore('h').put(v,'dir');t.oncomplete=()=>res();t.onerror=()=>res()})}catch(e){}}
+};
+function mostrarBtnPasta(){const b=$('btnAtualizaPasta');if(pastaH){b.hidden=false;b.textContent='🔄 Atualizar da pasta ('+pastaH.name+')'}else b.hidden=true}
+
+async function lerPasta(dir){
+  let melhor=null;
+  try{
+    for await(const [nome,h] of dir.entries()){
+      if(h.kind!=='file'||!EXT.test(nome)||nome.startsWith('~$'))continue;
+      const f=await h.getFile();
+      if(!melhor||f.lastModified>melhor.lastModified)melhor=f;
+    }
+  }catch(e){alert('Não consegui ler a pasta: '+e.message);return false}
+  if(!melhor){alert('Nenhum arquivo Excel (.xlsx, .xls ou .csv) encontrado na pasta "'+dir.name+'".');return false}
+  load(melhor,'📁 '+dir.name+' / '+melhor.name);
+  return true;
+}
+
+async function escolherPasta(){
+  if(!window.showDirectoryPicker){alert('Este navegador não permite escolher pasta. Use o Chrome ou o Edge no computador.');return}
+  try{
+    const dir=await window.showDirectoryPicker({mode:'read'});
+    pastaH=dir;await IDB.set(dir);mostrarBtnPasta();
+    await lerPasta(dir);
+  }catch(e){if(e.name!=='AbortError')alert('Não foi possível abrir a pasta: '+e.message)}
+}
+
+async function atualizarDaPasta(){
+  if(!pastaH){return escolherPasta()}
+  try{
+    let p=await pastaH.queryPermission({mode:'read'});
+    if(p!=='granted')p=await pastaH.requestPermission({mode:'read'});
+    if(p!=='granted'){alert('Permissão negada para ler a pasta.');return}
+    await lerPasta(pastaH);
+  }catch(e){alert('Erro ao atualizar da pasta: '+e.message)}
+}
+
+async function iniciarPasta(){
+  pastaH=await IDB.get();mostrarBtnPasta();
+  if(!pastaH)return false;
+  try{
+    const p=await pastaH.queryPermission({mode:'read'});
+    if(p==='granted')return await lerPasta(pastaH);
+    $('fn').textContent='Clique em 🔄 Atualizar da pasta para ler o Excel mais recente';
+  }catch(e){}
+  return false;
+}
+
+// Plano B: se existir "dados/estoques.xlsx" ao lado desta página (GitHub), lê automaticamente
+async function lerDoSite(){
+  try{
+    const r=await fetch('dados/estoques.xlsx',{cache:'no-store'});
+    if(!r.ok)return false;
+    return lerBuffer(await r.arrayBuffer(),'dados/estoques.xlsx (site)');
+  }catch(e){return false}
+}
 
 // --- SALVAMENTO LOCAL PERSISTENTE NO NAVEGADOR ---
 function salvarLocalmente(){
@@ -255,8 +327,10 @@ function baixarArquivoExcel(){
   }
 }
 
-document.addEventListener('DOMContentLoaded', () => {
-    carregarLocalmente();
+document.addEventListener('DOMContentLoaded', async () => {
+    carregarLocalmente();                 // 1) dados salvos no navegador (mostra rápido)
+    const okPasta = await iniciarPasta(); // 2) Excel mais recente da pasta escolhida
+    if(!okPasta && !D.length) await lerDoSite(); // 3) plano B: dados/estoques.xlsx no site
 });
 
 
