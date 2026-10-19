@@ -92,22 +92,46 @@ input:focus,select:focus,button:focus-visible{outline:2px solid #93b4f5;border-c
 .it{border-left:3px solid #1e3a8a;padding:8px 12px;background:#fff;border-radius:0 8px 8px 0}
 .empty{text-align:center;color:var(--mu);padding:30px 10px;font-weight:600}
 .hide{display:none}
-.print-title-only{display:none}
 
 /* ===== IMPRESSÃO ===== */
 @media print{
 @page{size:A4 landscape;margin:8mm 10mm}
 *{-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important}
 body{background:#fff!important;font-size:10.5px!important;padding:0!important}
-header,.seg,.toolbar,details.f,.pf{display:none!important}
+
+/* Oculta apenas os controles interativos */
+.seg,.toolbar,details.f,.pf,.top-btns,.home-btn{display:none!important}
+
+/* Header estilizado exatamente como na tela para a impressão */
+header{
+  position:relative!important;
+  top:auto!important;
+  display:block!important;
+  background:linear-gradient(135deg,#0b1220 0%,#1e3a8a 55%,#2563eb 100%)!important;
+  border-bottom:4px solid #f59e0b!important;
+  color:#fff!important;
+  padding:10px 18px!important;
+  border-radius:12px!important;
+  margin-bottom:14px!important;
+  box-shadow:none!important;
+  break-inside:avoid;
+}
+header h1{
+  font-size:16px!important;
+  color:#fff!important;
+}
+header #upd{
+  color:rgba(255,255,255,.8)!important;
+  font-size:10px!important;
+}
+
 main{padding:0!important;gap:10px!important;max-width:none!important}
 section,.kpis,.dashboard-grid{gap:10px!important}
-.print-title-only{display:flex!important;justify-content:space-between;align-items:baseline;font-size:14px;font-weight:900;color:#1e3a8a;border-bottom:2px solid #1e3a8a;padding-bottom:4px;text-transform:uppercase}
-.print-title-only span{font-size:10px;color:#64748b;font-weight:600;text-transform:none}
+.print-title-only{display:none!important}
+
 .chart-box,.kpi,.c,.top10-row,.alert-row{break-inside:avoid;box-shadow:none!important}
 .chart-bars{height:170px!important;overflow:visible!important}
 .kpi{padding:8px 14px!important}.kpi b{font-size:20px!important}
-/* grades fixas na impressão (independem da largura da folha) */
 .dashboard-grid{grid-template-columns:1fr 1fr!important}
 .kpis{grid-template-columns:repeat(3,1fr)!important}
 .kpis-4{grid-template-columns:repeat(4,1fr)!important}
@@ -147,15 +171,12 @@ body.pa3 .pg2t{display:none!important}
 </div>
 <main>
  <section id="s-rel">
-  <div class="print-title-only"><div>Relatório Corporativo: Movimentações e Consumo de EPIs</div><span class="pdt"></span></div>
   <div class="pf"><select id="p-ano" onchange="renderizarRelatorio()"></select><select id="p-mes" onchange="renderizarRelatorio()"></select><span class="sub" id="p-n"></span></div>
   <div class="kpis kpis-4" id="k-rel"></div>
   <div class="dashboard-grid" id="dg-rel"></div>
-  <div class="print-title-only pg2 pg2t"><div>Relatório Corporativo (continuação)</div><span class="pdt"></span></div>
   <div class="dashboard-grid" id="dg-rel2"></div>
  </section>
  <section id="s-est" class="hide">
-  <div class="print-title-only"><div>Movimentações de EPIs</div><span class="pdt"></span></div>
   <div class="kpis" id="k-est"></div>
   <div class="dashboard-grid" id="dg-est"></div>
   <details class="f"><summary><span>🔎 Filtros Avançados</span><span id="fe-n" class="sub"></span></summary>
@@ -176,7 +197,6 @@ body.pa3 .pg2t{display:none!important}
   <div id="l-est" class="cards"></div>
  </section>
  <section id="s-dev" class="hide">
-  <div class="print-title-only"><div>Colaboradores</div><span class="pdt"></span></div>
   <div class="kpis" id="k-dev"></div>
   <div class="dashboard-grid" id="dg-dev"></div>
   <details class="f"><summary><span>🔎 Filtros Avançados</span><span id="fd-n" class="sub"></span></summary>
@@ -197,8 +217,8 @@ body.pa3 .pg2t{display:none!important}
 const CSV_URL="https://docs.google.com/spreadsheets/d/e/2PACX-1vQVEgArNMWRAxt9I1pomlnmMRqYQ39ZfDDR-G2r7NFkqFSJf0af8t0o8FlSbomI4w/pub?output=csv";
 const KC="epis_cache_papaparse";
 const CORES=['#2563eb','#059669','#d97706','#dc2626','#7c3aed','#db2777','#0284c7','#65a30d','#4f46e5','#0d9488'];
-const DIAS_REPOSICAO=90;                       // reposição do mesmo EPI antes disso gera alerta
-const CONSUMIVEL=/LUVA|RESPIRADOR|MASCARA|PROTETOR AURIC|DESCART|FILTRO/i; // não alerta reposição
+const DIAS_REPOSICAO=90;
+const CONSUMIVEL=/LUVA|RESPIRADOR|MASCARA|PROTETOR AURIC|DESCART|FILTRO/i;
 const MESES=['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
 const $=id=>document.getElementById(id);
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -276,7 +296,6 @@ function imprimir(){
  let st=$('pgst');if(!st){st=document.createElement('style');st.id='pgst';document.head.appendChild(st)}
  st.textContent='@page{size:'+(f==='a3'?'A3 portrait':'A4 landscape')+';margin:8mm 10mm}';
  document.body.classList.toggle('pa3',f==='a3');document.body.classList.toggle('pa4',f!=='a3');
- const t='Impresso em '+new Date().toLocaleString('pt-BR');document.querySelectorAll('.pdt').forEach(e=>e.textContent=t);
  window.print();
 }
 function re(){
@@ -295,7 +314,7 @@ function re(){
  $('n-e').textContent=`${L.length} tipo(s) · ${totQtd} unidade(s)`;
  $('l-est').innerHTML=L.length?L.map(g=>{
   const k='e:'+g.nome,o=aberto.has(k);
-  return `<div class="c" id="${fId(g.nome,'card-e-')}"><button class="ch" onclick="tg('${kk(k)}')"><div class="row"><div class="nm">${esc(g.nome)}</div><span class="tot">${g.n} un.</span></div><div class="bar"><i style="width:${g.n/mx*100}%"></i></div><div class="chips"><span class="ch2">Colaboradores: ${g.solics.size}</span>${g.ult?`<span class="ch2">Última: ${dfm(g.ult)}</span>`:''}${g.custo?`<span class="ch2">${brl(g.custo)}</span>`:''}<span class="ch2">${o?'▲ ocultar':'▼ ver histórico'}</span></div></button><div class="det ${o?'':'det-closed'}">${g.registros.map(r=>`<div class="it"><b>${esc(r.colaborador)}</b> — ${r.qtd} un. (Data: ${esc(r.data)||'N/D'})</div>`).join('')}</div></div>`}).join(''):'<div class="empty">Nenhum registro encontrado.</div>';
+  return `<div class="c" id="${fId(g.nome,'card-e-')}"><button class="ch" onclick="tg('${kk(k)}')"><div class="row"><div class="nm">${esc(g.nome)}</div><span class="tot">${g.n} un.</span></div><div class="bar"><i style="width:${g.n/mx*100}%"></i></div><div class="chips"><span class="ch2">Colaboradores: ${g.solics.size}</span>${g.ult?`<span class="ch2">Última: ${dfm(g.ult)}</span>`:''}${g.custo?`<span class="ch2">${brl(g.custo)}</span>`:''}<span class="ch2">${o?'▲ ocultar':'▼ ver histórico'}</span></div></button><div class="det ${o?'':'det-closed'}">${g.registros.map(r=>`<div class="it"><b>${esc(r.colaborador)}</b> — ${r.qtd} un. (Data:${esc(r.data)||'N/D'})</div>`).join('')}</div></div>`}).join(''):'<div class="empty">Nenhum registro encontrado.</div>';
 }
 function rd(){
  const q=$('d-q').value.toLowerCase().trim(),ano=$('d-ano').value,mes=$('d-mes').value;
@@ -326,7 +345,7 @@ function rd(){
  $('n-dev').textContent=`${L.length} colaborador(es)`;
  $('l-dev').innerHTML=L.length?L.map(c=>{
   const k='d:'+c.nome,o=aberto.has(k),pi=Object.entries(c.porItem).sort((a,b)=>b[1]-a[1]);
-  return `<div class="c" id="${fId(c.nome,'card-d-')}"><button class="ch" onclick="tg('${kk(k)}')"><div class="row"><div class="nm">${esc(c.nome)}</div><span class="tot">${c.n} un.</span></div><div class="bar"><i style="width:${c.n/mx*100}%"></i></div><div class="chips"><span class="ch2">Tipos de EPIs: ${c.itens.size}</span>${c.custo?`<span class="ch2">${brl(c.custo)}</span>`:''}${c.ult?`<span class="ch2">Última: ${dfm(c.ult)} (${dias(c)}d)</span>`:''}<span class="ch2">${o?'▲ ocultar':'▼ ver detalhes'}</span></div></button><div class="det ${o?'':'det-closed'}"><div class="sub">Resumo por EPI</div>${pi.map(([n,v])=>`<div class="it"><b>${esc(abreviarEPI(n))}</b> — ${v} un.</div>`).join('')}<div class="sub" style="margin-top:6px">Histórico</div>${c.registros.map(r=>`<div class="it"><b>${esc(r.nome)}</b> — ${r.qtd} un. (Data: ${esc(r.data)||'N/D'})</div>`).join('')}</div></div>`}).join(''):'<div class="empty">Nenhum colaborador encontrado.</div>';
+  return `<div class="c" id="${fId(c.nome,'card-d-')}"><button class="ch" onclick="tg('${kk(k)}')"><div class="row"><div class="nm">${esc(c.nome)}</div><span class="tot">${c.n} un.</span></div><div class="bar"><i style="width:${c.n/mx*100}%"></i></div><div class="chips"><span class="ch2">Tipos de EPIs: ${c.itens.size}</span>${c.custo?`<span class="ch2">${brl(c.custo)}</span>`:''}${c.ult?`<span class="ch2">Última: ${dfm(c.ult)} (${dias(c)}d)</span>`:''}<span class="ch2">${o?'▲ ocultar':'▼ ver detalhes'}</span></div></button><div class="det ${o?'':'det-closed'}"><div class="sub">Resumo por EPI</div>${pi.map(([n,v])=>`<div class="it"><b>${esc(abreviarEPI(n))}</b> —${v} un.</div>`).join('')}<div class="sub" style="margin-top:6px">Histórico</div>${c.registros.map(r=>`<div class="it"><b>${esc(r.nome)}</b> — ${r.qtd} un. (Data:${esc(r.data)||'N/D'})</div>`).join('')}</div></div>`}).join(''):'<div class="empty">Nenhum colaborador encontrado.</div>';
 }
 
 /* ===== PAINEL EXECUTIVO ===== */
@@ -338,20 +357,17 @@ function renderizarRelatorio(){
  F.forEach(x=>{
   const g=G[x.nome]??={nome:x.nome,n:0,custo:0};g.n+=x.qtd;g.custo+=x.custo;
   const c=C[x.colaborador]??={nome:x.colaborador,n:0,custo:0};c.n+=x.qtd;c.custo+=x.custo});
- // evolução mensal (respeita só o ano)
- EST.filter(x=>x.ano&&(!$('p-ano').value||x.ano===$('p-ano').value)).forEach(x=>{
+ EST.filter(x=>x.ano&&(!$('p-ano').value\vert{}\vert{}x.ano===$('p-ano').value)).forEach(x=>{
   const k=x.ano+'-'+x.mes;const m=M[k]??={k,n:0,custo:0};m.n+=x.qtd;m.custo+=x.custo});
  const ML=Object.values(M).sort((a,b)=>a.k.localeCompare(b.k));
  const L_EPI=Object.values(G).sort((a,b)=>b.n-a.n),L_C=Object.values(C).sort((a,b)=>b.n-a.n);
  const top10=L_EPI.slice(0,10),nC=L_C.length||1;
 
- // último mês vs anterior
  let dl='';const u=ML[ML.length-1],p=ML[ML.length-2];
  if(u){const vr=p&&p.n?Math.round((u.n-p.n)/p.n*100):null;
   dl=kpi(u.n+' un.',`Último mês (${u.k.slice(5)}/${u.k.slice(0,4)})`,'#0284c7',vr===null?'':`<em class="${vr>0?'up':vr<0?'dn':'eq'}">${vr>0?'▲':vr<0?'▼':'='} ${Math.abs(vr)}% vs mês anterior</em>`)}
  else dl=kpi('—','Último mês','#0284c7');
 
- // alertas
  const mu=totQtd/nC,sd=Math.sqrt(soma(L_C.map(c=>(c.n-mu)**2))/nC),lim=mu+2*sd;
  const outl=L_C.length>=5?L_C.filter(c=>c.n>lim):[];
  const rep=[],GR={};
@@ -370,9 +386,7 @@ function renderizarRelatorio(){
   kpi(brl(totCusto/nC),'Custo por Colaborador','#db2777')+dl+
   kpi(rep.length,'Reposições antecipadas','#dc2626',`<em class="eq">menos de ${DIAS_REPOSICAO} dias</em>`);
 
- // gráficos
  const evo=box('📈 Evolução Mensal','Unidades retiradas por mês (custo abaixo)',vb(ML.slice(-12).map((m,i)=>({v:m.n,l:m.k,s:m.k.slice(5)+'/'+m.k.slice(2,4),c:'#2563eb',x:m.custo?'R$ '+kfmt(m.custo):''}))),'','#2563eb');
- // curva ABC
  const useC=totCusto>0,key=useC?'custo':'n',tot=useC?totCusto:totQtd;
  const ABC=Object.values(G).sort((a,b)=>b[key]-a[key]);let ac=0;
  ABC.forEach(g=>{ac+=g[key];g.acc=pct(ac,tot);g.cl=g.acc<=80?'A':g.acc<=95?'B':'C'});
@@ -381,7 +395,7 @@ function renderizarRelatorio(){
   `<div class="top10-list">${ABC.length?ABC.slice(0,10).map(g=>`<div class="top10-row" data-v="${esc(g.nome)}" onclick="selE(this.dataset.v)"><span><span class="cls c${g.cl}">${g.cl}</span>${esc(abreviarEPI(g.nome))}</span><span class="ch2">${useC?brl(g.custo):g.n+' un.'} · ${g.acc}%</span></div>`).join(''):VAZIO}</div>`,'','#d97706');
  const g1=box('📊 Top 10 EPIs Requisitados','Volume total entregue por material',vb(top10.map((g,i)=>({v:g.n,l:g.nome,c:CORES[i%10],x:pct(g.n,totQtd)+'%'}))),'','#059669');
  const g2=box('🏆 Top 10 Colaboradores','Maior volume retirado',`<div class="top10-list">${L_C.length?L_C.slice(0,10).map((c,i)=>`<div class="top10-row" data-v="${esc(c.nome)}" onclick="selD(this.dataset.v)"><span><b>#${i+1}</b>${esc(c.nome)}</span><span class="ch2 g">${c.n} un.</span></div>`).join(''):VAZIO}</div>`,'','#059669');
- const al=`${outl.slice(0,5).map(c=>`<div class="alert-row r" data-v="${esc(c.nome)}" onclick="selD(this.dataset.v)">🚩<div>${esc(c.nome)}<small>${c.n} un. retiradas — acima do padrão (média ${mu.toFixed(1)}, limite ${lim.toFixed(1)})</small></div></div>`).join('')}${rep.slice(0,6).map(r=>`<div class="alert-row" data-v="${esc(r.c)}" onclick="selD(this.dataset.v)">🔁<div>${esc(r.c)} — ${esc(abreviarEPI(r.n))}<small>nova retirada após ${r.d} dia(s) (${esc(r.data)})</small></div></div>`).join('')}`;
+ const al=`${outl.slice(0,5).map(c=>`<div class="alert-row r" data-v="${esc(c.nome)}" onclick="selD(this.dataset.v)">🚩<div>${esc(c.nome)}<small>${c.n} un. retiradas — acima do padrão (média ${mu.toFixed(1)}, limite${lim.toFixed(1)})</small></div></div>`).join('')}${rep.slice(0,6).map(r=>`<div class="alert-row" data-v="${esc(r.c)}" onclick="selD(this.dataset.v)">🔁<div>${esc(r.c)} —${esc(abreviarEPI(r.n))}<small>nova retirada após ${r.d} dia(s) (${esc(r.data)})</small></div></div>`).join('')}`;
  const alb=box('⚠️ Pontos de Atenção',`Retiradas fora do padrão e reposição antecipada (EPIs duráveis, menos de ${DIAS_REPOSICAO} dias)`,al||'<div class="empty" style="font-size:12px;padding:15px">Nenhum ponto de atenção no período ✔️</div>','full','#dc2626');
  $('dg-rel').innerHTML=evo+abc;$('dg-rel2').innerHTML=g1+g2+alb;
 }
