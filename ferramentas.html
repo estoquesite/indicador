@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="theme-color" content="#1e3a8a">
+<meta name="theme-color" content="#1d4ed8">
 <title>Painel Corporativo - Ferramentaria & Calibração</title>
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E🛠️%3C/text%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -182,8 +182,12 @@ input:focus,select:focus{outline:2px solid #93b4f5;border-color:#2563eb}
 
 /* ===== CORES MAIS VIVAS ===== */
 #s-est{--ac:#2563eb}#s-dev{--ac:#ea580c}#s-inv{--ac:#059669}
-body{background:linear-gradient(180deg,#e6ecfb 0,#f4f6fb 280px)}
-header{background:linear-gradient(135deg,#0b1220 0%,#1e3a8a 55%,#2563eb 100%);border-bottom:4px solid #f59e0b}
+body{background:linear-gradient(180deg,#dbe6fb 0,#f4f6fb 280px)}
+/* TÍTULO AZUL PRINCIPAL + NEON */
+header{background:linear-gradient(135deg,#1e40af 0%,#2563eb 55%,#3b82f6 100%);border-bottom:5px solid #00f0ff;box-shadow:0 6px 24px rgba(30,64,175,.35)}
+h1{font-size:26px;text-shadow:0 0 10px rgba(0,240,255,.9),0 0 22px rgba(0,240,255,.55)}
+#upd{opacity:.85;font-weight:600}
+@media(max-width:820px){h1{font-size:19px}}
 .seg button{color:#475569}
 #b-est.on{background:linear-gradient(135deg,#3b82f6,#1d4ed8);color:#fff;box-shadow:0 4px 14px rgba(37,99,235,.45)}
 #b-dev.on{background:linear-gradient(135deg,#fb923c,#ea580c);color:#fff;box-shadow:0 4px 14px rgba(234,88,12,.45)}
@@ -208,12 +212,13 @@ details.f summary{color:var(--ac,#334155)}
 
 /* ===== IMPRESSÃO: só indicadores + gráficos, 1 aba por folha ===== */
 @media print{
- /* sem fundo azul/colorido: folha totalmente branca */
  html,body{background:#fff!important;background-image:none!important}
  .chart-box{background:#fff!important}
  .kpi{background:#fff!important}
  .cards,.toolbar{display:none!important}
- .print-head{font-size:18px;margin-bottom:12px}
+ /* TÍTULO NEON EM TODAS AS FOLHAS (usa bordas: imprime sem "gráficos de segundo plano") */
+ .print-head{display:flex!important;flex-wrap:wrap;justify-content:space-between;align-items:baseline;background:#fff!important;border:3px solid #00f0ff!important;border-top:12px solid #0057ff!important;border-bottom:6px solid #39ff14!important;padding:6px 14px 6px!important;margin-bottom:12px!important;font-size:16px;color:#1e3a8a}
+ .print-head::before{content:"🛠️ Painel Corporativo — Ferramentaria & Calibração";flex-basis:100%;font-size:24px;font-weight:900;color:#0047ff;margin-bottom:2px}
  .kpis{gap:10px!important;margin-bottom:12px!important}
  .kpi{padding:10px 14px}.kpi b{font-size:26px}.kpi span{font-size:10px}
  .dashboard-grid{gap:12px!important}
