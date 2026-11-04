@@ -18,6 +18,7 @@ h1{font-size:24px;font-weight:900;text-shadow:0 0 10px rgba(0,240,255,.9)}
 .seg button.on{color:#fff;background:var(--c)}
 main{max-width:1800px;margin:0 auto;padding:18px 28px;display:grid;gap:18px}
 section{display:grid;gap:18px}.hide{display:none}
+h2.sec{font-size:18px;font-weight:900;color:#0f172a;border-left:7px solid var(--sc,#2563eb);padding-left:12px;margin-top:6px}
 .kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
 .kpi{background:#fff;border:1px solid var(--bd);border-left:8px solid var(--kc);border-radius:16px;padding:16px 20px;box-shadow:0 2px 10px rgba(15,23,42,.06)}
 .kpi b{display:block;font-size:28px;font-weight:900;color:var(--kc)}
@@ -57,9 +58,38 @@ input,select{width:100%;min-height:42px;padding:8px 12px;border:1px solid #d5dce
 .top10-row:hover{background:#f1f6ff}.top10-row span:first-child{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0}
 .fchip{display:flex;gap:8px;align-items:center;flex-wrap:wrap;font-size:13px;font-weight:700}
 .fchip button{border:1px solid var(--bd);background:#fff;border-radius:8px;padding:4px 10px;cursor:pointer;font-weight:800;color:#991b1b;font-family:inherit}
+
+/* ---- Resumo para impressão (só aparece ao imprimir) ---- */
+#prt{display:none}
 @media(max-width:1100px){.grid,.cards{grid-template-columns:1fr 1fr}.kpis{grid-template-columns:1fr 1fr}}
 @media(max-width:700px){.grid,.cards,.kpis,.f{grid-template-columns:1fr}main{padding:14px}.seg{margin:12px 14px 0}h1{font-size:18px}}
-@media print{header .btns,.seg,.f{display:none}.hide{display:none}.cards{grid-template-columns:repeat(3,1fr)}.c .det{display:grid}}
+@media print{
+ @page{size:A4 portrait;margin:7mm}
+ *{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+ html,body{background:#fff!important;padding:0!important;margin:0!important;width:auto}
+ header,.seg,main{display:none!important}
+ #prt{display:block!important;font-size:7.5pt;color:#0f172a;font-family:Inter,system-ui,sans-serif}
+ .p-h{display:flex;justify-content:space-between;align-items:flex-end;border-bottom:3px solid #2563eb;padding-bottom:4px;margin-bottom:5px}
+ .p-h h1{font-size:15pt;font-weight:900;text-shadow:none;color:#1e3a8a}
+ .p-s{font-size:7pt;color:#475569;font-weight:600}
+ .p-t{font-size:10pt;font-weight:900;color:#fff;background:#2563eb;padding:3px 8px;border-radius:4px;margin:7px 0 4px}
+ .p-t.cal{background:#059669}
+ .p-k{display:grid;grid-template-columns:repeat(4,1fr);gap:4px}
+ .p-k .kpi{padding:3px 6px;border-radius:4px;border-width:1px;border-left-width:4px;box-shadow:none}
+ .p-k .kpi b{font-size:12pt}
+ .p-k .kpi span{font-size:6pt;line-height:1.1;display:block}
+ .p-g{display:grid;grid-template-columns:repeat(3,1fr);gap:5px;margin-top:5px}
+ .p-b{border:1px solid #cbd5e1;border-radius:4px;padding:3px 6px;break-inside:avoid;min-width:0}
+ .p-b h4{font-size:7pt;text-transform:uppercase;color:#1e40af;border-bottom:1px solid #e3e8f0;margin-bottom:2px;padding-bottom:2px}
+ #prt .hb{font-size:6.8pt;padding:.6px 0;gap:4px;grid-template-columns:40% 1fr auto;cursor:default}
+ #prt .t{height:6px}
+ #prt .v{min-width:38px;font-size:6.8pt}
+ #prt .hb small{font-size:5.5pt;margin-left:2px}
+ .p-li{display:flex;justify-content:space-between;align-items:center;gap:4px;font-size:6.8pt;font-weight:600;padding:1px 0;border-bottom:1px dotted #e3e8f0}
+ .p-li span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0}
+ .p-li .chip{font-size:6pt;padding:1px 5px;white-space:nowrap}
+ .p-f{margin-top:6px;font-size:6.5pt;color:#64748b;text-align:center;border-top:1px dashed #cbd5e1;padding-top:3px}
+}
 </style></head><body>
 <header><div class="top">
  <div><h1>🛠️ Painel Corporativo — Ferramentaria & Movimentação</h1><div id="upd">Nenhum relatório carregado</div></div>
@@ -67,7 +97,7 @@ input,select{width:100%;min-height:42px;padding:8px 12px;border:1px solid #d5dce
   <button class="b" onclick="$('arq').click()">📊 Anexar Movimentação</button>
   <button class="b" style="background:rgba(5,150,105,.55)" onclick="$('arqc').click()">⚡ Anexar Calibração</button>
   <button class="b" onclick="salvar()">💾 Salvar</button>
-  <button class="b" onclick="print()">🖨️</button>
+  <button class="b" onclick="imprimir()" title="Imprime só o resumo geral em uma folha A4 em pé">🖨️ Imprimir resumo</button>
   <input type="file" id="arq" accept=".xls,.xlsx,.csv" hidden onchange="ler(this.files[0])">
   <input type="file" id="arqc" accept=".xls,.xlsx,.csv" hidden onchange="lerCal(this.files[0])">
  </div></div></header>
@@ -78,7 +108,12 @@ input,select{width:100%;min-height:42px;padding:8px 12px;border:1px solid #d5dce
 </div>
 <main>
  <div id="drop"><big>📊</big>Clique em <b>Anexar Movimentação</b> ou arraste o relatório de movimentação (.xls / .xlsx) aqui</div>
- <section id="s-ger" class="hide"><div class="kpis" id="k-ger"></div><div class="grid" id="g-ger"></div></section>
+ <section id="s-ger" class="hide">
+  <h2 class="sec" style="--sc:#2563eb">🔄 Movimentação e Empréstimos</h2>
+  <div class="kpis" id="k-ger"></div><div class="grid" id="g-ger"></div>
+  <h2 class="sec" style="--sc:#059669">⚡ Calibração</h2>
+  <div class="kpis" id="k-gcal"></div><div class="grid" id="g-gcal" style="--ac:#059669"></div>
+ </section>
  <section id="s-pen" class="hide" style="--ac:#ea580c">
   <div class="kpis" id="k-pen"></div><div class="grid" id="g-pen"></div>
   <div class="f"><input id="p-q" type="search" placeholder="Buscar usuário, ferramenta ou protocolo" oninput="rp()"><select id="p-ges" onchange="rp()"></select><select id="p-cal" onchange="rp()"><option value="">Calibração: todas</option><option>SIM</option><option>NAO</option></select><button class="btn" onclick="$('p-q').value=$('p-ges').value=$('p-cal').value='';rp()">Limpar</button></div>
@@ -89,6 +124,7 @@ input,select{width:100%;min-height:42px;padding:8px 12px;border:1px solid #d5dce
   <div class="f"><input id="c-q" type="search" placeholder="Buscar equipamento de calibração" oninput="rc()"><select id="c-st" onchange="rc()"><option value="">Status: todos</option><option value="v">Vencido</option><option value="a30">Vence em até 30 dias</option><option value="a90">Vence em 31–90 dias</option><option value="ok">Em dia</option><option value="sd">Sem data</option></select><span></span><button class="btn" onclick="$('c-q').value=$('c-st').value='';rc()">Limpar</button></div>
   <div class="fchip" id="c-cal"></div><div class="cards" id="l-cal"></div></section>
 </main>
+<div id="prt"></div>
 <script>
 const $=id=>document.getElementById(id);
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -102,10 +138,14 @@ const box=(t,sub,b,foot)=>`<div class="box"><h3>${t}<span class="sub">${sub||''}
 const hb=(items,fn,sel,un)=>{if(!items.length)return '<div class="empty">Sem dados</div>';const mx=Math.max(...items.map(x=>x.v),1),tot=soma(items.map(x=>x.v))||1;
  return items.map(i=>{const key=String(i.d??i.l);return `<div class="hb${sel!==undefined&&sel!==''&&String(sel)===key?' on':''}" ${fn?`data-v="${esc(key)}" onclick="${fn}(this.dataset.v)"`:''} title="${esc(i.l)}: ${i.v}${un?' '+un:''}"><div class="l">${esc(i.l)}</div><div class="t"><i style="width:${i.v>0?Math.max(i.v/mx*100,3):0}%;${i.c?'background:'+i.c:''}"></i></div><div class="v">${i.v}${un?' '+un:''}<small>${Math.round(i.v/tot*100)}%</small></div></div>`}).join('')};
 const top10=(arr,fn)=>arr.length?arr.map((x,i)=>`<div class="top10-row" data-v="${esc(x.d)}" onclick="${fn}(this.dataset.v)"><span><b>#${i+1}</b> ${esc(x.l)}</span><span class="chip ${x.c||''}">${x.r}</span></div>`).join(''):'<div class="empty">Sem dados</div>';
+const plist=arr=>arr.length?arr.map((x,i)=>`<div class="p-li"><span><b>#${i+1}</b> ${esc(x.l)}</span><span class="chip ${x.c||''}">${x.r}</span></div>`).join(''):'<div class="p-s">Sem dados</div>';
 const rank=(arr,k,n=8)=>Object.entries(arr.reduce((o,x)=>(o[x[k]||'—']=(o[x[k]||'—']||0)+1,o),{})).sort((a,b)=>b[1]-a[1]).slice(0,n).map(([l,v])=>({l,v}));
 
-function aba(t){cur=t;['ger','pen','cal'].forEach(x=>{const ok=x==='cal'?CAL.length>0:MOV.length>0;$('s-'+x).classList.toggle('hide',x!==t||!ok);$('b-'+x).classList.toggle('on',x===t)});
- $('drop').classList.toggle('hide',t==='cal'||MOV.length>0);$('drop-cal').classList.toggle('hide',t!=='cal'||CAL.length>0);scrollTo(0,0)}
+function aba(t){cur=t;
+ ['ger','pen','cal'].forEach(x=>{const ok=x==='cal'?CAL.length>0:x==='ger'?(MOV.length>0||CAL.length>0):MOV.length>0;$('s-'+x).classList.toggle('hide',x!==t||!ok);$('b-'+x).classList.toggle('on',x===t)});
+ const semMov=MOV.length===0,semCal=CAL.length===0;
+ $('drop').classList.toggle('hide',t==='cal'||!semMov||(t==='ger'&&!semCal));
+ $('drop-cal').classList.toggle('hide',t!=='cal'||!semCal);scrollTo(0,0)}
 
 /* ---- leitura do Excel ---- */
 async function ler(f){
@@ -140,27 +180,96 @@ function carregar(data,msg){
  rg();rp();aba(cur);
 }
 
-/* ---- Visão geral ---- */
-function irPen(v){$('p-q').value=v;$('p-ges').value=$('p-cal').value='';PF.faixa='';aba('pen');rp();setTimeout(()=>$('l-pen').scrollIntoView({behavior:'smooth'}),80)}
-function rg(){
- const aberto=ITENS.filter(i=>i.aberto),dev=ITENS.filter(i=>i.dev);
+/* ---- blocos reutilizados na Visão Geral (tela) e no resumo impresso (P=true) ---- */
+const FXP=[['Até 1 dia',x=>x<=1],['2 a 7 dias',x=>x>=2&&x<=7],['8 a 15 dias',x=>x>=8&&x<=15],['16 a 30 dias',x=>x>=16&&x<=30],['Mais de 30 dias',x=>x>30]];
+const PF={faixa:''};
+
+function htmlEmp(P){
+ if(!MOV.length)return{k:'',g:'<div class="empty" style="grid-column:1/-1">Relatório de movimentação não carregado. Clique em <b>Anexar Movimentação</b>.</div>'};
+ const N=P?5:8,bx=(t,s,b,f)=>P?`<div class="p-b"><h4>${t}</h4>${b}</div>`:box(t,s,b,f);
+ const aberto=ITENS.filter(i=>i.aberto),dev=ITENS.filter(i=>i.dev),n=ITENS.length;
  const tipos={};MOV.forEach(m=>tipos[m.tipo]=(tipos[m.tipo]||0)+1);
- const dia={};MOV.forEach(m=>{if(m.dt){const k=m.dt.toLocaleDateString('pt-BR',{day:'2-digit',month:'2-digit'});dia[k]=(dia[k]||0)+1}});
- $('k-ger').innerHTML=kpi(MOV.length,'Linhas de movimentação no relatório (reserva + empréstimo + devolução)','#2563eb')+kpi(ITENS.length,'Itens emprestados (1 por ferramenta/protocolo)','#7c3aed')+kpi(aberto.length,'Itens ainda não devolvidos','#ea580c')+kpi(dev.length,'Itens já devolvidos','#059669');
- const n=ITENS.length;
- $('g-ger').innerHTML=
-  box('📋 Tipo de movimentação','Número de linhas do relatório por tipo',hb(Object.entries(tipos).map(([l,v])=>({l,v})).sort((a,b)=>b.v-a.v),null,'','lin.'),'Cada empréstimo gera até 3 linhas: reserva, empréstimo e devolução.')+
-  box('🏆 Ferramentas mais emprestadas','Quantidade de itens emprestados · % do total de '+n,hb(rank(ITENS,'tool'),'irPen','','it.'),'👆 Clique para ver os empréstimos dessa ferramenta.')+
-  box('👤 Usuários com mais itens','Quantidade de itens retirados · % do total de '+n,hb(rank(ITENS,'usr'),'irPen','','it.'),'👆 Clique para ver os itens desse usuário.')+
-  box('🧑‍💼 Itens por gestor','Itens retirados por usuários de cada gestor',hb(rank(ITENS,'ges'),null,'','it.'))+
-  box('📅 Movimentações por dia','Linhas do relatório em cada dia (dd/mm)',hb(Object.entries(dia).map(([l,v])=>({l,v})),null,'','lin.'))+
-  box('🧰 Por tipo de ferramenta','FC = comum · CI = controle individual/aferição ou calibração',hb(rank(ITENS,'cat').map(x=>({...x,l:x.l.split(' - ')[0]+' - '+(x.l.split(' - ')[1]||'')}))),'Quantidade de itens emprestados.');
+ const dia={};MOV.forEach(m=>{if(m.dt){const t=new Date(m.dt.getFullYear(),m.dt.getMonth(),m.dt.getDate()).getTime();dia[t]=(dia[t]||0)+1}});
+ let dl=Object.entries(dia).sort((a,b)=>a[0]-b[0]).map(([t,v])=>({l:new Date(+t).toLocaleDateString('pt-BR',{day:'2-digit',month:'2-digit'}),v}));
+ if(P)dl=dl.slice(-10);
+ const us=new Set(aberto.map(i=>i.usr)).size,mx=aberto.length?Math.max(...aberto.map(x=>x.dias)):0,med=aberto.length?Math.round(soma(aberto.map(x=>x.dias))/aberto.length):0,gt7=aberto.filter(i=>i.dias>7).length;
+ const k=kpi(MOV.length,'Linhas de movimentação (reserva + empréstimo + devolução)','#2563eb')+kpi(n,'Itens emprestados (1 por ferramenta/protocolo)','#7c3aed')+kpi(aberto.length,'Itens ainda não devolvidos','#ea580c')+kpi(dev.length,'Itens já devolvidos','#059669')
+  +kpi(us,'Usuários com item em mãos','#7c3aed')+kpi(mx+' dias','Maior tempo de um item emprestado','#dc2626')+kpi(med+' dias','Tempo médio dos itens em aberto','#d97706')+kpi(gt7,'Itens em aberto há mais de 7 dias','#b91c1c');
+ const fx=FXP.map(([l,fn])=>({l,v:aberto.filter(i=>fn(i.dias)).length}));
+ const U={};aberto.forEach(i=>{const u=U[i.usr]??={u:i.usr,n:0,max:0};u.n++;u.max=Math.max(u.max,i.dias)});
+ const L=Object.values(U).sort((a,b)=>b.max-a.max||b.n-a.n).slice(0,P?5:10).map(x=>({l:x.u,d:x.u,r:x.n+' it. · '+x.max+' dias',c:x.max>7?'r':'a'}));
+ const g=
+  bx('📋 Tipo de movimentação','Número de linhas do relatório por tipo',hb(Object.entries(tipos).map(([l,v])=>({l,v})).sort((a,b)=>b.v-a.v),null,'','lin.'),'Cada empréstimo gera até 3 linhas: reserva, empréstimo e devolução.')+
+  bx('🏆 Ferramentas mais emprestadas','Quantidade de itens emprestados · % do total de '+n,hb(rank(ITENS,'tool',N),P?null:'irPen','','it.'),'👆 Clique para ver os empréstimos dessa ferramenta.')+
+  bx('👤 Usuários com mais itens','Quantidade de itens retirados · % do total de '+n,hb(rank(ITENS,'usr',N),P?null:'irPen','','it.'),'👆 Clique para ver os itens desse usuário.')+
+  bx('🧑‍💼 Itens por gestor','Itens retirados por usuários de cada gestor',hb(rank(ITENS,'ges',N),null,'','it.'))+
+  bx(P?'📅 Movimentações por dia (últimos 10)':'📅 Movimentações por dia','Linhas do relatório em cada dia (dd/mm)',hb(dl,null,'','lin.'))+
+  bx('🧰 Por tipo de ferramenta','FC = comum · CI = controle individual/aferição ou calibração',hb(rank(ITENS,'cat',N).map(x=>({...x,l:x.l.split(' - ')[0]+' - '+(x.l.split(' - ')[1]||'')}))),'Quantidade de itens emprestados.')+
+  bx('⏱️ Itens em aberto por tempo emprestado','Número de itens em cada faixa de dias desde a retirada',hb(fx,P?null:'irFx','','it.'),'👆 Clique numa barra para ver a lista.')+
+  bx('⚠️ Top usuários (maior tempo)','Maior nº de dias que o usuário está com um item',P?plist(L):top10(L,'irPen'),'it. = itens em mãos. 👆 Clique para ver o usuário.')+
+  bx('🔄 Ferramentas mais pendentes','Nº de itens ainda não devolvidos por ferramenta',hb(rank(aberto,'tool',N),P?null:'irPen','','it.'),'👆 Clique para filtrar por ferramenta.');
+ return{k,g};
 }
+
+function htmlCal(P){
+ if(!CAL.length)return{k:'',g:'<div class="empty" style="grid-column:1/-1">Arquivo de calibração não carregado. Clique em <b>Anexar Calibração</b>.</div>'};
+ const bx=(t,s,b,f)=>P?`<div class="p-b"><h4>${t}</h4>${b}</div>`:box(t,s,b,f);
+ const tl=(arr,fn)=>P?plist(arr):top10(arr,fn);
+ const all=CAL,n=all.length;all.forEach(x=>x.per=perKey(x));
+ const c=k=>all.filter(x=>x.st===k).length,cd=n-c('sd');
+ const venc=all.filter(x=>x.st==='v'&&x.d),mvenc=venc.length?Math.round(soma(venc.map(atr))/venc.length):0;
+ const esteMes=all.filter(x=>x.st!=='v'&&x.d&&mi(x)===0).length;
+ const k=kpi(n,'Equipamentos cadastrados','#2563eb')+kpi(c('v'),'Vencidos (calibração já passou da data)','#dc2626')+kpi(c('a30'),'Vencem nos próximos 30 dias','#d97706')+kpi(c('a90'),'Vencem entre 31 e 90 dias','#ca8a04')+kpi(cd?Math.round((cd-c('v'))/cd*100)+'%':'—','Conformidade: % dos equipamentos com data que estão em dia','#059669')+kpi(mvenc+' dias','Atraso médio dos vencidos','#7f1d1d')+kpi(esteMes,'Vencem neste mês (ainda não vencidos)','#0284c7')+kpi(c('sd'),'Sem data de vencimento cadastrada','#64748b');
+ const status=Object.keys(STL).map(k=>({l:STL[k][0],d:k,v:c(k),c:COR[k]}));
+ const B=[{l:'Vencidos',d:'Vencidos',v:0,c:'#dc2626'}];
+ for(let m=0;m<6;m++){const dt=new Date(HOJE.getFullYear(),HOJE.getMonth()+m,1);B.push({l:dt.toLocaleDateString('pt-BR',{month:'short',year:'2-digit'}),d:'m'+m,v:0})}
+ B.push({l:'7–12 meses',d:'7–12 meses',v:0},{l:'+ de 12 meses',d:'+ de 12 meses',v:0});
+ all.forEach(x=>{const i=B.findIndex(b=>b.d===x.per);if(i>=0)B[i].v++});
+ const AT=[['1 a 30 dias',x=>x<=30],['31 a 90 dias',x=>x>=31&&x<=90],['91 a 180 dias',x=>x>=91&&x<=180],['181 a 365 dias',x=>x>=181&&x<=365],['Mais de 1 ano',x=>x>365]].map(([l,fn])=>({l,v:venc.filter(x=>fn(atr(x))).length,c:'#dc2626'}));
+ const NT=P?5:10;
+ const crit=Object.values(all.reduce((o,x)=>{const g=o[x.ap]??={ap:x.ap,v:0,min:null,n:0};g.n++;if(x.st==='v')g.v++;if(x.d&&(!g.min||x.d<g.min))g.min=x.d;return o},{})).sort((a,b)=>b.v-a.v||(a.min?+a.min:9e15)-(b.min?+b.min:9e15)).slice(0,NT);
+ const sit={};all.forEach(x=>sit[x.sit]=(sit[x.sit]||0)+1);
+ const prox=all.filter(x=>x.d&&x.st!=='v').sort((a,b)=>a.d-b.d).slice(0,P?5:8);
+ const g=
+  bx('⚡ Situação da calibração','Nº de equipamentos em cada status · % do total de '+n,hb(status,P?null:'irCalSt','','equip.'),'Vencido = data já passou · Em dia = mais de 90 dias. 👆 Clique para ver a lista.')+
+  bx('📅 Vencimentos por período','Nº de equipamentos que vencem em cada mês',hb(B,P?null:'irCalPer','','equip.'),'Cada barra = equipamentos cujo vencimento cai naquele período. 👆 Clique para ver a lista.')+
+  bx('🏆 Equipamentos críticos','Mais itens vencidos e vencimento mais antigo',tl(crit.map(g=>({l:g.ap,d:g.ap,r:(g.v?g.v+' venc. · ':'')+fmt(g.min),c:g.v?'r':'a'})),'irCal'),'Data = vencimento mais antigo do grupo. 👆 Clique para ver o equipamento.')+
+  bx('🕒 Há quanto tempo estão vencidos','Nº de equipamentos vencidos por faixa de dias de atraso',hb(AT,null,'','equip.'),'Considera só os '+venc.length+' vencidos. Atraso médio: '+mvenc+' dias.')+
+  bx('📌 Situação da ferramenta','Nº de equipamentos por situação informada no cadastro',hb(Object.entries(sit).map(([l,v])=>({l,v})).sort((a,b)=>b.v-a.v).slice(0,P?5:8),null,'','equip.'))+
+  bx('🔜 Próximos a vencer','Os vencimentos mais próximos (ainda em dia)',tl(prox.map(x=>({l:x.ap,d:x.ap,r:fmt(x.d)+' · em '+Math.round((x.d-HOJE)/864e5)+' d',c:'a'})),'irCal'),'d = dias até vencer. 👆 Clique para ver o equipamento.');
+ return{k,g};
+}
+
+/* ---- Visão geral (tela) ---- */
+function irPen(v){$('p-q').value=v;$('p-ges').value=$('p-cal').value='';PF.faixa='';aba('pen');rp();setTimeout(()=>$('l-pen').scrollIntoView({behavior:'smooth'}),80)}
+function irFx(v){PF.faixa=v;$('p-q').value=$('p-ges').value=$('p-cal').value='';aba('pen');rp();rolar('l-pen')}
+function irCal(v){$('c-q').value=v;$('c-st').value='';CF.per='';aba('cal');rc();rolar('l-cal')}
+function irCalSt(v){$('c-q').value='';CF.per='';$('c-st').value=v;aba('cal');rc();rolar('l-cal')}
+function irCalPer(v){$('c-q').value='';$('c-st').value='';CF.per=v;aba('cal');rc();rolar('l-cal')}
+function rg(){
+ const E=htmlEmp(false),C=htmlCal(false);
+ $('k-ger').innerHTML=E.k;$('g-ger').innerHTML=E.g;
+ $('k-gcal').innerHTML=C.k;$('g-gcal').innerHTML=C.g;
+ atualizarPrt();
+}
+
+/* ---- Resumo impresso: tudo da Visão Geral, em 1 folha A4 em pé ---- */
+function atualizarPrt(){
+ if(!MOV.length&&!CAL.length){$('prt').innerHTML='';return}
+ const E=htmlEmp(true),C=htmlCal(true),agora=new Date().toLocaleString('pt-BR',{day:'2-digit',month:'2-digit',year:'numeric',hour:'2-digit',minute:'2-digit'});
+ $('prt').innerHTML=`<div class="p-h"><div><h1>🛠️ Ferramentaria — Resumo Geral</h1><div class="p-s">Movimentação: ${esc(NOME||'não carregada')} · Calibração: ${esc(NOMEC||'não carregada')}</div></div><div class="p-s" style="text-align:right">Emitido em ${agora}</div></div>`+
+  `<div class="p-t">🔄 Movimentação e Empréstimos</div><div class="p-k">${E.k}</div><div class="p-g">${E.g}</div>`+
+  `<div class="p-t cal">⚡ Calibração</div><div class="p-k">${C.k}</div><div class="p-g">${C.g}</div>`+
+  `<div class="p-f">Painel Corporativo — Ferramentaria & Movimentação · Resumo gerado automaticamente a partir dos arquivos carregados</div>`;
+}
+function imprimir(){
+ if(!MOV.length&&!CAL.length){alert('Anexe um relatório primeiro.');return}
+ atualizarPrt();print();
+}
+window.addEventListener('beforeprint',()=>{HOJE=new Date();HOJE.setHours(0,0,0,0);atualizarPrt()});
 
 /* ---- Em empréstimo ---- */
 function card(g,open,extra,red){return `<div class="c ${red?'red':''} ${open?'open':''}"><button class="ch" onclick="this.parentNode.classList.toggle('open')"><div class="row"><div class="nm">${esc(g.t)}</div><span class="tot">${g.n} it.</span></div><div class="chips">${extra}</div></button><div class="det">${g.det}</div></div>`}
-const PF={faixa:''};
-const FXP=[['Até 1 dia',x=>x<=1],['2 a 7 dias',x=>x>=2&&x<=7],['8 a 15 dias',x=>x>=8&&x<=15],['16 a 30 dias',x=>x>=16&&x<=30],['Mais de 30 dias',x=>x>30]];
 function selFx(v){PF.faixa=PF.faixa===v?'':v;rp();rolar('l-pen')}
 function rolar(id){setTimeout(()=>$(id).scrollIntoView({behavior:'smooth',block:'start'}),80)}
 function rp(){
@@ -205,7 +314,7 @@ function carregarCal(data){
  CAL=data.filter(r=>{const s=pick(r,'Status').toLowerCase();return !s||s==='ativo'}).map(r=>{
   const d=pd(pick(r,'Data próxima manutenção','Data Próxima Manutenção','Vencimento'));
   return{ap:pick(r,'Apelido','Descrição Ferramenta','Equipamento').trim(),d,sit:pick(r,'Situação ferramenta')||'—',st:stat(d)}}).filter(x=>x.ap);
- rc();aba(cur);
+ rc();rg();aba(cur);
 }
 const CF={per:'',ap:''};
 const COR={v:'#dc2626',a30:'#d97706',a90:'#eab308',ok:'#059669',sd:'#94a3b8'};
@@ -266,7 +375,7 @@ function salvar(){
 
 /* arrastar e soltar + dados salvos no navegador */
 ['dragover','drop'].forEach(e=>document.addEventListener(e,ev=>{ev.preventDefault();if(e==='drop')(cur==='cal'?lerCal:ler)(ev.dataTransfer.files[0])}));
-try{const c=JSON.parse(localStorage.getItem(KC)||'null');if(c)carregar(c.d,'Dados salvos: '+c.n+' ('+new Date(c.t).toLocaleString('pt-BR',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'})+')')}catch(e){}
-try{const c=JSON.parse(localStorage.getItem(KCC)||'null');if(c)carregarCal(c.d)}catch(e){}
+try{const c=JSON.parse(localStorage.getItem(KC)||'null');if(c){NOME=c.n;carregar(c.d,'Dados salvos: '+c.n+' ('+new Date(c.t).toLocaleString('pt-BR',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'})+')')}}catch(e){}
+try{const c=JSON.parse(localStorage.getItem(KCC)||'null');if(c){NOMEC=c.n;carregarCal(c.d)}}catch(e){}
 aba(cur);
 </script></body></html>
