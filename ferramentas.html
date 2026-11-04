@@ -212,6 +212,9 @@ h1{font-size:26px;text-shadow:0 0 10px rgba(0,240,255,.9),0 0 22px rgba(0,240,25
 .bar i{background:linear-gradient(90deg,color-mix(in srgb,var(--ac,#2563eb) 55%,#fff),var(--ac,#2563eb))}
 details.f summary{color:var(--ac,#334155)}
 
+/* Botão salvar: confirmação visível */
+#btnSalvar.ok{background:#059669;border-color:#34d399}
+
 /* ===== IMPRESSÃO: só indicadores + gráficos, 1 aba por folha ===== */
 @media print{
  html,body{background:#fff!important;background-image:none!important}
@@ -247,6 +250,7 @@ details.f summary{color:var(--ac,#334155)}
   <div class="top-btns">
    <button class="print-btn" onclick="$('fileIn').click()" title="Anexar planilhas Excel">📁</button>
    <button class="print-btn" id="btnWeb" onclick="voltarWeb()" hidden title="Voltar à planilha online">🌐</button>
+   <button class="print-btn" id="btnSalvar" onclick="salvarAgora()" title="Salvar neste aparelho">💾</button>
    <button class="print-btn" onclick="window.print()" title="Imprimir / Salvar PDF">🖨️</button>
    <button class="rf" id="rf" onclick="atualizar(true)" aria-label="Atualizar">↻</button>
   </div>
@@ -316,6 +320,7 @@ const $=id=>document.getElementById(id);
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 let EST=[],DEV=[],INV=[],HOJE=new Date(),aberto=new Set(),stF='todos',ultimo=0;
 let modoArquivo=false;
+let ARQ={dev:null,inv:null};
 const LK={e:[],d:[],i:[]};
 
 /* ---------- utilidades ---------- */
@@ -696,8 +701,9 @@ function rowsDoExcel(wb){
  for(const n of wb.SheetNames){
   const r=XLSX.utils.sheet_to_json(wb.Sheets[n],{defval:'',raw:false,dateNF:'dd/mm/yyyy'});
   if(r.length){
-   const t=tipoDoArquivo(r.map(o=>{const x={};for(const k in o)x[String(k).trim()]=o[k];return x}));
-   if(t)return{tipo:t,rows:r.map(o=>{const x={};for(const k in o)x[String(k).trim()]=o[k];return x})};
+   const rows=r.map(o=>{const x={};for(const k in o)x[String(k).trim()]=o[k];return x});
+   const t=tipoDoArquivo(rows);
+   if(t)return{tipo:t,rows};
   }
  }
  return null;
@@ -708,7 +714,6 @@ function paraCsv(rows){
  const q=v=>'"'+String(v??'').replace(/"/g,'""')+'"';
  return [cab.map(q).join(',')].concat(rows.map(r=>cab.map(k=>q(r[k])).join(','))).join('\n');
 }
-let ARQ={dev:null,inv:null}; /* {nome, txt} de cada tipo */
 
 $('fileIn').addEventListener('change',async()=>{
  const files=[...$('fileIn').files];$('fileIn').value='';
@@ -728,10 +733,9 @@ $('fileIn').addEventListener('change',async()=>{
  if(!ARQ.dev||!ARQ.inv){
   alert('Anexei o que veio. Falta '+(ARQ.dev?'o de calibração':'o de devoluções')+' para o painel ficar completo. O outro segue com o último arquivo anexado ou sem dados.');
  }
- if(!ARQ.dev||!ARQ.inv){}
- const ok=usarArquivos();
+ usarArquivos();
  if(erros.length)alert('Alguns arquivos não foram usados:\n• '+erros.join('\n• '));
- try{localStorage.setItem(KA,JSON.stringify(ARQ));localStorage.setItem('ferr_modo','arquivo')}catch(e){}
+ salvarAgora(true);
 });
 function usarArquivos(){
  const dev=ARQ.dev?ARQ.dev.txt:'',inv=ARQ.inv?ARQ.inv.txt:'';
@@ -746,6 +750,28 @@ function voltarWeb(){
  try{localStorage.removeItem(KA);localStorage.setItem('ferr_modo','web')}catch(e){}
  $('btnWeb').hidden=true;
  atualizar(true);
+}
+
+/* ---------- SALVAR NESTE APARELHO (💾) ---------- */
+/* Os Excel anexados ficam guardados no navegador deste aparelho, e voltam ao abrir a página.
+   Não são enviados para nenhum servidor. */
+function salvarAgora(automatico){
+ const b=$('btnSalvar');
+ try{
+  if(modoArquivo){
+   localStorage.setItem(KA,JSON.stringify(ARQ));
+   localStorage.setItem('ferr_modo','arquivo');
+  }else{
+   localStorage.setItem('ferr_modo','web');
+  }
+  const h=new Date().toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'});
+  const nomes=modoArquivo?[ARQ.dev&&ARQ.dev.nome,ARQ.inv&&ARQ.inv.nome].filter(Boolean).join(' + ')+' · ':'';
+  $('upd').textContent=(automatico?'📎 ':'')+nomes+'✔️ Salvo neste aparelho às '+h;
+  b.classList.add('ok');b.title='Salvo às '+h;
+  setTimeout(()=>b.classList.remove('ok'),1500);
+ }catch(e){
+  alert('Não consegui salvar neste aparelho: '+e.message+'\n\nVerifique se o navegador não está em modo privado ou sem espaço de armazenamento.');
+ }
 }
 
 /* impressão: carimbo de data */
