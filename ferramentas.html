@@ -397,40 +397,23 @@ function renderizarRelatorio(){
 }
 
 /* ===== ANEXAR PLANILHA EXCEL (📁) ===== */
-/* Lê o Excel ignorando acentos, maiúsculas, espaços extras e linhas de título acima do cabeçalho. */
-const norm=s=>String(s??'').replace(/\u00a0/g,' ').trim().toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9]/g,'');
-const COLUNAS_USADAS=['CriadaEm','SolicitanteNome','ItemNome','ItemQuantidade','ItemPreco'];
-function lerLinhasExcel(wb){
- for(const n of wb.SheetNames){
-  const aoa=XLSX.utils.sheet_to_json(wb.Sheets[n],{header:1,defval:'',raw:false,dateNF:'dd/mm/yyyy'});
-  const lim=Math.min(aoa.length,30);
-  for(let i=0;i<lim;i++){
-   const cab=aoa[i].map(norm);
-   if(cab.includes(norm('SolicitanteNome'))&&cab.includes(norm('ItemNome'))){
-    const mapa=aoa[i].map(h=>{const k=norm(h);const c=COLUNAS_USADAS.find(c=>norm(c)===k);return c||String(h).trim()});
-    return aoa.slice(i+1).filter(a=>a.some(v=>String(v).trim()!=='')).map(a=>{const o={};mapa.forEach((k,j)=>{if(k)o[k]=a[j]??''});return o});
-   }
-  }
- }
- return null;
-}
-function cabecalhoAmostra(wb){
- const ws=wb.Sheets[wb.SheetNames[0]];
- const aoa=XLSX.utils.sheet_to_json(ws,{header:1,defval:'',raw:false});
- const linha=aoa.find(a=>a.some(v=>String(v).trim()!==''))||[];
- return linha.map(v=>String(v).trim()).filter(Boolean).slice(0,12).join(', ')||'(nenhuma)';
-}
 $('fileIn').addEventListener('change',()=>{const f=$('fileIn').files[0];$('fileIn').value='';if(f)lerArquivo(f)});
 async function lerArquivo(f){
  if(!/\.(xlsx|xls)$/i.test(f.name)){alert('Escolha um arquivo Excel (.xlsx ou .xls).');return}
  try{
   const wb=XLSX.read(await f.arrayBuffer(),{type:'array'});
-  const rows=lerLinhasExcel(wb);
-  if(!rows){
-   alert('Não encontrei as colunas SolicitanteNome e ItemNome nessa planilha.\n\nColunas lidas no início do arquivo:\n• '+cabecalhoAmostra(wb)+'\n\nSe o relatório veio com outros títulos, me envie o arquivo.');
-   return;
+  let rows=null;
+  for(const n of wb.SheetNames){
+   const r=XLSX.utils.sheet_to_json(wb.Sheets[n],{defval:'',raw:false,dateNF:'dd/mm/yyyy'});
+   if(r.length){
+    const cab=Object.keys(r[0]).map(x=>String(x).trim());
+    if(cab.includes('SolicitanteNome')&&cab.includes('ItemNome')){
+     rows=r.map(o=>{const x={};for(const k in o)x[String(k).trim()]=o[k];return x});
+     break;
+    }
+   }
   }
-  if(!rows.length){alert('A planilha tem as colunas certas, mas está sem linhas de dados.');return}
+  if(!rows){alert('Essa planilha não tem as colunas SolicitanteNome e ItemNome (mesmo formato da planilha online).');return}
   usarArquivo(rows,f.name);
   salvarAgora(true);
  }catch(e){alert('Não consegui ler o arquivo: '+e.message)}
