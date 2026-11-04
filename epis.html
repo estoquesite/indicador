@@ -138,14 +138,15 @@ body.pa3 .pg2t{display:none!important}
    <div><h1>⛑️ Painel Corporativo — Gestão de EPIs</h1><div id="upd">Carregando dados…</div></div>
   </div>
   <div class="top-btns">
-   <button class="print-btn" onclick="escolherPasta()" title="Escolher a pasta do computador com o Excel">📁</button>
-   <button class="print-btn" id="btnWeb" onclick="voltarWeb()" hidden title="Voltar a usar a planilha online">🌐</button>
+   <button class="print-btn" onclick="$('fileIn').click()" title="Anexar planilha Excel">📁</button>
+   <button class="print-btn" id="btnWeb" onclick="voltarWeb()" hidden title="Voltar à planilha online">🌐</button>
    <button class="print-btn" onclick="exportar()" title="Exportar CSV (filtro do painel)">⬇️</button>
    <select id="fmt" class="fmt" title="Formato de impressão"><option value="a4">A4 paisagem</option><option value="a3">A3 retrato</option></select><button class="print-btn" onclick="imprimir()" title="Imprimir / Salvar PDF">🖨️</button>
    <button class="rf" id="rf" onclick="atualizar(true)" aria-label="Atualizar">↻</button>
   </div>
  </div>
 </header>
+<input type="file" id="fileIn" accept=".xlsx,.xls" hidden>
 <div class="seg">
  <button id="b-rel" class="on" onclick="aba('rel')">📊 Painel Executivo</button>
  <button id="b-est" onclick="aba('est')">📦 Movimentações de EPIs</button>
@@ -202,6 +203,7 @@ body.pa3 .pg2t{display:none!important}
 <script>
 const CSV_URL="https://docs.google.com/spreadsheets/d/e/2PACX-1vQVEgArNMWRAxt9I1pomlnmMRqYQ39ZfDDR-G2r7NFkqFSJf0af8t0o8FlSbomI4w/pub?output=csv";
 const KC="epis_cache_papaparse";
+const KA="epis_arquivo";
 const CORES=['#2563eb','#059669','#d97706','#dc2626','#7c3aed','#db2777','#0284c7','#65a30d','#4f46e5','#0d9488'];
 const DIAS_REPOSICAO=90;
 const CONSUMIVEL=/LUVA|RESPIRADOR|MASCARA|PROTETOR AURIC|DESCART|FILTRO/i;
@@ -223,6 +225,7 @@ function abreviarEPI(n){if(!n)return'';return n.trim()
  .replace(/RESPIRADOR DESCARTAVEL N95 S\/ VALVULA PFF2/gi,'RESPIRADOR N95').replace(/BOTINA CADARCO COMPOS MANOBREIRO CPAP/gi,'BOTINA CPAP')
  .replace(/OCULOS GRADUADOS OPERACIONAL/gi,'OCULOS GRADUADOS').replace(/SUSPENSAO DUPLA COM CATRACA 3M/gi,'SUSPENSAO 3M')}
 let EST=[],aberto=new Set();const LK={e:[],d:[]};
+let modoArquivo=false;
 const fId=(s,p='card-')=>p+String(s).toLowerCase().replace(/[^a-z0-9]/g,'_');
 function rolarPara(id){setTimeout(()=>{const el=$(id);if(el){el.scrollIntoView({behavior:'smooth',block:'center'});el.classList.add('highlight-target');setTimeout(()=>el.classList.remove('highlight-target'),1600)}},80)}
 const VAZIO='<div class="empty" style="font-size:12px;padding:15px">Sem dados</div>';
@@ -249,7 +252,7 @@ function processarDados(results){
  $('upd').textContent='Atualizado às '+new Date().toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'});
 }
 function atualizar(manual){
- if(modoPasta&&pastaH){if(manual)atualizarDaPasta();return}
+ if(modoArquivo){if(manual)alert('Você está usando a planilha anexada. Para atualizar, anexe o Excel de novo pelo 📁 ou volte à online pelo 🌐.');return}
  const b=$('rf');b.classList.add('spin');
  let fim=false;
  const falha=()=>{if(fim)return;fim=true;clearTimeout(tm);
@@ -391,64 +394,38 @@ function renderizarRelatorio(){
  $('dg-rel').innerHTML=evo+abc;$('dg-rel2').innerHTML=g1+g2+alb;
 }
 
-/* ===== PASTA DO COMPUTADOR (Chrome / Edge) ===== */
-/* Escolha uma pasta uma vez; o painel lê o Excel/CSV mais recente que tenha as colunas
-   SolicitanteNome e ItemNome (mesmo formato da planilha online). */
-let pastaH=null,modoPasta=false;
-const EXT=/\.(xlsx|xls|csv)$/i;
-const IDB={
- open(){return new Promise((res,rej)=>{const r=indexedDB.open('epis_pasta',1);r.onupgradeneeded=()=>r.result.createObjectStore('h');r.onsuccess=()=>res(r.result);r.onerror=()=>rej(r.error)})},
- async get(){try{const db=await this.open();return await new Promise(res=>{const q=db.transaction('h').objectStore('h').get('dir');q.onsuccess=()=>res(q.result||null);q.onerror=()=>res(null)})}catch(e){return null}},
- async set(v){try{const db=await this.open();return await new Promise(res=>{const t=db.transaction('h','readwrite');t.objectStore('h').put(v,'dir');t.oncomplete=()=>res();t.onerror=()=>res()})}catch(e){}}
-};
-function mostrarPasta(){$('btnWeb').hidden=!modoPasta}
-async function arquivoParaRows(f){
- let txt;
- if(/\.csv$/i.test(f.name))txt=(await f.text()).replace(/^\ufeff/,'');
- else{const wb=XLSX.read(await f.arrayBuffer(),{type:'array',cellDates:true});txt=XLSX.utils.sheet_to_csv(wb.Sheets[wb.SheetNames[0]],{dateNF:'dd/mm/yyyy',blankrows:false})}
- const r=Papa.parse(txt,{header:true,skipEmptyLines:true});
- return{rows:r.data,campos:(r.meta.fields||[]).map(x=>String(x).trim())};
-}
-async function lerPasta(dir){
- const arqs=[];
- try{for await(const [nome,h] of dir.entries()){if(h.kind!=='file'||!EXT.test(nome)||nome.startsWith('~$'))continue;arqs.push(await h.getFile())}}
- catch(e){alert('Não consegui ler a pasta: '+e.message);return false}
- if(!arqs.length){alert('Nenhum arquivo Excel/CSV encontrado na pasta "'+dir.name+'".');return false}
- arqs.sort((a,b)=>b.lastModified-a.lastModified);
- for(const f of arqs){
-  let d;try{d=await arquivoParaRows(f)}catch(e){continue}
-  if(d.campos.includes('SolicitanteNome')&&d.campos.includes('ItemNome')&&d.rows.length){
-   processarDados({data:d.rows});
-   try{localStorage.setItem(KC,JSON.stringify(d.rows))}catch(e){}
-   $('upd').textContent='📁 '+dir.name+' · '+f.name;
-   return true;
+/* ===== ANEXAR PLANILHA EXCEL (📁) ===== */
+$('fileIn').addEventListener('change',()=>{const f=$('fileIn').files[0];$('fileIn').value='';if(f)lerArquivo(f)});
+async function lerArquivo(f){
+ if(!/\.(xlsx|xls)$/i.test(f.name)){alert('Escolha um arquivo Excel (.xlsx ou .xls).');return}
+ try{
+  const wb=XLSX.read(await f.arrayBuffer(),{type:'array'});
+  let rows=null;
+  for(const n of wb.SheetNames){
+   const r=XLSX.utils.sheet_to_json(wb.Sheets[n],{defval:'',raw:false,dateNF:'dd/mm/yyyy'});
+   if(r.length){
+    const cab=Object.keys(r[0]).map(x=>String(x).trim());
+    if(cab.includes('SolicitanteNome')&&cab.includes('ItemNome')){
+     rows=r.map(o=>{const x={};for(const k in o)x[String(k).trim()]=o[k];return x});
+     break;
+    }
+   }
   }
- }
- alert('Nenhum arquivo da pasta "'+dir.name+'" tem as colunas SolicitanteNome e ItemNome (mesmo formato da planilha online).');
- return false;
+  if(!rows){alert('Essa planilha não tem as colunas SolicitanteNome e ItemNome (mesmo formato da planilha online).');return}
+  usarArquivo(rows,f.name);
+  try{localStorage.setItem(KA,JSON.stringify({nome:f.name,rows}));localStorage.setItem('epis_modo','arquivo')}catch(e){}
+ }catch(e){alert('Não consegui ler o arquivo: '+e.message)}
 }
-async function escolherPasta(){
- if(!window.showDirectoryPicker){alert('Este navegador não permite escolher pasta. Use o Chrome ou o Edge no computador.');return}
- try{
-  const d=await window.showDirectoryPicker({mode:'read'});
-  pastaH=d;await IDB.set(d);modoPasta=true;
-  try{localStorage.setItem('epis_modo','pasta')}catch(e){}
-  mostrarPasta();await lerPasta(d);
- }catch(e){if(e.name!=='AbortError')alert('Não foi possível abrir a pasta: '+e.message)}
-}
-async function atualizarDaPasta(){
- const b=$('rf');b.classList.add('spin');
- try{
-  let p=await pastaH.queryPermission({mode:'read'});
-  if(p!=='granted')p=await pastaH.requestPermission({mode:'read'});
-  if(p!=='granted')alert('Permissão negada para ler a pasta.');
-  else await lerPasta(pastaH);
- }catch(e){alert('Erro ao atualizar da pasta: '+e.message)}
- b.classList.remove('spin');
+function usarArquivo(rows,nome){
+ modoArquivo=true;$('btnWeb').hidden=false;
+ processarDados({data:rows});
+ $('upd').textContent='📎 '+nome+' · '+rows.length+' linhas';
 }
 function voltarWeb(){
- modoPasta=false;try{localStorage.setItem('epis_modo','web')}catch(e){}
- mostrarPasta();atualizar(true);
+ modoArquivo=false;
+ try{localStorage.removeItem(KA);localStorage.setItem('epis_modo','web')}catch(e){}
+ $('btnWeb').hidden=true;
+ atualizar(true);
 }
 
 function exportar(){
@@ -459,16 +436,11 @@ function exportar(){
 }
 
 try{const fm=localStorage.getItem('epis_fmt');if(fm)$('fmt').value=fm}catch(e){}
-try{const c=localStorage.getItem(KC);if(c)processarDados({data:JSON.parse(c)})}catch(e){}
-(async()=>{
- pastaH=await IDB.get();
- modoPasta=!!pastaH&&(()=>{try{return localStorage.getItem('epis_modo')==='pasta'}catch(e){return false}})();
- mostrarPasta();
- if(modoPasta){
-  try{const p=await pastaH.queryPermission({mode:'read'});if(p==='granted'){await lerPasta(pastaH);return}}catch(e){}
-  $('upd').textContent='📁 Clique em ↻ para liberar e ler a pasta';
-  return;
- }
+(function iniciar(){
+ let a=null;
+ try{if(localStorage.getItem('epis_modo')==='arquivo')a=JSON.parse(localStorage.getItem(KA))}catch(e){}
+ if(a&&a.rows&&a.rows.length){usarArquivo(a.rows,a.nome);return}
+ try{const c=localStorage.getItem(KC);if(c)processarDados({data:JSON.parse(c)})}catch(e){}
  atualizar();
 })();
 </script>
