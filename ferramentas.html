@@ -245,8 +245,8 @@ details.f summary{color:var(--ac,#334155)}
    <div><h1>🛠️ Painel Corporativo — Ferramentaria & Calibração</h1><div id="upd">Carregando…</div></div>
   </div>
   <div class="top-btns">
-   <button class="print-btn" onclick="escolherPasta()" title="Escolher a pasta do computador com os Excel">📁</button>
-   <button class="print-btn" id="btnWeb" onclick="voltarWeb()" hidden title="Voltar a usar as planilhas online">🌐</button>
+   <button class="print-btn" onclick="$('fileIn').click()" title="Anexar planilhas Excel">📁</button>
+   <button class="print-btn" id="btnWeb" onclick="voltarWeb()" hidden title="Voltar à planilha online">🌐</button>
    <button class="print-btn" onclick="window.print()" title="Imprimir / Salvar PDF">🖨️</button>
    <button class="rf" id="rf" onclick="atualizar(true)" aria-label="Atualizar">↻</button>
   </div>
@@ -257,6 +257,7 @@ details.f summary{color:var(--ac,#334155)}
   <button id="b-inv" onclick="aba('inv')">⚡ Calibração de Equipamentos</button>
  </div>
 </header>
+<input type="file" id="fileIn" accept=".xlsx,.xls" multiple hidden>
 <main>
  <!-- ABA 1: INVENTÁRIO -->
  <section id="s-est">
@@ -308,11 +309,13 @@ const URLS=[
  "https://docs.google.com/spreadsheets/d/e/2PACX-1vR4zF860IfKYViF0uSuN_Hd3LT-1uX_5IQPgZLl5FGu7pMF8CI96hrIlVfQmtOlWw/pub?output=csv"
 ];
 const KC="ferramentaria_cache_v21";
+const KA="ferr_arquivos";
 const MES_NOME=['janeiro','fevereiro','março','abril','maio','junho','julho','agosto','setembro','outubro','novembro','dezembro'];
 const CORES_GRAFICO=['#2563eb','#059669','#d97706','#dc2626','#7c3aed','#db2777','#0284c7','#65a30d'];
 const $=id=>document.getElementById(id);
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 let EST=[],DEV=[],INV=[],HOJE=new Date(),aberto=new Set(),stF='todos',ultimo=0;
+let modoArquivo=false;
 const LK={e:[],d:[],i:[]};
 
 /* ---------- utilidades ---------- */
@@ -433,7 +436,7 @@ function preencher(){
 }
 
 async function atualizar(manual){
- if(modoPasta&&pastaH){if(manual)await atualizarDaPasta();return}
+ if(modoArquivo){if(manual)alert('Você está usando as planilhas anexadas. Para atualizar, anexe os Excel de novo pelo 📁 ou volte à online pelo 🌐.');return}
  const b=$('rf');b.classList.add('spin');
  try{
   const [a,c]=await Promise.all(URLS.map(u=>fetch(u,{cache:'no-store'}).then(r=>{if(!r.ok)throw 0;return r.text()})));
@@ -680,84 +683,81 @@ function ri(){
  }).join(''):'<div class="empty">Nenhum equipamento encontrado.</div>';
 }
 
-/* ---------- PASTA DO COMPUTADOR (Chrome / Edge) ---------- */
-/* Escolha uma pasta uma vez; o painel lê o Excel/CSV mais recente de cada tipo
-   (devoluções e calibração/inventário), reconhecendo pelos títulos das colunas. */
-let pastaH=null,modoPasta=false;
-const EXT=/\.(xlsx|xls|csv)$/i;
-const IDB={
- open(){return new Promise((res,rej)=>{const r=indexedDB.open('ferramentaria_pasta',1);r.onupgradeneeded=()=>r.result.createObjectStore('h');r.onsuccess=()=>res(r.result);r.onerror=()=>rej(r.error)})},
- async get(){try{const db=await this.open();return await new Promise(res=>{const q=db.transaction('h').objectStore('h').get('dir');q.onsuccess=()=>res(q.result||null);q.onerror=()=>res(null)})}catch(e){return null}},
- async set(v){try{const db=await this.open();return await new Promise(res=>{const t=db.transaction('h','readwrite');t.objectStore('h').put(v,'dir');t.oncomplete=()=>res();t.onerror=()=>res()})}catch(e){}}
-};
-function mostrarPasta(){$('btnWeb').hidden=!modoPasta}
-async function arquivoParaCsv(f){
- if(/\.csv$/i.test(f.name))return(await f.text()).replace(/^\ufeff/,'');
- const wb=XLSX.read(await f.arrayBuffer(),{type:'array',cellDates:true});
- return XLSX.utils.sheet_to_csv(wb.Sheets[wb.SheetNames[0]],{dateNF:'dd/mm/yyyy',blankrows:false});
+/* ---------- ANEXAR PLANILHAS EXCEL (📁) ---------- */
+/* Reconhece cada arquivo pelos títulos das colunas: devoluções (Solicitante/Atraso)
+   ou calibração (Vencimento/Data próxima manutenção). */
+function tipoDoArquivo(rows){
+ const h=Object.keys(rows[0]||{}).join(' ').toLowerCase();
+ if(/solicitante|atraso/.test(h))return'dev';
+ if(/manuten|vencimento|calibra/.test(h))return'inv';
+ return null;
 }
-async function lerPasta(dir){
- const arqs=[];
- try{for await(const [nome,h] of dir.entries()){if(h.kind!=='file'||!EXT.test(nome)||nome.startsWith('~$'))continue;arqs.push(await h.getFile())}}
- catch(e){alert('Não consegui ler a pasta: '+e.message);return false}
- if(!arqs.length){alert('Nenhum arquivo Excel/CSV encontrado na pasta "'+dir.name+'".');return false}
- arqs.sort((a,b)=>b.lastModified-a.lastModified);
- let dev=null,inv=null;
- for(const f of arqs){
-  let txt;try{txt=await arquivoParaCsv(f)}catch(e){continue}
-  const h=csv(txt).h.join(' ').toLowerCase();
-  if(/solicitante|atraso/.test(h)){if(!dev)dev={txt,nome:f.name}}
-  else if(/manuten|vencimento|calibra/.test(h)){if(!inv)inv={txt,nome:f.name}}
-  if(dev&&inv)break;
+function rowsDoExcel(wb){
+ for(const n of wb.SheetNames){
+  const r=XLSX.utils.sheet_to_json(wb.Sheets[n],{defval:'',raw:false,dateNF:'dd/mm/yyyy'});
+  if(r.length){
+   const t=tipoDoArquivo(r.map(o=>{const x={};for(const k in o)x[String(k).trim()]=o[k];return x}));
+   if(t)return{tipo:t,rows:r.map(o=>{const x={};for(const k in o)x[String(k).trim()]=o[k];return x})};
+  }
  }
- if(!dev||!inv){alert('Preciso de 2 arquivos na pasta "'+dir.name+'":\n• Devoluções (colunas Solicitante / Atraso)\n• Calibração (colunas Vencimento / Data próxima manutenção)\n\nEncontrei: '+(dev?'devoluções ✔️':'devoluções ✖️')+' · '+(inv?'calibração ✔️':'calibração ✖️'));return false}
- processar(dev.txt,inv.txt);
- try{localStorage.setItem(KC,JSON.stringify({t:Date.now(),a:dev.txt,c:inv.txt}))}catch(e){}
- ultimo=Date.now();
- $('upd').textContent='📁 '+dir.name+' · '+dev.nome+' + '+inv.nome;
+ return null;
+}
+/* converte linhas em texto CSV, para reaproveitar o processar() */
+function paraCsv(rows){
+ const cab=Object.keys(rows[0]);
+ const q=v=>'"'+String(v??'').replace(/"/g,'""')+'"';
+ return [cab.map(q).join(',')].concat(rows.map(r=>cab.map(k=>q(r[k])).join(','))).join('\n');
+}
+let ARQ={dev:null,inv:null}; /* {nome, txt} de cada tipo */
+
+$('fileIn').addEventListener('change',async()=>{
+ const files=[...$('fileIn').files];$('fileIn').value='';
+ if(!files.length)return;
+ const achados={},erros=[];
+ for(const f of files){
+  if(!/\.(xlsx|xls)$/i.test(f.name)){erros.push(f.name+' (não é Excel)');continue}
+  try{
+   const wb=XLSX.read(await f.arrayBuffer(),{type:'array'});
+   const res=rowsDoExcel(wb);
+   if(!res){erros.push(f.name+' (colunas não reconhecidas)');continue}
+   achados[res.tipo]={nome:f.name,txt:paraCsv(res.rows)};
+  }catch(e){erros.push(f.name+' ('+e.message+')')}
+ }
+ if(!achados.dev&&!achados.inv){alert('Não reconheci as planilhas:\n• '+erros.join('\n• ')+'\n\nAnexe o Excel de devoluções (colunas Solicitante / Atraso) e/ou o de calibração (colunas Vencimento / Data próxima manutenção).');return}
+ ARQ={dev:achados.dev||ARQ.dev,inv:achados.inv||ARQ.inv};
+ if(!ARQ.dev||!ARQ.inv){
+  alert('Anexei o que veio. Falta '+(ARQ.dev?'o de calibração':'o de devoluções')+' para o painel ficar completo. O outro segue com o último arquivo anexado ou sem dados.');
+ }
+ if(!ARQ.dev||!ARQ.inv){}
+ const ok=usarArquivos();
+ if(erros.length)alert('Alguns arquivos não foram usados:\n• '+erros.join('\n• '));
+ try{localStorage.setItem(KA,JSON.stringify(ARQ));localStorage.setItem('ferr_modo','arquivo')}catch(e){}
+});
+function usarArquivos(){
+ const dev=ARQ.dev?ARQ.dev.txt:'',inv=ARQ.inv?ARQ.inv.txt:'';
+ if(!dev&&!inv)return false;
+ modoArquivo=true;$('btnWeb').hidden=false;
+ processar(dev||inv,inv||dev);
+ $('upd').textContent='📎 '+[ARQ.dev&&ARQ.dev.nome,ARQ.inv&&ARQ.inv.nome].filter(Boolean).join(' + ');
  return true;
 }
-async function escolherPasta(){
- if(!window.showDirectoryPicker){alert('Este navegador não permite escolher pasta. Use o Chrome ou o Edge no computador.');return}
- try{
-  const d=await window.showDirectoryPicker({mode:'read'});
-  pastaH=d;await IDB.set(d);modoPasta=true;
-  try{localStorage.setItem('ferr_modo','pasta')}catch(e){}
-  mostrarPasta();await lerPasta(d);
- }catch(e){if(e.name!=='AbortError')alert('Não foi possível abrir a pasta: '+e.message)}
-}
-async function atualizarDaPasta(){
- const b=$('rf');b.classList.add('spin');
- try{
-  let p=await pastaH.queryPermission({mode:'read'});
-  if(p!=='granted')p=await pastaH.requestPermission({mode:'read'});
-  if(p!=='granted')alert('Permissão negada para ler a pasta.');
-  else await lerPasta(pastaH);
- }catch(e){alert('Erro ao atualizar da pasta: '+e.message)}
- b.classList.remove('spin');
-}
 function voltarWeb(){
- modoPasta=false;try{localStorage.setItem('ferr_modo','web')}catch(e){}
- mostrarPasta();atualizar(true);
+ modoArquivo=false;ARQ={dev:null,inv:null};
+ try{localStorage.removeItem(KA);localStorage.setItem('ferr_modo','web')}catch(e){}
+ $('btnWeb').hidden=true;
+ atualizar(true);
 }
 
 /* impressão: carimbo de data */
 window.addEventListener('beforeprint',()=>{document.querySelectorAll('.pdt').forEach(e=>e.textContent='Emitido em '+new Date().toLocaleString('pt-BR'))});
 
-try{const c=JSON.parse(localStorage.getItem(KC)||'null');if(c){processar(c.a,c.c);ultimo=c.t;$('upd').textContent='Dados salvos de '+new Date(c.t).toLocaleString('pt-BR',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'})}}catch(e){}
-(async()=>{
- pastaH=await IDB.get();
- modoPasta=!!pastaH&&(()=>{try{return localStorage.getItem('ferr_modo')==='pasta'}catch(e){return false}})();
- mostrarPasta();
- if(modoPasta){
-  try{const p=await pastaH.queryPermission({mode:'read'});if(p==='granted'){await lerPasta(pastaH);return}}catch(e){}
-  $('upd').textContent='📁 Clique em ↻ para liberar e ler a pasta';
-  return;
- }
+try{const fa=JSON.parse(localStorage.getItem(KA)||'null');if(fa&&(fa.dev||fa.inv)&&localStorage.getItem('ferr_modo')==='arquivo'){ARQ=fa;usarArquivos()}}catch(e){}
+if(!modoArquivo){
+ try{const c=JSON.parse(localStorage.getItem(KC)||'null');if(c){processar(c.a,c.c);ultimo=c.t;$('upd').textContent='Dados salvos de '+new Date(c.t).toLocaleString('pt-BR',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'})}}catch(e){}
  atualizar();
-})();
-setInterval(()=>atualizar(),5*60*1000);
-document.addEventListener('visibilitychange',()=>{if(!document.hidden&&Date.now()-ultimo>2*60*1000)atualizar()});
+}
+setInterval(()=>{if(!modoArquivo)atualizar()},5*60*1000);
+document.addEventListener('visibilitychange',()=>{if(!document.hidden&&!modoArquivo&&Date.now()-ultimo>2*60*1000)atualizar()});
 </script>
 </body>
 </html>
