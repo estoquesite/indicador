@@ -46,7 +46,7 @@ input,select{width:100%;min-height:42px;padding:8px 12px;border:1px solid #d5dce
 .det{display:none;border-top:1px solid #cbd5e1;background:#f7f9fc;padding:12px 16px;gap:6px;font-size:13px}.c.open .det{display:grid}
 .it{border-left:3px solid var(--ac);padding:7px 10px;background:#fff;border-radius:0 8px 8px 0}
 .sub{font-size:12px;color:#64748b;font-weight:600}
-#drop{border:3px dashed #93b4f5;border-radius:18px;background:#fff;padding:60px 20px;text-align:center;font-weight:700;color:#334155}
+#drop,#drop-cal{border:3px dashed #93b4f5;border-radius:18px;background:#fff;padding:60px 20px;text-align:center;font-weight:700;color:#334155}
 #drop big{display:block;font-size:46px}
 @media(max-width:1100px){.grid,.cards{grid-template-columns:1fr 1fr}.kpis{grid-template-columns:1fr 1fr}}
 @media(max-width:700px){.grid,.cards,.kpis,.f{grid-template-columns:1fr}main{padding:14px}.seg{margin:12px 14px 0}h1{font-size:18px}}
@@ -55,10 +55,12 @@ input,select{width:100%;min-height:42px;padding:8px 12px;border:1px solid #d5dce
 <header><div class="top">
  <div><h1>🛠️ Painel Corporativo — Ferramentaria & Movimentação</h1><div id="upd">Nenhum relatório carregado</div></div>
  <div class="btns">
-  <button class="b" onclick="$('arq').click()">📊 Anexar Excel</button>
+  <button class="b" onclick="$('arq').click()">📊 Anexar Movimentação</button>
+  <button class="b" style="background:rgba(5,150,105,.55)" onclick="$('arqc').click()">⚡ Anexar Calibração</button>
   <button class="b" onclick="salvar()">💾 Salvar</button>
   <button class="b" onclick="print()">🖨️</button>
   <input type="file" id="arq" accept=".xls,.xlsx,.csv" hidden onchange="ler(this.files[0])">
+  <input type="file" id="arqc" accept=".xls,.xlsx,.csv" hidden onchange="lerCal(this.files[0])">
  </div></div></header>
 <div class="seg" style="--c:#2563eb">
  <button id="b-ger" class="on" style="--c:#2563eb" onclick="aba('ger')">📦 Visão Geral</button>
@@ -66,22 +68,23 @@ input,select{width:100%;min-height:42px;padding:8px 12px;border:1px solid #d5dce
  <button id="b-cal" style="--c:#059669" onclick="aba('cal')">⚡ Calibração</button>
 </div>
 <main>
- <div id="drop"><big>📊</big>Clique em <b>Anexar Excel</b> ou arraste o relatório de movimentação (.xls / .xlsx) aqui</div>
+ <div id="drop"><big>📊</big>Clique em <b>Anexar Movimentação</b> ou arraste o relatório de movimentação (.xls / .xlsx) aqui</div>
  <section id="s-ger" class="hide"><div class="kpis" id="k-ger"></div><div class="grid" id="g-ger"></div></section>
  <section id="s-pen" class="hide" style="--ac:#ea580c">
   <div class="kpis" id="k-pen"></div><div class="grid" id="g-pen"></div>
   <div class="f"><input id="p-q" type="search" placeholder="Buscar usuário, ferramenta ou protocolo" oninput="rp()"><select id="p-ges" onchange="rp()"></select><select id="p-cal" onchange="rp()"><option value="">Calibração: todas</option><option>SIM</option><option>NAO</option></select><button class="btn" onclick="$('p-q').value=$('p-ges').value=$('p-cal').value='';rp()">Limpar</button></div>
   <div class="cards" id="l-pen"></div></section>
+ <div id="drop-cal" class="hide" style="border-color:#34d399"><big>⚡</big>Clique em <b>Anexar Calibração</b> ou arraste aqui o arquivo de calibração (.xls / .xlsx)<div class="sub" style="margin-top:8px">Colunas esperadas: Apelido, Data próxima manutenção (ou Vencimento), Situação ferramenta</div></div>
  <section id="s-cal" class="hide" style="--ac:#059669">
   <div class="kpis" id="k-cal"></div><div class="grid" id="g-cal"></div>
-  <div class="f"><input id="c-q" type="search" placeholder="Buscar ferramenta de calibração" oninput="rc()"><select id="c-st" onchange="rc()"><option value="">Status: todos</option><option>Emprestada</option><option>Disponível</option></select><span></span><button class="btn" onclick="$('c-q').value=$('c-st').value='';rc()">Limpar</button></div>
+  <div class="f"><input id="c-q" type="search" placeholder="Buscar equipamento de calibração" oninput="rc()"><select id="c-st" onchange="rc()"><option value="">Status: todos</option><option value="v">Vencido</option><option value="a30">Vence em até 30 dias</option><option value="a90">Vence em 31–90 dias</option><option value="ok">Em dia</option><option value="sd">Sem data</option></select><span></span><button class="btn" onclick="$('c-q').value=$('c-st').value='';rc()">Limpar</button></div>
   <div class="cards" id="l-cal"></div></section>
 </main>
 <script>
 const $=id=>document.getElementById(id);
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-const KC='ferramentaria_mov_v1',soma=a=>a.reduce((s,x)=>s+x,0);
-let MOV=[],ITENS=[],HOJE=new Date(),NOME='',cur='ger';
+const KC='ferramentaria_mov_v1',KCC='ferramentaria_cal_v1',soma=a=>a.reduce((s,x)=>s+x,0);
+let MOV=[],ITENS=[],CAL=[],NOMEC='',HOJE=new Date(),NOME='',cur='ger';
 const pd=s=>{const m=String(s||'').match(/(\d+)\/(\d+)\/(\d+)(?:\s+(\d+):(\d+))?/);return m?new Date(+m[3],+m[2]-1,+m[1],+(m[4]||0),+(m[5]||0)):null};
 const fmt=d=>d?d.toLocaleDateString('pt-BR'):'—';
 const dias=d=>d?Math.max(0,Math.floor((HOJE-d)/864e5)):0;
@@ -90,14 +93,15 @@ const hb=(items,fn)=>items.length?items.map(i=>`<div class="hb" ${fn?`onclick="$
 const box=(t,b)=>`<div class="box"><h3>${t}</h3>${b}</div>`;
 const rank=(arr,k,n=8)=>Object.entries(arr.reduce((o,x)=>(o[x[k]||'—']=(o[x[k]||'—']||0)+1,o),{})).sort((a,b)=>b[1]-a[1]).slice(0,n).map(([l,v])=>({l,v}));
 
-function aba(t){cur=t;['ger','pen','cal'].forEach(x=>{$('s-'+x).classList.toggle('hide',x!==t||!MOV.length);$('b-'+x).classList.toggle('on',x===t)});scrollTo(0,0)}
+function aba(t){cur=t;['ger','pen','cal'].forEach(x=>{const ok=x==='cal'?CAL.length>0:MOV.length>0;$('s-'+x).classList.toggle('hide',x!==t||!ok);$('b-'+x).classList.toggle('on',x===t)});
+ $('drop').classList.toggle('hide',t==='cal'||MOV.length>0);$('drop-cal').classList.toggle('hide',t!=='cal'||CAL.length>0);scrollTo(0,0)}
 
 /* ---- leitura do Excel ---- */
 async function ler(f){
  if(!f)return;
  try{
-  const wb=XLSX.read(await f.arrayBuffer(),{type:'array'});
-  const rows=XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]],{header:1,raw:false,defval:''});
+  const wb=XLSX.read(await f.arrayBuffer(),{type:'array',cellDates:true});
+  const rows=XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]],{header:1,raw:false,defval:'',dateNF:'dd/mm/yyyy'});
   const hi=rows.findIndex(r=>r.map(x=>String(x).trim()).includes('dataMovimentacao'));
   if(hi<0)throw new Error('Não achei a coluna "dataMovimentacao". Este é o relatório de movimentação?');
   const h=rows[hi].map(x=>String(x).trim());
@@ -109,6 +113,7 @@ async function ler(f){
 }
 
 function carregar(data,msg){
+ document.body.dataset.mov=1;
  HOJE=new Date();HOJE.setHours(0,0,0,0);
  MOV=data.map(r=>({dt:pd(r.dataMovimentacao),tipo:r.tipoMovimentacao,prot:r.protocolo,tool:r.apelidoFerramenta||'—',cat:r.tipoFerramenta,cod:r.codigoIndividualFerramenta||r.codigoPartNumber||'—',sap:r.codigoSapFerramenta,usr:r.nomeUsuario||'(sem nome)',ges:r.nomeGestor||'—',fer:r.nomeFerramenteiro,cal:(r.necessitaCalibracao||'').toUpperCase().startsWith('S')?'SIM':'NAO'}));
  /* agrupa por protocolo+ferramenta+código: empréstimo sem devolução = em aberto */
@@ -116,12 +121,12 @@ function carregar(data,msg){
  MOV.forEach(m=>{const k=[m.prot,m.sap,m.cod].join('|');const g=G[k]??={...m,emp:null,dev:null};
   if(m.tipo.startsWith('Empr'))g.emp=m.dt;else if(m.tipo.startsWith('Devol'))g.dev=m.dt;else if(!g.res)g.res=m.dt;});
  ITENS=Object.values(G).map(g=>({...g,aberto:!!g.emp&&!g.dev,dias:g.emp&&!g.dev?dias(g.emp):0,durac:g.emp&&g.dev?Math.max(0,Math.round((g.dev-g.emp)/864e5)):null}));
- $('upd').textContent=msg;$('drop').classList.add('hide');
+ $('upd').textContent=msg;
  const ds=MOV.map(m=>m.dt).filter(Boolean).sort((a,b)=>a-b);
  if(ds.length)$('upd').textContent+=' · período '+fmt(ds[0])+' a '+fmt(ds[ds.length-1]);
  const ges=[...new Set(ITENS.filter(i=>i.aberto).map(i=>i.ges))].sort();
  $('p-ges').innerHTML='<option value="">Todos os gestores</option>'+ges.map(g=>`<option>${esc(g)}</option>`).join('');
- rg();rp();rc();aba(cur);
+ rg();rp();aba(cur);
 }
 
 /* ---- Visão geral ---- */
@@ -157,25 +162,60 @@ function rp(){
 }
 function pickU(j){$('p-q').value=JSON.parse(j);rp()}
 
-/* ---- Calibração ---- */
+/* ---- Calibração (arquivo próprio) ---- */
+const STL={v:['Vencido','r'],a30:['Vence em até 30 dias','a'],a90:['Vence em 31–90 dias','a'],ok:['Em dia','g'],sd:['Sem data','']};
+const pick=(r,...k)=>{for(const x of k)if(r[x])return r[x];return ''};
+const stat=d=>{if(!d)return'sd';const n=Math.round((d-HOJE)/864e5);return n<0?'v':n<=30?'a30':n<=90?'a90':'ok'};
+async function lerCal(f){
+ if(!f)return;
+ try{
+  const wb=XLSX.read(await f.arrayBuffer(),{type:'array',cellDates:true});
+  const rows=XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]],{header:1,raw:false,defval:'',dateNF:'dd/mm/yyyy'});
+  const hi=rows.findIndex(r=>/manuten|vencimento|calibra/i.test(r.join(' '))&&r.filter(x=>String(x).trim()).length>=3);
+  if(hi<0)throw new Error('Não achei as colunas de calibração (Data próxima manutenção / Vencimento).');
+  const h=rows[hi].map(x=>String(x).trim());
+  const data=rows.slice(hi+1).filter(r=>r.some(x=>String(x).trim())).map(r=>Object.fromEntries(h.map((k,i)=>[k,String(r[i]??'').trim()])));
+  NOMEC=f.name;localStorage.setItem(KCC,JSON.stringify({n:NOMEC,t:Date.now(),d:data}));
+  carregarCal(data);cur='cal';aba('cal');
+ }catch(e){alert('Erro ao ler a calibração: '+e.message)}
+ $('arqc').value='';
+}
+function carregarCal(data){
+ HOJE=new Date();HOJE.setHours(0,0,0,0);
+ CAL=data.filter(r=>{const s=pick(r,'Status').toLowerCase();return !s||s==='ativo'}).map(r=>{
+  const d=pd(pick(r,'Data próxima manutenção','Data Próxima Manutenção','Vencimento'));
+  return{ap:pick(r,'Apelido','Descrição Ferramenta','Equipamento').trim(),d,sit:pick(r,'Situação ferramenta')||'—',st:stat(d)}}).filter(x=>x.ap);
+ rc();aba(cur);
+}
 function rc(){
  const q=$('c-q').value.toLowerCase().trim(),st=$('c-st').value;
- const base=ITENS.filter(i=>i.cal==='SIM'&&(!q||(i.tool+' '+i.cod).toLowerCase().includes(q)));
- const T={};base.forEach(i=>{const k=i.tool+'|'+i.cod;const t=T[k]??={t:i.tool,cod:i.cod,h:[]};t.h.push(i)});
- let L=Object.values(T).map(t=>({...t,emp:t.h.some(x=>x.aberto),n:t.h.length})).filter(t=>!st||(st==='Emprestada')===t.emp).sort((a,b)=>b.emp-a.emp||b.n-a.n);
- $('k-cal').innerHTML=kpi(L.length,'Equipamentos de calibração','#059669')+kpi(L.filter(x=>x.emp).length,'Emprestados agora','#ea580c')+kpi(L.filter(x=>!x.emp).length,'Disponíveis','#2563eb')+kpi(soma(L.map(x=>x.n)),'Empréstimos no período','#7c3aed');
- $('g-cal').innerHTML=box('🔝 Mais emprestados',hb(L.slice().sort((a,b)=>b.n-a.n).slice(0,8).map(x=>({l:x.t+' ('+x.cod+')',v:x.n}))))+box('👤 Quem mais usa',hb(rank(base,'usr')))+box('🧑‍💼 Por gestor',hb(rank(base,'ges')));
- $('l-cal').innerHTML=L.length?L.map(t=>{
-  const det=t.h.sort((a,b)=>(b.emp||0)-(a.emp||0)).map(i=>`<div class="it"><b>${esc(i.usr)}</b><div class="sub">Protocolo ${esc(i.prot)} · Retirado: ${fmt(i.emp)} · Devolvido: ${fmt(i.dev)}</div><span class="chip ${i.aberto?'r':'g'}">${i.aberto?'Em empréstimo há '+i.dias+' dia(s)':'Devolvido'}</span></div>`).join('');
-  return card({t:t.t,n:t.n,det},0,`<span class="chip">Código: ${esc(t.cod)}</span><span class="chip ${t.emp?'r':'g'}">${t.emp?'Emprestada':'Disponível'}</span><span class="chip">▼ histórico</span>`,t.emp)}).join(''):'<div class="empty">Nenhum equipamento.</div>';
+ const base=CAL.filter(x=>(!st||x.st===st)&&(!q||x.ap.toLowerCase().includes(q)));
+ const all=CAL,c=k=>all.filter(x=>x.st===k).length,n=all.length,cd=n-c('sd');
+ const venc=all.filter(x=>x.st==='v'&&x.d).sort((a,b)=>a.d-b.d)[0];
+ $('k-cal').innerHTML=kpi(n,'Total de equipamentos','#2563eb')+kpi(c('v'),'Vencidos'+(venc?' — mais antigo: '+fmt(venc.d):''),'#dc2626')+kpi(c('a30')+c('a90'),'Vencem em até 90 dias','#d97706')+kpi(cd?Math.round((cd-c('v'))/cd*100)+'%':'—','Conformidade (itens com data)','#059669');
+ const status=Object.keys(STL).map(k=>({l:STL[k][0],v:c(k),c:{v:'#dc2626',a30:'#d97706',a90:'#eab308',ok:'#059669',sd:'#94a3b8'}[k]}));
+ const B=[{l:'Vencidos',v:0,c:'#dc2626'}];
+ for(let m=0;m<6;m++){const dt=new Date(HOJE.getFullYear(),HOJE.getMonth()+m,1);B.push({l:dt.toLocaleDateString('pt-BR',{month:'short',year:'2-digit'}),v:0})}
+ B.push({l:'7–12 meses',v:0},{l:'+ de 12 meses',v:0});
+ all.forEach(x=>{if(!x.d)return;if(x.st==='v'){B[0].v++;return}const mi=(x.d.getFullYear()-HOJE.getFullYear())*12+x.d.getMonth()-HOJE.getMonth();if(mi<=5)B[1+Math.max(mi,0)].v++;else if(mi<=11)B[7].v++;else B[8].v++});
+ const G={};base.forEach(x=>{const g=G[x.ap]??={ap:x.ap,h:[],min:null};g.h.push(x);if(x.d&&(!g.min||x.d<g.min))g.min=x.d});
+ const L=Object.values(G).sort((a,b)=>(a.min?+a.min:9e15)-(b.min?+b.min:9e15));
+ $('g-cal').innerHTML=box('⚡ Situação da calibração',hb(status))+box('📅 Vencimentos por período',hb(B))+box('🏆 Equipamentos mais críticos',hb(L.slice(0,8).map(g=>({l:g.ap+' · '+fmt(g.min),v:g.h.length}))));
+ $('l-cal').innerHTML=L.length?L.map(g=>{
+  const v=g.h.filter(x=>x.st==='v').length,red=v>0;
+  const det=g.h.slice().sort((a,b)=>(a.d||0)-(b.d||0)).map(e=>`<div class="it"><b>Vencimento: ${fmt(e.d)}</b> <span class="chip ${STL[e.st][1]}">${STL[e.st][0]}</span><div class="sub">Situação: ${esc(e.sit)}</div></div>`).join('');
+  const dd=g.min?Math.round((g.min-HOJE)/864e5):null;
+  return card({t:g.ap,n:g.h.length,det},0,`<span class="chip ${red?'r':'g'}">Próx. vencimento: ${fmt(g.min)}${dd!==null?(dd<0?' (vencido há '+-dd+' d)':' (em '+dd+' d)'):''}</span>${v?`<span class="chip r">${v} vencido(s)</span>`:''}<span class="chip">▼ ver itens</span>`,red)}).join(''):'<div class="empty">Nenhum equipamento.</div>';
 }
 
 /* ---- Salvar: baixa Excel com os dados tratados ---- */
 function salvar(){
- if(!MOV.length){alert('Anexe um relatório primeiro.');return}
+ if(!MOV.length&&!CAL.length){alert('Anexe um relatório primeiro.');return}
  const wb=XLSX.utils.book_new(),L=a=>XLSX.utils.json_to_sheet(a);
  const pend=ITENS.filter(i=>i.aberto).map(i=>({Usuário:i.usr,Ferramenta:i.tool,Código:i.cod,Protocolo:i.prot,Retirada:fmt(i.emp),'Dias emprestado':i.dias,Gestor:i.ges,Calibração:i.cal}));
  const todos=ITENS.map(i=>({Protocolo:i.prot,Ferramenta:i.tool,Código:i.cod,Usuário:i.usr,Gestor:i.ges,Tipo:i.cat,Calibração:i.cal,Retirada:fmt(i.emp),Devolução:fmt(i.dev),Situação:i.aberto?'Em empréstimo':'Devolvido'}));
+ if(CAL.length)XLSX.utils.book_append_sheet(wb,L(CAL.map(x=>({Equipamento:x.ap,Vencimento:fmt(x.d),Situação:x.sit,Status:STL[x.st][0]}))),'Calibração');
+ if(!MOV.length){XLSX.writeFile(wb,'calibracao_'+new Date().toISOString().slice(0,10)+'.xlsx');return}
  XLSX.utils.book_append_sheet(wb,L(pend),'Em empréstimo');
  XLSX.utils.book_append_sheet(wb,L(todos),'Todos os itens');
  XLSX.utils.book_append_sheet(wb,L(MOV.map(m=>({Data:m.dt?m.dt.toLocaleString('pt-BR'):'',Tipo:m.tipo,Protocolo:m.prot,Ferramenta:m.tool,Código:m.cod,Usuário:m.usr,Gestor:m.ges}))),'Movimentações');
@@ -184,6 +224,8 @@ function salvar(){
 }
 
 /* arrastar e soltar + dados salvos no navegador */
-['dragover','drop'].forEach(e=>document.addEventListener(e,ev=>{ev.preventDefault();if(e==='drop')ler(ev.dataTransfer.files[0])}));
+['dragover','drop'].forEach(e=>document.addEventListener(e,ev=>{ev.preventDefault();if(e==='drop')(cur==='cal'?lerCal:ler)(ev.dataTransfer.files[0])}));
 try{const c=JSON.parse(localStorage.getItem(KC)||'null');if(c)carregar(c.d,'Dados salvos: '+c.n+' ('+new Date(c.t).toLocaleString('pt-BR',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'})+')')}catch(e){}
+try{const c=JSON.parse(localStorage.getItem(KCC)||'null');if(c)carregarCal(c.d)}catch(e){}
+aba(cur);
 </script></body></html>
